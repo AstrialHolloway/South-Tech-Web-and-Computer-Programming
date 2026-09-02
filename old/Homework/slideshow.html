@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Asher's Slideshow</title>
+
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+        <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+        <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-cyan.css">
+
+        <link rel="stylesheet" href="..\\home.css">
+
+        <script src='main.js'></script>
+
+    </head>
+    <body>
+        <img src="..\\Images\\Asher Stream Sprite 1.png">
+        <div class="w3-container w3-auto">
+          <h1>Slideshow of a school I found.</h1>
+          <h1>LHS/Lindbergh High School:</h1>
+        </div>
+        <!-- set up each image, the coding will be the same but different images-->
+        <div class="w3-content w3-display-container" style="max-width:700px;">
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Outside.jpg" alt="Outside" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Outside</h3>
+            </div>
+          </div>
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Main Enterance.jpg" alt="Main Enterance" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Main Enterance</h3>
+            </div>
+          </div>
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Expo.jpg" alt="Expo" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Expo</h3>
+            </div>
+          </div>
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Learning stairs.jpg" alt="Learning Stairs" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Learning Stairs</h3>
+            </div>
+          </div>
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Gym.jpg" alt="Gym" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Gym</h3>
+            </div>
+          </div>
+    
+          <div class="w3-display-container mySlides w3-text-yellow w3-xlarge">
+            <img src="..\Images\Slides\hw\Theater.jpg" alt="Theater" style="width:100%; height:500px">
+            <div class="w3-display-bottommiddle w3-large w3-container w3-container w3-padding-12 w3-green">
+              <h3>Theater</h3>
+            </div>
+          </div>
+    
+    
+    
+        
+        <!-- do not change this, these are your buttons for navigating through images-->
+          <button class="w3-button w3-green w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+          <button class="w3-button w3-green w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+        </div>
+    
+        <!-- DO NOT CHANGE ANYTHING BELOW THIS LINE-->
+        <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+    
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("mySlides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length}
+          for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";  
+          }
+          x[slideIndex-1].style.display = "block";  
+        }
+        </script>
+        <!-- CHANGE FOOTER-->
+        <footer>
+            <div>
+                <h3> Asher Holloway, 2025 </h3>
+            <div>
+            <a href="..\\index.html">Home</a>
+        </footer>
+      </body>
+    
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dropdowns and Accordions</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+    <body>
+    <h2> Fun Facts About Ice Cream</h2>
+    </div>
+    <!-- Question #1 - regular answer-->
+    <!-- create a container for an accordion style button -->
+    <div class="w3-container w3-auto">
+    <!-- accordion style button, only change color-->
+    <button onclick="myFunction('Demo1')" class="w3-btn w3-block w3-pink w3-left-align "
+    style="width: 50%">1. When was ice cream invented? &#9660;</button>
+    <!-- div for the answer that will drop down once a button is clicked -->
+    <div id="Demo1" class="w3-container w3-hide">
+        <h4>Second Century B.C.</h4>
+    </div> <!--end of answer div-->
+
+    </div> <!-- closing <div> for an accordion style button -->
+
+    <!-- Question #2 - image answer-->
+        <!-- create a container for an accordion style button -->
+        <div class="w3-container w3-auto">
+            <!-- accordion style button, only change color-->
+            <button onclick="myFunction('Demo2')" class="w3-btn w3-block w3-pink w3-left-align "
+            style="width: 50%">2. Where was ice cream invented? &#9660;</button>
+            <!-- div for the answer that will drop down once a button is clicked -->
+            <div id="Demo2" class="w3-container w3-hide">
+                <h4>China</h4>
+                <img src="..\\images\trivia\\china.jpg" alt="China" style="width:150px">
+            </div> <!--end of answer div-->
+        </div>
+    <!-- add breaks as needed for space between buttons -->
+    <br>
+    <br>
+    <!-- repeat the code two or three times for additional questions-->
+
+    <!-- footer with your name on it -->
+
+    <div>
+        <footer> CHANGE ME </footer>
+    </div>
+
+    <!-- DO NOT CHANGE THE SCRIPT -->
+    <script>
+    function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+    }
+
+    </script>
+    <footer><a href="..\\index.html">Home</a></footer>
+    </body>
+</html>

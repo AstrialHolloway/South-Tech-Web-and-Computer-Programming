@@ -1,0 +1,10 @@
+.Home page + 4 additional related pages (3 pages for seniors, 4 pages for Rosa) (Fin)
+.A navigation menu that allows to go between each page (Fin)
+.A color theme used throughout the site (Fin)
+.Use of a minimum of 1 image on each page or 3 images total for the site (Fin)
+.Incorporation of a video on 1 page (Fin)
+.Incorporation of a minimum of 1 external link that opens in a new tab (Fin)
+.Incorporation of a table (Fin)
+.Incorporation of a list (Fin)
+.Incorporation of one element that you learned on your own at w3css site.
+.Incorporation of icons (Fin)
