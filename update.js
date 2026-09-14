@@ -2,7 +2,7 @@ const repoOwner = 'AstrialHolloway';
 const repoName = 'South-Tech-Web-and-Computer-Programming';
 
 // FIX: Make sure this exact structure is used with backticks (`)
-fetch(`https://github.com${repoOwner}/${repoName}`)
+fetch(`https://github.com/${repoOwner}/${repoName}`)
   .then(response => {
     if (!response.ok) {
       throw new Error(`GitHub API returned status: ${response.status}`);
