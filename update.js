@@ -21,4 +21,5 @@ fetch(`https://github.com/${repoOwner}/${repoName}`)
   .catch(error => {
     document.getElementById('update-date').innerText = 'unknown';
     console.error('Error fetching repo data:', error);
-  });
+  }
+);
