@@ -1,0 +1,32 @@
+/* 
+    main p means decendent
+    main>p means child
+    ul~p means sibling
+    ul+p means adjasent siblings
+*/
+/*
+    nav a {
+        color: #00FF00;    
+    }
+
+    ul~p {
+        color: #FF00FF;
+    }
+*/
+* {
+    color: yellow;
+    background-color: red;
+}
+.fancy {
+    color: red;
+    background-color: #ACACAC;
+}
+
+.green {
+    color: green;
+}
+
+#important {
+    color: white;
+    background-color: black;
+}

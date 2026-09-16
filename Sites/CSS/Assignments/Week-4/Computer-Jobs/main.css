@@ -1,0 +1,24 @@
+* {
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
+li {
+    color: rgb(0,0,255);
+}
+
+ul>li {
+    color: rgb(255,0,255);
+}
+
+h1+p {
+    color: #00FF00;
+}
+
+li.red {
+    background-color: #FF0000;
+    color: #FFFFFF;
+}
+div>li {
+    color: #FFFF00;
+}
