@@ -1,0 +1,45 @@
+/* 
+    main p means decendent
+    main>p means child
+    ul~p means sibling
+    ul+p means adjasent siblings
+*/
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 48pt;
+}
+
+h2 {
+    font-size: 24pt;
+    text-decoration: underline;
+    font-variant: small-caps;
+}
+
+h1,h2 {
+    text-align: center;
+}
+
+p {
+    text-align: justify;
+}
+
+footer {
+    text-align: center;
+    background-color: #ababab;
+    border-style: solid;
+    border-color: blue;
+    border-width: 10px;
+}
+
+ol.red {
+    color: #FF0000;
+}
+
+.fun {
+    font-style: italic;
+    font-weight: bold;
+}
