@@ -90,7 +90,7 @@ section {
 section h2 {
     margin: 0 0 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(139, 92, 246, 0.5);
+    border-bottom: 2px solid rgba(246, 92, 92, 0.5);
     color: var(--southTechRed);
     font-size: 1.8rem;
     letter-spacing: 0.04em;
