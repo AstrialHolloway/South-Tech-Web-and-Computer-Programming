@@ -6,12 +6,11 @@
     --text: #e5e7eb;
     --muted: #cbd5e1;
     --heading: #f8fafc;
-    --accent: #8b5cf6;
-    --accent-2: #22c55e;
-    --accent-3: #f59e0b;
     --warning: #fca5a5;
-    --link: #bfdbfe;
+    --link: #FFFFFF;
     --link-hover: #ffffff;
+    --southTechRed: #b11e3b;
+    --SouthTechGrey: #5c595a;
 }
 
 * {
@@ -25,7 +24,7 @@ html {
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
     background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid));
     color: var(--text);
     line-height: 1.6;
@@ -66,13 +65,20 @@ main > p {
     color: var(--muted);
 }
 
-main > p span {
-    color: var(--accent-3);
+/* too lazy for double classes */
+
+main > p span,header > h1 span {
+    color: var(--southTechRed);
+    font-weight: 700;
+}
+
+main > p span span,header > h1 span span {
+    color: var(--SouthTechGrey);
     font-weight: 700;
 }
 
 section {
-    background: var(--panel);
+    background: #b4b4b4;
     border: 1px solid var(--panel-border);
     border-radius: 18px;
     padding: 1.4rem 1.5rem 1.2rem;
@@ -84,14 +90,12 @@ section h2 {
     margin: 0 0 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid rgba(139, 92, 246, 0.5);
-    color: var(--heading);
+    color: var(--southTechRed);
     font-size: 1.8rem;
     letter-spacing: 0.04em;
 }
 
-dl,
-ol,
-ul {
+dl,ol,ul {
     margin: 0;
     padding-left: 0;
     list-style: none;
@@ -101,17 +105,16 @@ dt {
     margin-top: 0.8rem;
     margin-bottom: 0.4rem;
     font-weight: 700;
-    color: var(--accent-2);
+    color: var(--SouthTechGrey);
     font-size: 1.05rem;
     text-align: left;
 }
 
-dd,
-li {
+dd,li {
     margin: 0.45rem 0;
     padding: 0.5rem 0.8rem;
     border-radius: 10px;
-    background: rgba(148, 163, 184, 0.06);
+    background: #000000;
     border: 1px solid rgba(148, 163, 184, 0.08);
     text-align: left;
 }
@@ -123,18 +126,17 @@ a {
     transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
 }
 
-a:hover,
-a:focus {
+a:hover,a:focus {
     color: var(--link-hover);
     text-decoration: underline;
     text-shadow: 0 0 10px rgba(191, 219, 254, 0.7);
 }
 
 .warning {
-    color: var(--warning);
+    color: var(--southTechRed);
     font-weight: 700;
-    background: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    background: rgba(239, 68, 68, 0.349);
+    border: 1px solid #b11e3b;
     border-radius: 8px;
     padding: 0.2rem 0.45rem;
     margin-left: 0.75rem;
@@ -156,7 +158,7 @@ footer a {
 }
 
 footer b {
-    color: var(--accent-3);
+    color: var(--southTechRed);
 }
 
 @media (max-width: 700px) {
