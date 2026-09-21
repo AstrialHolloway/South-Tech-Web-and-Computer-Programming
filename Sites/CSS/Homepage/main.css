@@ -62,7 +62,7 @@ main > p {
     text-align: center;
     font-size: 1.2rem;
     margin: 0 0 2rem;
-    color: var(--muted);
+    color: var(--muted);    
 }
 
 /* too lazy for double classes */
