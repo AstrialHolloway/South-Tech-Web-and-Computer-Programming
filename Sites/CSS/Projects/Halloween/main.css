@@ -1,0 +1,43 @@
+* {
+    font-family: sans-serif;
+}
+
+h1::first-letter {
+    font-size: 2em;
+}
+
+header > h2 {
+    font-style: italic;
+    font-size: 2.15em;
+    color: orange;
+    text-shadow: #000000 2px 2px 0;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float:right;
+}
+
+.clear {
+    clear: both;
+}
+
+a {
+    color: #ffd000;
+    line-height: 1.3;
+}
+
+a:link {
+    font-weight: bold;
+}
+
+a:hover {
+    color:green;
+}
+
+a:visited {
+    font-weight:normal;
+}
