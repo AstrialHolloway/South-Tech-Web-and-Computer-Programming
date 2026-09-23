@@ -1,0 +1,8 @@
+
+a:hover {
+    color: orange;
+}
+
+p::first-letter {
+    color: blue;
+}

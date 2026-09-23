@@ -1,0 +1,30 @@
+/* 
+    a:link (unvisited, blue)
+    a:visited (purple)
+    a:active (while clicking, red)
+    a:hover (while mouse it resting on)
+*/
+
+a {
+    text-decoration: none;
+}
+
+a:link {
+    font-weight: bold;
+}
+
+a:visited {
+    color: yellow;
+}
+
+a:hover {
+    font-size: 3em;
+}
+
+p:hover {
+    color: red;
+}
+
+p::first-letter {
+    font-size: 3em;
+}
