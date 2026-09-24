@@ -1,3 +1,5 @@
 {
+    "editor.fontFamily": "'PhantomMuff 1.5', Consolas, monospace",
+    "editor.fontSize": 14,
     "files.autoSave": "afterDelay"
 }

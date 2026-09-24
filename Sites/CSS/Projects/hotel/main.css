@@ -1,0 +1,45 @@
+:root {
+    --maincolor: #ffa600;
+}
+
+* {
+    font-family:Georgia, 'Times New Roman', Times, serif
+}
+
+body {
+    background-color: rgb(66, 66, 66);
+}
+
+h1 {
+    text-indent: 20px;
+    font-size: 30pt;
+    font-style: italic;
+    text-shadow: 3px 3px 0 black;
+    text-decoration: underline;
+    color: var(--maincolor);
+}
+
+p {
+    color: #999999
+}
+
+header > p {
+    text-indent: 20px;
+    font-size: 20pt;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+#contact {
+    color:rgb(163, 0, 0);
+}
