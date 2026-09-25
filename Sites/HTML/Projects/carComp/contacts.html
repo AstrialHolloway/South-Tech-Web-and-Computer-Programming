@@ -1,26 +1,44 @@
 <!DOCTYPE html>
 <!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+ <!--This took WAY too fucking long to find out how to do this shit-->
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="keyword" content="">
-		<meta name="description" content="">
-		<meta name="viewport" content="">
+		<meta name="keywords" content="cars, car comparison, contact">
+		<meta name="description" content="Contact Kars 4 Kids for help comparing cars.">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" href="../../../Images/Projects/carComp/k.webp">
 		<link rel="stylesheet" href="../../../CSS/Projects/carComp/main.css">
 		<title>Kars 4 Kids</title>
 	</head>
 	<body>
+		<p id="confirmation" aria-live="polite" hidden>Message sent. Please wait 24-48 hours for a response.</p>
 		<header>
-			
-			<img src="../../../Images/Projects/carComp/icon.jpg">
+			<img class="left" src="../../../Images/Projects/carComp/icon.jpg" alt="logo" width="100">
+			<h1><span class="pink">K</span>ars 4 <span class="pink">K</span>ids</h1>
+			<hr class="clear">
 		</header>
-		<nav>
-			<p>Home |  Pricing | Contacts</p>
+		<nav aria-label="Main navigation">
+			<p><a href="index.html">Home</a> | <a href="pricing.html">Pricing</a> | <a href="contacts.html">Contacts</a></p>
 		</nav>
 		<main>
-			
+			<h1>Contact Us</h1>
+			<p>Have questions about finding the right car? Get in touch with the Kars 4 Kids team.</p>
+			<section>
+				<h2>Send us a message</h2>
+				<form action="#" onsubmit="document.getElementById('confirmation').hidden = false; return false;">
+					<label for="name">Name:</label><br>
+					<input type="text" id="name" name="name" required><br><br>
+					<label for="email">Email:</label><br>
+					<input type="email" id="email" name="email" required><br><br>
+					<label for="message">Message:</label><br>
+					<textarea id="message" name="message" rows="5" required></textarea><br><br>
+					<button type="submit">Submit</button>
+				</form>
+			</section>
 		</main>
 		<footer>
+			<p>9/25/26</p>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 		</footer>
 	</body>
