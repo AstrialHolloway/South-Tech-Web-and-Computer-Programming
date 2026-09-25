@@ -1,5 +1,10 @@
+root: {
+    --mainPink:#e40a85;
+}
+
 body {
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+    background-color: var(--mainPink);
 }
 
 .left {
@@ -14,5 +19,5 @@ body {
     clear:both;
 }
 .pink {
-    color: #e40a85;
+    color: var(--mainPink);
 }
