@@ -2,6 +2,17 @@ body {
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
 }
 
+.left {
+    float: left;
+}
+
+.right {
+    float:right;
+}
+
+.clear {
+    clear:both;
+}
 .pink {
-    color:#e40a85;
+    color: #e40a85;
 }
