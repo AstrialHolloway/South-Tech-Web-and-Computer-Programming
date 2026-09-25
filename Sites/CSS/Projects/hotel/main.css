@@ -1,27 +1,43 @@
 :root {
     --maincolor: #ffa600;
+    --textColor: #999999;
 }
 
 * {
-    font-family:Georgia, 'Times New Roman', Times, serif
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    box-sizing: border-box;
 }
 
 body {
     background-color: rgb(66, 66, 66);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.4;
 }
 
 h1 {
     text-indent: 20px;
     font-size: 30pt;
     font-style: italic;
-    text-shadow: 3px 3px 0 black;
+    text-shadow: 3px 3px 0 rgb(0, 0, 0);
     text-decoration: underline;
     color: var(--maincolor);
+    margin-top: 0;
 }
 
-p {
-    color: #999999
+p,ol,li,h6 {
+    color: #d6d6d6;
+    font-weight: 600;
+    font-size: 20pt;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.65);
 }
+h2 {
+    color: #d6d6d6;
+    font-weight: 600;
+    font-size: 25pt;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.65);
+}
+
 
 header > p {
     text-indent: 20px;
@@ -41,5 +57,10 @@ header > p {
 }
 
 #contact {
-    color:rgb(163, 0, 0);
+    color: rgb(163, 0, 0);
+    transition: color 0.2s ease;
+}
+
+#contact:hover {
+    color: var(--maincolor);
 }
