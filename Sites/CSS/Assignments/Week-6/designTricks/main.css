@@ -1,0 +1,29 @@
+body {
+    background-color: rgb(158, 158, 158);
+}
+h1,h2 {
+    color: rgb(211, 0, 211);
+    text-align:center;
+}
+footer {
+    border-top-style: solid;
+    border-top-color: white;
+    border-top-width: 1px;
+    text-align:center;
+}
+.left {
+    float:left;
+}
+.clear {
+    clear:both;
+}
+img {
+    border-style : solid;
+    border-color: rgb(1, 13, 173);
+}
+section {
+    margin-left: 25%;
+}
+ol {
+    margin-left: 27%;
+}

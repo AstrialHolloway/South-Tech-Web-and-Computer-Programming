@@ -1,0 +1,67 @@
+* {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+    padding: 0px;
+    margin-top: 0px;
+    border-style:solid;
+    border-color:darkred;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+img {
+    padding:20px;
+}
+
+article {
+    margin: 10px 20px
+}
+
+h1 {
+    color: darkred;
+    
+}
+
+header h2 {
+    font-style: italic;
+}
+
+header {
+    border-bottom-style: solid;
+    border-bottom-color: darkred;
+}
+footer{
+    text-align:center
+}
+
+header,main,footer {
+    padding:10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: lightgray;
+    background-clip: padding-box;
+}
+main section p, main section h2, main section h3 {
+   margin-top: 1px;
+   margin-bottom: 1px;
+}
+
+
+footer {
+    border-top-style: solid;
+    border-top-color: darkred;
+}
+
+section.guestSpeakers p {
+    color:darkred
+}
+
+.left {
+    float:left;
+}
+
+.clear {
+    clear:both;
+}
