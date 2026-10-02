@@ -1,0 +1,64 @@
+html {
+    background-image: url("../../../../Images/Assignments/Week-6/ITJob/background.avif");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: right center;
+}
+
+body {
+    color:lightskyblue;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+header {
+    border-bottom: solid 5px lightskyblue 
+}
+
+footer {
+    margin-top: 20px;
+    border-top: solid 5px lightskyblue; 
+}
+
+p {
+    width:50%;
+    text-align:center;
+}
+
+footer p, aside p {
+    width:100%;
+}
+
+img {
+    border-radius:20px;
+    border-style:solid;
+    border-color:lightskyblue;
+    max-width:100%
+}
+
+aside {
+    border-style: solid;
+    border-color: lightskyblue;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 255, 0.329);
+    color:lightskyblue;
+    float:right;
+    width: 40%;
+    padding: 10px;
+}
+
+.clear {
+    clear:both
+}
+
+h1,h2 {
+    text-align:center;
+    text-shadow: 3px 3px 3px blue;
+}
+
+.fancy {
+    font-style: italic;
+    font-weight: bold;
+    text-shadow: 3px 3px 3px blue;
+}
+
