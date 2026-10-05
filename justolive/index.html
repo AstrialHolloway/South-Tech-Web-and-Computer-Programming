@@ -5,7 +5,8 @@
     <title>Centered Olive</title>
     <style>
       html {
-        background-image:linear-gradient(to bottom, #655258, #907e7e);
+        /* Fixed spacing in the gradient */
+        background-image: linear-gradient(to bottom, #655258, #907e7e);
       }
       html, body {
         height: 100%;
@@ -16,9 +17,15 @@
         justify-content: center;
         align-items: center;
       }
+      /* Target the image via CSS to safely use 'em' sizing */
+      img {
+        width: 5em; /* Adjusted to 5em so it's clearly visible, change as needed */
+        height: auto;
+      }
     </style>
   </head>
   <body>
-    <img src="olive.png" alt="cartoon olive" width="0.5em">
+    <!-- Removed the broken HTML width attribute -->
+    <img src="olive.png" alt="cartoon olive">
   </body>
 </html>
