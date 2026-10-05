@@ -15,55 +15,23 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        overflow: hidden;
       }
       img {
         width: 5em; /* Added a base size so it displays correctly */
-        width: 12em; /* Adjusted base size for a prominent centered image */
         height: auto;
         /* Smoothly transition the transform property over 0.3 seconds */
-        transition: transform 0.3s ease-in-out; 
-        user-select: none;
-        -webkit-user-drag: none;
-        /* Smooth, snappy transition properties resembling justbean.co */
-        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        transition: transform 0.3s ease-in-out;
       }
       /* Triggered when the mouse hovers over the image */
-      /* Hover animation style matching justbean.co */
       img:hover {
         /* Scales the image up to 1.3 times its original size (30% larger) */
-        transform: scale(1.3); 
+        transform: scale(1.3);
         /* Changes the cursor to a pointer to indicate it's interactive */
-        cursor: pointer; 
-        transform: scale(1.15) rotate(15deg); 
         cursor: pointer;
-      }
-      /* Active click state for extra responsiveness */
-      img:active {
-        transform: scale(0.95) rotate(-10deg);
-      }
-      /* Continuous spin class triggered via JavaScript click */
-      .spinning {
-        animation: continuousSpin 1.5s linear infinite;
-      }
-      @keyframes continuousSpin {
-        from { transform: rotate(0deg) scale(1.15); }
-        to { transform: rotate(360deg) scale(1.15); }
       }
     </style>
   </head>
   <body>
     <img src="olive.png" alt="cartoon olive">
-
-    <img src="olive.png" alt="cartoon olive" id="interactive-olive">
-
-    <script>
-      const olive = document.getElementById('interactive-olive');
-      
-      // Mimic the justbean.co persistent spin behavior when clicked
-      olive.addEventListener('click', () => {
-        olive.classList.toggle('spinning');
-      });
-    </script>
   </body>
 </html>
