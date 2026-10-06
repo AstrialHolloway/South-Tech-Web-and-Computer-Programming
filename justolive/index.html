@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="icon" href="olive.png">
-    <title>Centered Olive</title>
-    <style>
-      html {
-        background-image: linear-gradient(to bottom, #655258, #907e7e);
-      }
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      img {
-        width: 5em; /* Added a base size so it displays correctly */
-        height: auto;
-        /* Smoothly transition the transform property over 0.3 seconds */
-        transition: transform 0.3s ease-in-out;
-      }
-      /* Triggered when the mouse hovers over the image */
-      img:hover {
-        /* Scales the image up to 1.3 times its original size (30% larger) */
-        transform: scale(1.3);
-        /* Changes the cursor to a pointer to indicate it's interactive */
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <img src="olive.png" alt="cartoon olive">
-  </body>
+    <head>
+        <meta charset=UTF-8">    
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Centered Olive</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="icon" href="olive.png">
+    </head>
+    <body>
+        <div class="centered">
+            <img id="olive" src="olive.png" alt="olive" onclick="explodeOlives()">
+        </div>
+        <footer style="position: absolute; bottom: 10px; width: 100%; text-align: center; color: #fff;">
+            by Ashley | <a href="https://justbean.co/" target="_blank">Original</a> | <a href="../index.html">Home</a> 
+        </footer>
+        <script>
+            function explodeOlives() {
+                const container = document.querySelector('.centered');
+                for (let i = 0; i < 10; i++) {
+                    const newOlive = document.createElement('img');
+                    newOlive.src = 'olive.png';
+                    newOlive.style.position = 'absolute';
+                    newOlive.style.width = '50px';
+                    newOlive.style.height = '50px';
+                    newOlive.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
+                    newOlive.style.opacity = '0';
+
+                    // Initial position at the center
+                    newOlive.style.transform = 'translate(0, 0) scale(0.5)';
+
+                    container.appendChild(newOlive);
+
+                    // Random position around the original olive
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * 100 + 50;
+
+                    // Trigger the animation
+                    setTimeout(() => {
+                        newOlive.style.opacity = '1';
+                        newOlive.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(1)`;
+                    }, 0);
+
+                    // Remove the olive after animation
+                    setTimeout(() => {
+                        newOlive.style.opacity = '0';
+                        setTimeout(() => {
+                            container.removeChild(newOlive);
+                        }, 1000);
+                    }, 1000);
+                }
+            }
+        </script>
+
+    </body>
 </html>

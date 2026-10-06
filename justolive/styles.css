@@ -1,0 +1,32 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+html {
+    background-image: linear-gradient(to bottom, #655258, #907e7e);
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+#olive {
+    width: 150px;
+    height: 150px;
+    transition: transform 0.3s ease;
+}
+
+#olive:hover {
+    transform: scale(1.1); /* Slightly enlarge the olive on hover */
+}
