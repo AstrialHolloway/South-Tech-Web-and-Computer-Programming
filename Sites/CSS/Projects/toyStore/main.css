@@ -1,0 +1,45 @@
+* {
+    margin:0;
+    padding:0;
+}
+
+html {
+
+}
+
+body {
+    background-image: linear-gradient(to bottom, #e15cd1, #a9f3e6);
+    background-attachment: fixed;
+}
+
+header {
+    font-style: italic;
+    font-family: "FancyPants";
+    border-bottom: solid 2px;
+    padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+main {
+
+}
+
+footer {
+
+}
+
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.clear {
+    clear:both;
+}
