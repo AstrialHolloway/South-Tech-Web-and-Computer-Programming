@@ -3,26 +3,53 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="keyword" content="">
-		<meta name="description" content="">
-		<meta name="viewport" content="">
+		<link rel="icon" href="../../../Images/Projects/toyStore/ctystal.png">
 		<link rel="stylesheet" href="../../../CSS/Projects/toyStore/main.css">
-		<title>Celestial Shard</title>
+		<title>Celestial Crystal</title>
 	</head>
 	<body>
 		<header>
-            <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Shard Toy Store icon" class="left" width="300">
-			<h1>Celestial Shard</h1>
+            <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Crystal Toy Store icon" class="left" width="300">
+			<h1><span class="top">Celestial Crystal</span> <br> <span class="bottom">Toy Store</span></h1>
 		</header>
 		<nav>
             <h3>Sections</h3>
-			<p><a href="index.html">Home</a> | <a href="kids.html">Kids</a> | <a href="teens.html">Teens</a> | <a href="adult.html">Adult</a></p>
+			<p>
+				<a href="index.html">Home</a> | 
+				<a href="kids.html">Kids</a> | 
+				<a href="teens.html">Teens</a> | 
+				<a href="adult.html">Adult</a> | 
+				<a href="contact.html">Contacts</a>
+			</p>
 		</nav>
 		<main>
-			
+			<p>Welcome to the Celestial Crystal Toy Store!</p>
+			<p>Here we have a large selection of toys for ages 5-16!</p>
+			<h2>Our money back guarantee</h2>
+			<p>We pride ourself in giving you the best experience posible when shopping with us!</p>
+			<p>We have a 30 day money back guarantee for all of our products we sell.</p>
 		</main>
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 		</footer>
+		<script>
+			const url = new URL(window.location.href);
+			if (url.searchParams.get("redirected") === "adult") {
+				const notice = document.createElement("div");
+				notice.id = "redirect-notice";
+				notice.setAttribute("role", "status");
+				notice.setAttribute("aria-live", "polite");
+				notice.innerHTML = 'TOY POLICE ALERT! You lingered too long, so you have been boinged back to the toy aisle! <button type="button" aria-label="Dismiss notification">×</button>';
+				document.body.prepend(notice);
+				history.replaceState(null, "", window.location.pathname + window.location.hash);
+
+				notice.querySelector("button").addEventListener("click", () => notice.remove());
+				document.addEventListener("visibilitychange", () => {
+					if (document.hidden) {
+						notice.remove();
+					}
+				});
+			}
+		</script>
 	</body>
 </html>

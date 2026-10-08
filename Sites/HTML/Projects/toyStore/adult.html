@@ -3,20 +3,24 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="keyword" content="">
-		<meta name="description" content="">
-		<meta name="viewport" content="">
+		<link rel="icon" href="../../../Images/Projects/toyStore/ctystal.png">
 		<link rel="stylesheet" href="../../../CSS/Projects/toyStore/main.css">
-		<title>Celestial Shard</title>
+		<title>Celestial Crystal</title>
 	</head>
 	<body>
 		<header>
-            <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Shard Toy Store icon" class="left" width="300">
-			<h1>Celestial Shard</h1>
+            <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Crystal Toy Store icon" class="left" width="300">
+			<h1><span class="top">Celestial Crystal</span> <br> <span class="bottom">Toy Store</span></h1>
 		</header>
 		<nav>
             <h3>Sections</h3>
-			<p><a href="index.html">Home</a> | <a href="kids.html">Kids</a> | <a href="teens.html">Teens</a> | <a href="adult.html">Adult</a></p>
+			<p>
+				<a href="index.html">Home</a> | 
+				<a href="kids.html">Kids</a> | 
+				<a href="teens.html">Teens</a> | 
+				<a href="adult.html">Adult</a> | 
+				<a href="contact.html">Contacts</a>
+			</p>
 		</nav>
 		<main>
 			<p>Why are you looking for adult toys? This is a kids store!</p>
@@ -24,5 +28,10 @@
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 		</footer>
+		<script>
+			setTimeout(() => {
+				window.location.href = "index.html?redirected=adult";
+			}, 10000);
+		</script>
 	</body>
 </html>

@@ -3,6 +3,20 @@
     padding:0;
 }
 
+@font-face {
+    font-family: "FancyPants";
+    src: url("../../../Fonts/Projects/toyStore/fancy_pants.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Chicle";
+    src: url("../../../Fonts/Projects/toyStore/Chicle_Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 html {
 
 }
@@ -12,7 +26,67 @@ body {
     background-attachment: fixed;
 }
 
+#redirect-notice {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 14px 14px 19px;
+    background-color: #d71920;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    animation: police-lights 0.8s steps(1, end) infinite;
+}
+
+#redirect-notice::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    background-image: radial-gradient(circle, #111 2px, transparent 2.5px);
+    background-position: 0 0;
+    background-size: 12px 5px;
+    content: "";
+    animation: border-dots-left 0.5s linear infinite;
+}
+
+#redirect-notice button {
+    margin-left: 12px;
+    padding: 4px 10px;
+    border: 2px solid #111;
+    border-radius: 8px;
+    background-color: #a9f3e6;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@keyframes police-lights {
+    0%, 49% {
+        background-color: #d71920;
+    }
+    50%, 100% {
+        background-color: #0756b5;
+    }
+}
+
+@keyframes border-dots-left {
+    to {
+        background-position: -12px 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #redirect-notice,
+    #redirect-notice::after {
+        animation: none;
+    }
+}
+
 header {
+    text-align: center;
     font-style: italic;
     font-family: "FancyPants";
     border-bottom: solid 2px;
@@ -24,12 +98,68 @@ header {
     margin-bottom: 10px;
 }
 
-main {
+header h1 span.top {
+    color: #e15cd1;
+    text-shadow:
+        -1px -1px 0 black,
+         1px -1px 0 black,
+        -1px  1px 0 black,
+         1px  1px 0 black;
+}
 
+header h1 span.bottom {
+    color: #a9f3e6;
+    text-shadow:
+        -1px -1px 0 black,
+         1px -1px 0 black,
+        -1px  1px 0 black,
+         1px  1px 0 black;
+}
+
+nav{
+    padding-left: 30px;
+}
+
+nav h3 {
+    font-weight: normal;
+    font-size: 25pt;
+    font-family: "Chicle"
+}
+
+nav p {
+    font-size: 15pt;
+    font-family: "Chicle"
+}
+
+main {
+    padding-left: 30px;
+    margin-top: 10px;
+    font-size: 20pt;
+    font-family: "Chicle"
+}
+
+main h2 {
+    margin-top: 10px;
+    font-size: 25pt;
+    font-family: "Chicle"
+}
+
+main p {
+    padding-left: 10px;
+}
+
+main ul {
+    margin-left: 40px;
 }
 
 footer {
-
+    padding-left: 30px;
+    padding-top: 10px;
+    margin-top: 10px;
+    font-size: 18pt;
+    font-family: "Chicle";
+    margin-top: 10px;
+    border-top: solid 2px;
 }
 
 .left {
