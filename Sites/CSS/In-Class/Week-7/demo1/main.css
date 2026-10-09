@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    padding: 0; }
+html { background-color:#FACD8A; }
+
+h1 { padding: 10px; }
+
+/* the styles for the header, section, sidebar, and footer */
+header { border-bottom: 2px solid #ef9c00; }
+body {
+    width: 964px;
+    background-color: white;
+    margin: 15px auto;
+    border: 1px solid black; }
+#sidebarA {
+    width: 180px;
+    height: 400px;
+    float: left;
+    border-right: 2px solid #ef9c00; }
+section {
+    width: 600px; 
+    float: left; }
+#sidebarB {
+    width: 180px;
+    height: 400px;
+    float: right;
+    border-left: 2px solid #ef9c00; }
+footer {
+    clear: both;
+    border-top: 2px solid #ef9c00; }

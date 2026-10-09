@@ -1,0 +1,23 @@
+#one {
+    width: 500px;
+    height: 250px;
+    border: solid black 3px;
+    background-color:yellow;
+    float: left;
+    overflow: hidden;
+}
+#two {
+    width: 500px;
+    height: 250px;
+    border: solid black 3px;
+    background-color:blue;
+    float: right;
+    overflow: scroll;
+}
+hr    {
+    border: black solid 2px;
+    
+}
+footer {
+    clear: both;
+}

@@ -1,0 +1,23 @@
+html {
+    background-color: gray;
+}
+
+body {
+    width:80%;
+    background-color: white;
+    margin: 0 auto;
+    height: 1000px;
+}
+
+section#a {
+    width: 300px;
+    background-color: skyblue;
+    float:left;
+    margin-left: 50px;
+}
+
+section#b {
+    width: 300px;
+    float:right;
+    background-color: lightgreen;
+}
