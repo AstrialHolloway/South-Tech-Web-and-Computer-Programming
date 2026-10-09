@@ -9,6 +9,35 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <div class="falling-olives" id="falling-olives" aria-hidden="true"></div>
+        <aside class="event-popup" id="event-popup" aria-live="assertive" hidden>
+            <div>
+                <strong id="event-title"></strong>
+                <p id="event-message"></p>
+            </div>
+            <button class="event-dismiss" id="dismiss-event" type="button" aria-label="Dismiss event">×</button>
+        </aside>
+        <details class="stats-menu" open>
+            <summary>
+                <span aria-hidden="true">🫒</span>
+                <strong id="olive-count" aria-live="polite">0</strong>
+                <span class="stats-menu-label">Stats</span>
+            </summary>
+            <section class="stats-grid" aria-label="Game stats">
+                <div class="stat">
+                    <span class="stat-label">Per second</span>
+                    <strong id="production-rate">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Per click</span>
+                    <strong id="click-power">1</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Prestige</span>
+                    <strong id="prestige-level">0</strong>
+                </div>
+            </section>
+        </details>
         <main class="game">
             <header class="game-header">
                 <div>
@@ -18,30 +47,7 @@
                 <button class="reset-button" id="reset-button" type="button">Reset progress</button>
             </header>
 
-            <section class="dashboard" aria-label="Game progress">
-                <div class="stat">
-                    <span class="stat-label">Olives</span>
-                    <strong id="olive-count" aria-live="polite">0</strong>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Per second</span>
-                    <strong id="production-rate">0</strong>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Per click</span>
-                    <strong id="click-power">1</strong>
-                </div>
-            </section>
-
             <div class="game-layout">
-                <section class="orchard" aria-label="Olive orchard">
-                    <p class="orchard-hint">Click the olive to collect!</p>
-                    <button class="olive-button" id="olive-button" type="button" aria-label="Collect olives">
-                        <img src="olive.png" alt="">
-                    </button>
-                    <p class="save-status" id="save-status" role="status">Progress saves automatically</p>
-                </section>
-
                 <section class="shop" aria-labelledby="shop-title">
                     <div class="shop-heading">
                         <div>
@@ -52,50 +58,75 @@
                     <div class="upgrade-list" id="upgrade-list">
                         <button class="upgrade" type="button" data-upgrade="press">
                             <span class="upgrade-icon" aria-hidden="true">⚙️</span>
-                            <span class="upgrade-info">
-                                <strong>Olive Press</strong>
-                                <span>Produces 1 olive per second</span>
-                            </span>
-                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
-                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                            <span class="upgrade-info"><strong>Olive Press</strong><span>Produces 1 olive/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="grove">
                             <span class="upgrade-icon" aria-hidden="true">🌳</span>
-                            <span class="upgrade-info">
-                                <strong>Olive Grove</strong>
-                                <span>Produces 5 olives per second</span>
-                            </span>
-                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
-                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                            <span class="upgrade-info"><strong>Olive Grove</strong><span>Produces 5 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="mill">
                             <span class="upgrade-icon" aria-hidden="true">🏭</span>
-                            <span class="upgrade-info">
-                                <strong>Oil Mill</strong>
-                                <span>Produces 25 olives per second</span>
-                            </span>
-                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
-                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                            <span class="upgrade-info"><strong>Oil Mill</strong><span>Produces 25 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="refinery">
+                            <span class="upgrade-icon" aria-hidden="true">✨</span>
+                            <span class="upgrade-info"><strong>Golden Refinery</strong><span>Produces 100 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="orchard">
+                            <span class="upgrade-icon" aria-hidden="true">🌿</span>
+                            <span class="upgrade-info"><strong>Grand Orchard</strong><span>Produces 500 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="gloves">
                             <span class="upgrade-icon" aria-hidden="true">🧤</span>
-                            <span class="upgrade-info">
-                                <strong>Picking Gloves</strong>
-                                <span>Click power +1</span>
-                            </span>
-                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
-                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                            <span class="upgrade-info"><strong>Picking Gloves</strong><span>Click power +1 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="basket">
                             <span class="upgrade-icon" aria-hidden="true">🧺</span>
-                            <span class="upgrade-info">
-                                <strong>Giant Basket</strong>
-                                <span>Click power +10</span>
-                            </span>
-                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
-                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                            <span class="upgrade-info"><strong>Giant Basket</strong><span>Click power +10 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="tractor">
+                            <span class="upgrade-icon" aria-hidden="true">🚜</span>
+                            <span class="upgrade-info"><strong>Olive Tractor</strong><span>Click power +50 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="goldenTouch">
+                            <span class="upgrade-icon" aria-hidden="true">🪙</span>
+                            <span class="upgrade-info"><strong>Golden Touch</strong><span>Click power +250 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="prestigePress">
+                            <span class="upgrade-icon" aria-hidden="true">🌟</span>
+                            <span class="upgrade-info"><strong>Prestige Press</strong><span>Produces 250 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="starGrove">
+                            <span class="upgrade-icon" aria-hidden="true">🌠</span>
+                            <span class="upgrade-info"><strong>Star Grove</strong><span>Produces 2,500 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="cosmicBasket">
+                            <span class="upgrade-icon" aria-hidden="true">🌌</span>
+                            <span class="upgrade-info"><strong>Cosmic Basket</strong><span>Click power +1,000 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                     </div>
+                    <section class="prestige-panel" aria-labelledby="prestige-title">
+                        <div>
+                            <p class="eyebrow">Start over, harvest more</p>
+                            <h3 id="prestige-title">Prestige</h3>
+                            <p>Reset your olives and upgrades to gain a permanent 50% production and click bonus per prestige level. The cost multiplies by 5 each prestige.</p>
+                        </div>
+                        <button class="prestige-button" id="prestige-button" type="button">
+                            Prestige for <span id="prestige-cost"></span> olives
+                        </button>
+                    </section>
                 </section>
             </div>
 
@@ -105,14 +136,33 @@
             </footer>
         </main>
 
+        <aside class="click-dock" aria-label="Olive clicker">
+            <button class="olive-button" id="olive-button" type="button" aria-label="Collect olives">
+                <img src="olive.png" alt="">
+            </button>
+            <p class="save-status" id="save-status" role="status">Progress saves automatically</p>
+        </aside>
+
         <dialog class="reset-dialog" id="reset-dialog" aria-labelledby="reset-title">
             <form method="dialog">
                 <p class="eyebrow">Start fresh?</p>
                 <h2 id="reset-title">Reset all progress?</h2>
-                <p>Your olives and upgrades will be permanently cleared from this browser.</p>
+                <p>Your olives, upgrades, prestige level, and permanent bonuses will be permanently cleared from this browser.</p>
                 <div class="dialog-actions">
                     <button class="cancel-button" value="cancel">Keep playing</button>
                     <button class="confirm-button" id="confirm-reset" value="confirm">Yes, reset</button>
+                </div>
+            </form>
+        </dialog>
+
+        <dialog class="reset-dialog" id="prestige-dialog" aria-labelledby="prestige-confirm-title">
+            <form method="dialog">
+                <p class="eyebrow">A new beginning</p>
+                <h2 id="prestige-confirm-title">Prestige and restart?</h2>
+                <p>Your olives and upgrades will reset. Your prestige level and permanent bonus will increase.</p>
+                <div class="dialog-actions">
+                    <button class="cancel-button" value="cancel">Keep playing</button>
+                    <button class="confirm-button" id="confirm-prestige" value="confirm">Prestige</button>
                 </div>
             </form>
         </dialog>

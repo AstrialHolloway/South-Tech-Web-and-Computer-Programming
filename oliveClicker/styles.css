@@ -15,8 +15,79 @@ body {
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    padding: 48px 20px 28px;
+    padding: 48px 20px 150px;
     background: linear-gradient(to bottom, #655258, #907e7e);
+}
+
+.game {
+    position: relative;
+    z-index: 1;
+}
+
+.falling-olives {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.falling-olive {
+    position: absolute;
+    top: -40px;
+    font-size: 1.4rem;
+    animation: olive-fall var(--fall-duration) linear forwards;
+}
+
+@keyframes olive-fall {
+    to {
+        transform: translateY(calc(100vh + 40px)) rotate(540deg);
+    }
+}
+
+.event-popup {
+    position: fixed;
+    z-index: 3;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    width: min(calc(100% - 40px), 380px);
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255, 249, 242, 0.35);
+    border-radius: 14px;
+    background: #493d43;
+    box-shadow: 0 12px 34px rgba(37, 27, 32, 0.38);
+}
+
+.event-popup[hidden] {
+    display: none;
+}
+
+.event-popup strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #f0d8b0;
+}
+
+.event-popup p {
+    margin: 0;
+    color: #e1d2c9;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.event-dismiss {
+    flex: 0 0 auto;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: #fff9f2;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
 }
 
 button {
@@ -26,6 +97,76 @@ button {
 .game {
     width: min(100%, 980px);
     margin: 0 auto;
+}
+
+.stats-menu {
+    position: fixed;
+    z-index: 4;
+    bottom: 20px;
+    left: 20px;
+    width: min(250px, calc(100vw - 145px));
+    border: 1px solid rgba(255, 249, 242, 0.25);
+    border-radius: 14px;
+    background: rgba(57, 44, 50, 0.96);
+    box-shadow: 0 12px 34px rgba(37, 27, 32, 0.38);
+    backdrop-filter: blur(8px);
+}
+
+.stats-menu summary {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 13px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.stats-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.stats-menu summary::after {
+    margin-left: auto;
+    content: '+';
+    color: #e3c99e;
+    font-size: 1.25rem;
+}
+
+.stats-menu[open] summary::after {
+    content: '−';
+}
+
+.stats-menu summary strong {
+    color: #f0d8b0;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-menu-label {
+    color: #e1d2c9;
+    font-size: 0.85rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    padding: 0 9px 9px;
+}
+
+.stats-grid .stat {
+    min-width: 0;
+    padding: 9px;
+    border-radius: 9px;
+}
+
+.stats-grid .stat-label {
+    margin-bottom: 3px;
+    font-size: 0.72rem;
+}
+
+.stats-grid .stat strong {
+    font-size: 1.05rem;
 }
 
 .game-header,
@@ -97,13 +238,6 @@ h2 {
     transform: translateY(1px);
 }
 
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
 .stat {
     padding: 17px 20px;
     border: 1px solid rgba(255, 249, 242, 0.2);
@@ -125,12 +259,8 @@ h2 {
 
 .game-layout {
     display: grid;
-    grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.4fr);
-    gap: 20px;
-    align-items: stretch;
 }
 
-.orchard,
 .shop {
     border: 1px solid rgba(255, 249, 242, 0.2);
     border-radius: 18px;
@@ -138,29 +268,27 @@ h2 {
     box-shadow: 0 12px 34px rgba(37, 27, 32, 0.2);
 }
 
-.orchard {
-    display: flex;
-    min-height: 390px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 28px 20px;
-    background:
-        radial-gradient(ellipse at 50% 57%, rgba(223, 201, 184, 0.16), transparent 53%),
-        rgba(57, 44, 50, 0.38);
-}
-
-.orchard-hint {
-    margin: 0 0 10px;
-    color: #f1dfd1;
-    font-size: 0.95rem;
-    font-weight: 600;
+.click-dock {
+    position: fixed;
+    z-index: 4;
+    right: 20px;
+    bottom: 20px;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    width: 108px;
+    padding: 6px 6px 2px;
+    border: 1px solid rgba(255, 249, 242, 0.25);
+    border-radius: 18px;
+    background: rgba(57, 44, 50, 0.96);
+    box-shadow: 0 12px 34px rgba(37, 27, 32, 0.38);
+    backdrop-filter: blur(8px);
 }
 
 .olive-button {
     display: grid;
-    width: 190px;
-    height: 190px;
+    width: 88px;
+    height: 88px;
     place-items: center;
     padding: 0;
     border: 0;
@@ -172,8 +300,8 @@ h2 {
 
 .olive-button img {
     display: block;
-    width: min(150px, 80%);
-    height: min(150px, 80%);
+    width: min(72px, 80%);
+    height: min(72px, 80%);
     object-fit: contain;
     filter: drop-shadow(0 10px 12px rgba(37, 27, 32, 0.3));
     transition: transform 300ms ease;
@@ -196,9 +324,11 @@ a:focus-visible {
 }
 
 .save-status {
-    margin: 14px 0 0;
+    margin: 0;
     color: #d8c9c1;
-    font-size: 0.8rem;
+    font-size: 0.62rem;
+    line-height: 1.25;
+    text-align: center;
 }
 
 .shop {
@@ -231,6 +361,10 @@ a:focus-visible {
     transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
 }
 
+.upgrade[hidden] {
+    display: none;
+}
+
 .upgrade:hover:not(:disabled) {
     transform: translateY(-1px);
     border-color: rgba(255, 249, 242, 0.45);
@@ -252,6 +386,15 @@ a:focus-visible {
 .upgrade-info {
     display: grid;
     gap: 2px;
+}
+
+.upgrade-info [data-unlock] {
+    color: #e3c99e;
+    font-size: 0.72rem;
+}
+
+.upgrade-locked {
+    border-style: dashed;
 }
 
 .upgrade-info strong {
@@ -276,6 +419,45 @@ a:focus-visible {
 .upgrade-owned {
     grid-column: 2 / 4;
     grid-row: 2;
+}
+
+.prestige-panel {
+    display: grid;
+    gap: 14px;
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid rgba(227, 201, 158, 0.3);
+    border-radius: 14px;
+    background: rgba(37, 27, 32, 0.3);
+}
+
+.prestige-panel h3 {
+    margin: 0 0 7px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.35rem;
+}
+
+.prestige-panel p:not(.eyebrow) {
+    margin: 0;
+    color: #d1c4be;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.prestige-button {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid #a88c61;
+    border-radius: 10px;
+    background: #806d4e;
+    color: #fff9f2;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.prestige-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .game-footer {
@@ -337,20 +519,7 @@ a:focus-visible {
 
 @media (max-width: 680px) {
     body {
-        padding: 28px 14px 22px;
-    }
-
-    .game-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .orchard {
-        min-height: 310px;
-    }
-
-    .olive-button {
-        width: 190px;
-        height: 190px;
+        padding: 28px 14px 150px;
     }
 
     .shop {
@@ -368,16 +537,14 @@ a:focus-visible {
         font-size: 0.82rem;
     }
 
-    .dashboard {
-        gap: 7px;
+    .stats-menu {
+        bottom: 14px;
+        left: 14px;
     }
 
-    .stat {
-        padding: 13px 10px;
-    }
-
-    .stat-label {
-        font-size: 0.75rem;
+    .click-dock {
+        right: 14px;
+        bottom: 14px;
     }
 
     .upgrade {
