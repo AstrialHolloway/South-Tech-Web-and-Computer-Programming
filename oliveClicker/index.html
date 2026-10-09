@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Click olives, buy upgrades, and build your olive empire.">
+        <title>Olive Clicker</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <main class="game">
+            <header class="game-header">
+                <div>
+                    <p class="eyebrow">A tiny olive empire</p>
+                    <h1>Olive Clicker</h1>
+                </div>
+                <button class="reset-button" id="reset-button" type="button">Reset progress</button>
+            </header>
+
+            <section class="dashboard" aria-label="Game progress">
+                <div class="stat">
+                    <span class="stat-label">Olives</span>
+                    <strong id="olive-count" aria-live="polite">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Per second</span>
+                    <strong id="production-rate">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Per click</span>
+                    <strong id="click-power">1</strong>
+                </div>
+            </section>
+
+            <div class="game-layout">
+                <section class="orchard" aria-label="Olive orchard">
+                    <p class="orchard-hint">Click the olive to collect!</p>
+                    <button class="olive-button" id="olive-button" type="button" aria-label="Collect olives">
+                        <img src="olive.png" alt="">
+                    </button>
+                    <p class="save-status" id="save-status" role="status">Progress saves automatically</p>
+                </section>
+
+                <section class="shop" aria-labelledby="shop-title">
+                    <div class="shop-heading">
+                        <div>
+                            <p class="eyebrow">Grow your harvest</p>
+                            <h2 id="shop-title">Upgrades</h2>
+                        </div>
+                    </div>
+                    <div class="upgrade-list" id="upgrade-list">
+                        <button class="upgrade" type="button" data-upgrade="press">
+                            <span class="upgrade-icon" aria-hidden="true">⚙️</span>
+                            <span class="upgrade-info">
+                                <strong>Olive Press</strong>
+                                <span>Produces 1 olive per second</span>
+                            </span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
+                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="grove">
+                            <span class="upgrade-icon" aria-hidden="true">🌳</span>
+                            <span class="upgrade-info">
+                                <strong>Olive Grove</strong>
+                                <span>Produces 5 olives per second</span>
+                            </span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
+                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="mill">
+                            <span class="upgrade-icon" aria-hidden="true">🏭</span>
+                            <span class="upgrade-info">
+                                <strong>Oil Mill</strong>
+                                <span>Produces 25 olives per second</span>
+                            </span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
+                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="gloves">
+                            <span class="upgrade-icon" aria-hidden="true">🧤</span>
+                            <span class="upgrade-info">
+                                <strong>Picking Gloves</strong>
+                                <span>Click power +1</span>
+                            </span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
+                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="basket">
+                            <span class="upgrade-icon" aria-hidden="true">🧺</span>
+                            <span class="upgrade-info">
+                                <strong>Giant Basket</strong>
+                                <span>Click power +10</span>
+                            </span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span>
+                            <span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="game-footer">
+                <a href="../index.html">Back to home</a>
+                <span>Keep clicking. The grove is counting on you.</span>
+            </footer>
+        </main>
+
+        <dialog class="reset-dialog" id="reset-dialog" aria-labelledby="reset-title">
+            <form method="dialog">
+                <p class="eyebrow">Start fresh?</p>
+                <h2 id="reset-title">Reset all progress?</h2>
+                <p>Your olives and upgrades will be permanently cleared from this browser.</p>
+                <div class="dialog-actions">
+                    <button class="cancel-button" value="cancel">Keep playing</button>
+                    <button class="confirm-button" id="confirm-reset" value="confirm">Yes, reset</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script src="game.js" defer></script>
+    </body>
+</html>

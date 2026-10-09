@@ -1,0 +1,402 @@
+:root {
+    color-scheme: light;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #283527;
+    background: #f4f2e8;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    padding: 48px 20px 28px;
+    background:
+        radial-gradient(ellipse at 8% 8%, rgba(202, 213, 165, 0.42), transparent 35%),
+        #f4f2e8;
+}
+
+button {
+    font: inherit;
+}
+
+.game {
+    width: min(100%, 980px);
+    margin: 0 auto;
+}
+
+.game-header,
+.shop-heading,
+.game-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.game-header {
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: #75815c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1,
+h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+h1 {
+    margin-bottom: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.04em;
+}
+
+h2 {
+    margin-bottom: 0;
+    font-size: 1.65rem;
+}
+
+.reset-button,
+.cancel-button,
+.confirm-button {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid #d9d8cc;
+    border-radius: 10px;
+    background: #fffefa;
+    color: #59634e;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.reset-button:hover,
+.cancel-button:hover {
+    background: #f0efe6;
+}
+
+.reset-button:active,
+.cancel-button:active,
+.confirm-button:active {
+    transform: translateY(1px);
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    padding: 17px 20px;
+    border: 1px solid #e7e5d8;
+    border-radius: 14px;
+    background: rgba(255, 254, 250, 0.86);
+}
+
+.stat-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #7b806e;
+    font-size: 0.85rem;
+}
+
+.stat strong {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-variant-numeric: tabular-nums;
+}
+
+.game-layout {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.4fr);
+    gap: 20px;
+    align-items: stretch;
+}
+
+.orchard,
+.shop {
+    border: 1px solid #e7e5d8;
+    border-radius: 18px;
+    background: #fffefa;
+    box-shadow: 0 12px 34px rgba(67, 73, 48, 0.06);
+}
+
+.orchard {
+    display: flex;
+    min-height: 390px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px;
+    background:
+        radial-gradient(ellipse at 50% 57%, rgba(217, 225, 188, 0.6), transparent 53%),
+        #fffefa;
+}
+
+.orchard-hint {
+    margin: 0 0 10px;
+    color: #707a5a;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.olive-button {
+    display: grid;
+    width: 230px;
+    height: 230px;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.olive-button img {
+    display: block;
+    width: min(190px, 80%);
+    height: min(190px, 80%);
+    object-fit: contain;
+    filter: drop-shadow(0 14px 12px rgba(57, 62, 37, 0.18));
+    transition: transform 140ms ease;
+}
+
+.olive-button:hover img {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+.olive-button:active img {
+    transform: scale(0.91) rotate(4deg);
+}
+
+.olive-button:focus-visible,
+.upgrade:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #a6b875;
+    outline-offset: 4px;
+}
+
+.save-status {
+    margin: 14px 0 0;
+    color: #8b8d7c;
+    font-size: 0.8rem;
+}
+
+.shop {
+    padding: 24px;
+}
+
+.shop-heading {
+    margin-bottom: 16px;
+}
+
+.upgrade-list {
+    display: grid;
+    gap: 9px;
+}
+
+.upgrade {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 5px 11px;
+    align-items: center;
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #e8e6da;
+    border-radius: 12px;
+    background: #fffefa;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
+}
+
+.upgrade:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: #b9c29b;
+    background: #fafbf4;
+}
+
+.upgrade:disabled {
+    color: #8e9184;
+    cursor: not-allowed;
+    opacity: 0.68;
+}
+
+.upgrade-icon {
+    grid-row: 1 / 3;
+    font-size: 1.55rem;
+    text-align: center;
+}
+
+.upgrade-info {
+    display: grid;
+    gap: 2px;
+}
+
+.upgrade-info strong {
+    font-size: 0.94rem;
+}
+
+.upgrade-info span,
+.upgrade-owned {
+    color: #858879;
+    font-size: 0.75rem;
+}
+
+.upgrade-cost {
+    grid-column: 3;
+    grid-row: 1;
+    color: #596b3c;
+    font-size: 0.83rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.upgrade-owned {
+    grid-column: 2 / 4;
+    grid-row: 2;
+}
+
+.game-footer {
+    margin-top: 20px;
+    color: #898b7c;
+    font-size: 0.8rem;
+}
+
+.game-footer a {
+    color: #68774d;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.game-footer a:hover {
+    text-decoration: underline;
+}
+
+.reset-dialog {
+    width: min(calc(100% - 32px), 420px);
+    padding: 28px;
+    border: 1px solid #e7e5d8;
+    border-radius: 18px;
+    background: #fffefa;
+    color: #283527;
+    box-shadow: 0 24px 80px rgba(35, 42, 28, 0.22);
+}
+
+.reset-dialog::backdrop {
+    background: rgba(35, 42, 28, 0.48);
+    backdrop-filter: blur(3px);
+}
+
+.reset-dialog h2 {
+    margin: 0 0 10px;
+}
+
+.reset-dialog p:not(.eyebrow) {
+    margin-bottom: 22px;
+    color: #74796a;
+    line-height: 1.55;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+}
+
+.confirm-button {
+    border-color: #7c4239;
+    background: #7c4239;
+    color: white;
+}
+
+.confirm-button:hover {
+    background: #67372f;
+}
+
+@media (max-width: 680px) {
+    body {
+        padding: 28px 14px 22px;
+    }
+
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .orchard {
+        min-height: 310px;
+    }
+
+    .olive-button {
+        width: 205px;
+        height: 205px;
+    }
+
+    .shop {
+        padding: 19px 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .game-header {
+        align-items: flex-start;
+    }
+
+    .reset-button {
+        padding: 0 11px;
+        font-size: 0.82rem;
+    }
+
+    .dashboard {
+        gap: 7px;
+    }
+
+    .stat {
+        padding: 13px 10px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .upgrade {
+        grid-template-columns: 32px minmax(0, 1fr) auto;
+        gap: 5px 8px;
+        padding: 11px 9px;
+    }
+
+    .upgrade-info span {
+        font-size: 0.7rem;
+    }
+
+    .upgrade-cost {
+        font-size: 0.73rem;
+    }
+
+    .game-footer span {
+        text-align: right;
+    }
+}
