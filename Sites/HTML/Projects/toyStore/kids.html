@@ -3,43 +3,61 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="../../../Images/Projects/toyStore/ctystal.png">
 		<link rel="stylesheet" href="../../../CSS/Projects/toyStore/main.css">
-		<title>Celestial Crystal</title>
+		<title>Kids' Toys | Celestial Crystal</title>
 	</head>
-	<body>
+	<body class="store-kids">
 		<header>
             <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Crystal Toy Store icon" class="left" width="300">
 			<h1><span class="top">Celestial Crystal</span> <br> <span class="bottom">Toy Store</span></h1>
 		</header>
-		<nav>
+		<nav class="store-nav">
             <h3>Sections</h3>
 			<p>
 				<a href="index.html">Home</a> | 
-				<a href="kids.html">Kids</a> | 
+				<a href="kids.html" aria-current="page">Kids</a> | 
 				<a href="teens.html">Teens</a> | 
 				<a href="adult.html">Adult</a> | 
-				<a href="contact.html">Contacts</a>
+				<a href="contact.html">Contact</a>
 			</p>
-			<h3>Catagorys</h3>
-			<p><a href="">Art</a> | <a href="">Dolls</a> | <a href="">Action Figures</a> | <a href="">Building</a></p>
+			<h3>Categories</h3>
+			<p>
+				<a href="#art">Art</a> |
+				<a href="#dolls">Dolls</a> |
+				<a href="#action-figures">Action Figures</a> |
+				<a href="#building">Building</a>
+			</p>
 		</nav>
-		<main>
-			<section class="odd">
-				<h2>Art</h2>
-				<P>TEMP</P>
+		<main class="store-page">
+			<section class="store-intro">
+				<h2>Make, imagine, and play</h2>
+				<p>Find creative toys and old favorites for your next big idea.</p>
 			</section>
-			<section class="even">
-				<h2>Dolls</h2>
-				<P>TEMP</P>
+			<section class="odd store-card" id="art">
+				<div class="store-card-copy">
+					<h2>Art</h2>
+					<p>Get creative with supplies for drawing, coloring, and making something all your own.</p>
+				</div>
 			</section>
-			<section class="odd">
-				<h2>Action Figures</h2>
-				<P>TEMP</P>
+			<section class="even store-card" id="dolls">
+				<div class="store-card-copy">
+					<h2>Dolls</h2>
+					<p>Discover dolls and accessories for imaginative stories and play.</p>
+				</div>
 			</section>
-			<section class="even">
-				<h2>Building</h2>
-				<P>TEMP</P>
+			<section class="odd store-card" id="action-figures">
+				<div class="store-card-copy">
+					<h2>Action Figures</h2>
+					<p>Bring adventures to life with action figures ready for the next story.</p>
+				</div>
+			</section>
+			<section class="even store-card" id="building">
+				<div class="store-card-copy">
+					<h2>Building</h2>
+					<p>Build, create, and experiment with toys made for curious minds.</p>
+				</div>
 			</section>
 		</main>
 		<footer>

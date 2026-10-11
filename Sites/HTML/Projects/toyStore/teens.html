@@ -3,29 +3,66 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="../../../Images/Projects/toyStore/ctystal.png">
 		<link rel="stylesheet" href="../../../CSS/Projects/toyStore/main.css">
-		<title>Celestial Crystal</title>
+		<title>Teen Toys | Celestial Crystal</title>
 	</head>
-	<body>
+	<body class="teens-page">
 		<header>
             <img src="../../../Images/Projects/toyStore/icon.png" alt="Celestial Crystal Toy Store icon" class="left" width="300">
 			<h1><span class="top">Celestial Crystal</span> <br> <span class="bottom">Toy Store</span></h1>
 		</header>
-		<nav>
+		<nav class="store-nav">
             <h3>Sections</h3>
 			<p>
 				<a href="index.html">Home</a> | 
 				<a href="kids.html">Kids</a> | 
-				<a href="teens.html">Teens</a> | 
+				<a href="teens.html" aria-current="page">Teens</a> | 
 				<a href="adult.html">Adult</a> | 
-				<a href="contact.html">Contacts</a>
+				<a href="contact.html">Contact</a>
 			</p>
-			<h3>Catagorys</h3>
-			<p><a href="">Video Games</a> | <a href="">Board Games</a> | <a href="">Card Games</a> | <a href="">Bikes</a></p>
+			<h3>Categories</h3>
+			<p>
+				<a href="#video-games">Video Games</a> |
+				<a href="#board-games">Board Games</a> |
+				<a href="#card-games">Card Games</a> |
+				<a href="#bikes">Bikes</a>
+			</p>
 		</nav>
-		<main>
-			
+		<main class="store-page">
+			<div class="store-intro">
+				<h2>Find your next favorite</h2>
+				<p>Explore games and rides picked for teens. Browse a category to see what our store has to offer.</p>
+			</div>
+			<section class="odd store-card" id="video-games">
+				<div class="store-card-copy">
+					<h2>Video Games</h2>
+					<p>Discover a selection of video games rated ESRB Teen (T) and below.</p>
+				</div>
+				<img src="../../../Images/Projects/toyStore/videoGames.webp" alt="A colorful collection of video games" width="300">
+			</section>
+			<section class="even store-card" id="board-games">
+				<div class="store-card-copy">
+					<h2>Board Games</h2>
+					<p>Pick a classic or try something new. Our board game selection changes regularly.</p>
+				</div>
+				<img src="../../../Images/Projects/toyStore/boardGames.jpg" alt="Board games ready for a game night" width="300">
+			</section>
+			<section class="odd store-card" id="card-games">
+				<div class="store-card-copy">
+					<h2>Card Games</h2>
+					<p>Browse trading cards and easy-to-learn favorites like UNO.</p>
+				</div>
+				<img src="../../../Images/Projects/toyStore/cardGames.jpg" alt="A colorful assortment of playing cards" width="300">
+			</section>
+			<section class="even store-card" id="bikes">
+				<div class="store-card-copy">
+					<h2>Bikes</h2>
+					<p>Take a look at our small selection of bikes and find a new way to get outside.</p>
+				</div>
+				<img src="../../../Images/Projects/toyStore/bikes.jpg" alt="A bike ready for a ride" width="300">
+			</section>
 		</main>
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>

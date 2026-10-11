@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: "FancyPants";
-    src: url("../../../Fonts/Projects/toyStore/fancy_pants.ttf") format("truetype");
+    src: url("../../../Fonts/Projects/toyStore/FancyPantsNF.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
@@ -98,12 +98,13 @@ header {
 }
 
 header h1 {
-    font-family: "FancyPants", cursive;
+    font-family: "FancyPants";
     font-style: normal;
     font-weight: normal;
 }
 
 header h1 span.top {
+    font-family: "FancyPants";
     color: #e15cd1;
     text-shadow:
         -1px -1px 0 black,
@@ -113,6 +114,7 @@ header h1 span.top {
 }
 
 header h1 span.bottom {
+    font-family: "FancyPants";
     color: #a9f3e6;
     text-shadow:
         -1px -1px 0 black,
@@ -205,4 +207,160 @@ section.even {
     margin: 20px;
     border: black solid 5px;
     border-radius: 10px;
+}
+
+.store-nav {
+    margin: 0 auto;
+    padding: 0 20px;
+    max-width: 1000px;
+}
+
+.store-nav p a {
+    display: inline-block;
+    margin: 3px 0;
+    padding: 4px 9px;
+    border: 2px solid #111;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #24102b;
+    text-decoration: none;
+}
+
+.store-nav p a[aria-current="page"] {
+    background-color: #24102b;
+    color: #fff;
+}
+
+.store-nav p a:hover,
+.store-nav p a:focus-visible {
+    background-color: #fff;
+    color: #24102b;
+    outline: 2px solid #111;
+    outline-offset: 2px;
+}
+
+.store-page {
+    box-sizing: border-box;
+    max-width: 1000px;
+    margin: 10px auto;
+    padding: 0 20px;
+}
+
+.store-intro {
+    margin-bottom: 14px;
+    padding: 18px 22px;
+    border: 3px solid #111;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.78);
+}
+
+.store-intro h2 {
+    margin-top: 0;
+}
+
+.store-intro p {
+    padding-left: 10px;
+}
+
+.store-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 14px 0;
+    padding: 18px;
+    border-width: 3px;
+}
+
+.store-card h2 {
+    margin-top: 0;
+}
+
+.store-card p {
+    padding-left: 10px;
+}
+
+.store-card-copy {
+    flex: 1;
+}
+
+.store-card img {
+    width: 280px;
+    max-width: 40%;
+    height: auto;
+    border: 2px solid #111;
+    border-radius: 10px;
+}
+
+.store-home-links a {
+    display: inline-block;
+    margin: 5px 8px 0 0;
+    padding: 7px 12px;
+    border: 2px solid #111;
+    border-radius: 8px;
+    background-color: #24102b;
+    color: #fff;
+    text-decoration: none;
+}
+
+.store-home-links a:hover,
+.store-home-links a:focus-visible {
+    background-color: #fff;
+    color: #24102b;
+}
+
+.store-contact-card ul {
+    margin-left: 30px;
+}
+
+.store-contact-card li {
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.store-contact-card img {
+    width: 240px;
+}
+
+.store-adult-notice {
+    margin-top: 24px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    body.store-home header,
+    body.store-kids header,
+    body.teens-page header,
+    body.store-contact header,
+    body.store-adult header {
+        gap: 10px;
+    }
+
+    body.store-home header img,
+    body.store-kids header img,
+    body.teens-page header img,
+    body.store-contact header img,
+    body.store-adult header img {
+        width: min(35vw, 180px);
+        height: auto;
+    }
+
+    .store-nav {
+        padding: 0 15px;
+    }
+
+    .store-page {
+        padding: 0 15px;
+    }
+
+    .store-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .store-card img {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
 }
