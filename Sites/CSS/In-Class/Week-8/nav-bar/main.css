@@ -1,0 +1,14 @@
+nav { 
+    background-color: black; 
+}
+ul {
+    display: flex;               /* flex-direction is row by default */
+    list-style-type: none; 
+}
+li {
+    padding: .5em 1em; 
+}
+a {
+    text-decoration: none;
+    color: white;
+}
