@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="../../../Images/Projects/pizzaShop/favicon.png">
 		<link rel="stylesheet" href="../../../CSS/Projects/pizzaShop/main.css">
-		<title>Showbiz Pizza Place</title>
+		<title>Animatronic Parts | Showbiz Pizza Place</title>
 	</head>
 	<body>
 		<nav aria-label="Main navigation">
@@ -14,13 +14,13 @@
 				<img src="../../../Images/Projects/pizzaShop/logo.webp" alt="Showbiz Pizza Place home" width="200">
 			</a>
 			<ul class="nav-links">
-				<li><a href="Index.html" aria-current="page">Home</a></li>
+				<li><a href="Index.html">Home</a></li>
 				<li class="dropdown">
 					<details>
 						<summary>Order</summary>
 						<ul class="dropdown-menu">
 							<li><a href="foodOrder.html">Food</a></li>
-							<li><a href="partsOrder.html">Animatronic Parts</a></li>
+							<li><a href="partsOrder.html" aria-current="page">Animatronic Parts</a></li>
 						</ul>
 					</details>
 				</li>
@@ -32,51 +32,167 @@
 			<h2>Come for the pizza, stay for the fun!</h2>
 		</header>
 		<main>
-			<video width="477" height="360" controls poster="../../../Images/Projects/pizzaShop/thumbnail.png">
-                <source src="../../../Images/Projects/pizzaShop/intro.mp4" type="video/mp4">
-				<track src="../../../Images/Projects/pizzaShop/captions.vtt" kind="captions" srclang="en" label="English" default>
-                Your browser does not support the video tag.
-			</video>
-			<h2>Welcome to Showbiz Pizza Place! Where Pizza Meets Fun!</h2>
-			<p>We are a restaurant that combines pizza, games, and live animatronic entertainment!</p>
-			<p>Our animatronic characters, including the famous Rock-afire Explosion band, will keep you entertained while you enjoy our delicious pizza and other menu items.</p>
-			<section class="band-section">
-				<details class="band-dropdown">
-					<summary>Meet The Band</summary>
-
-					<div class="band-content">
-						<p>Meet the talented musicians who bring the magic of Showbiz Pizza Place to life!</p>
-
-						<div class="band-category">
-							<h3>Stage Right</h3>
-							<ul>
-								<li>Rolf &amp; Earl</li>
-							</ul>
+			<section class="parts-access" id="parts-access">
+				<p class="eyebrow">Franchisee access</p>
+				<h2>Restricted Parts Page</h2>
+				<p class="parts-access-warning">Franchisee owners only. If you are not a franchisee owner, please leave this page.</p>
+				<p>Password is included on page 25 of the Franchisee Handbook.</p>
+				<form class="parts-access-form" id="parts-access-form">
+					<label for="parts-password">Enter the password to continue</label>
+					<input id="parts-password" name="password" type="password" autocomplete="current-password" required>
+					<button type="submit">View Parts</button>
+					<p class="parts-access-error" id="parts-access-error" role="alert" hidden></p>
+				</form>
+				<a class="parts-home-button" href="Index.html">Return to Home</a>
+			</section>
+			<section class="parts-page" id="parts-content" hidden>
+				<p class="eyebrow">Keep your show shining</p>
+				<h2>Animatronic Parts</h2>
+				<p class="parts-intro">Find props and character pieces for your stage. Browse the gallery, then check out the available parts.</p>
+				<div class="parts-layout">
+					<figure class="parts-gallery" aria-label="Showbiz Pizza Place image gallery">
+						<div class="gallery-stage">
+							<img id="parts-gallery-image" src="../../../Images/Projects/pizzaShop/thumbnail.png" alt="Showbiz Pizza Place logo with the Rock-afire Explosion band">
+							<button class="gallery-button gallery-previous" type="button" aria-label="Show previous image">&#10094;</button>
+							<button class="gallery-button gallery-next" type="button" aria-label="Show next image">&#10095;</button>
 						</div>
-
-						<div class="band-category">
-							<h3>Center Stage</h3>
+						<figcaption id="parts-gallery-caption" aria-live="polite">The Rock-afire Explosion on stage</figcaption>
+						<p class="gallery-count" id="parts-gallery-count" aria-live="polite">Image 1 of 4</p>
+					</figure>
+					<div class="parts-list">
+						<section class="parts-card">
+							<h3>Stage Props</h3>
+							<p>Set the scene and bring your stage to life.</p>
 							<ul>
-								<li>Duke</li>
-								<li>Fatz</li>
-								<li>Beach Bear</li>
-								<li>Mizi</li>
+								<li>Spotlights and floodlights</li>
+								<li>Bushes and trees</li>
+								<li>Rock-afire light sign</li>
+								<li>Looney Bird's barrel</li>
 							</ul>
-						</div>
-
-						<div class="band-category">
-							<h3>Stage Left</h3>
+						</section>
+						<section class="parts-card">
+							<h3>Character Cosmetics</h3>
+							<p>Refresh the look of your performers.</p>
 							<ul>
-								<li>Billy Bob</li>
-								<li>Loony Bird</li>
+								<li>Painted character masks</li>
+								<li>Character clothing</li>
+								<li>Replacement fur</li>
+								<li>Character guitars</li>
 							</ul>
-						</div>
+						</section>
+						<p class="parts-note">When placing an order, include the required information from page 25 in the Franchisee Handbook.</p>
 					</div>
-				</details>
+				</div>
 			</section>
 		</main>
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 		</footer>
+		<script>
+			const partsAccessForm = document.querySelector("#parts-access-form");
+			const partsPasswordInput = document.querySelector("#parts-password");
+			const partsAccessError = document.querySelector("#parts-access-error");
+			const partsAccess = document.querySelector("#parts-access");
+			const partsContent = document.querySelector("#parts-content");
+			const passwordHash = "347e4025c4c98ac77d2aa89ae0ddde0970f4f55316da8dcc784fc2d064da84c9";
+
+			partsAccessForm.addEventListener("submit", async (event) => {
+				event.preventDefault();
+				partsAccessError.hidden = true;
+
+				if (!window.crypto || !window.crypto.subtle) {
+					partsAccessError.textContent = "Password verification is unavailable in this browser context. Open this page over HTTPS to continue.";
+					partsAccessError.hidden = false;
+					return;
+				}
+
+				try {
+					const passwordBytes = new TextEncoder().encode(partsPasswordInput.value);
+					const digest = await window.crypto.subtle.digest("SHA-256", passwordBytes);
+					const submittedHash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+
+					if (submittedHash !== passwordHash) {
+						partsAccessError.textContent = "That password was not correct. Check page 25 of the Franchisee Handbook and try again.";
+						partsAccessError.hidden = false;
+						partsPasswordInput.select();
+						return;
+					}
+
+					partsAccess.hidden = true;
+					partsContent.hidden = false;
+					partsContent.querySelector("h2").focus();
+				} catch (error) {
+					partsAccessError.textContent = "Password verification failed. Please reload the page and try again.";
+					partsAccessError.hidden = false;
+				}
+			});
+
+			const placeholderImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23140d0d'/%3E%3Ctext x='400' y='300' fill='%23fff4d6' font-family='sans-serif' font-size='36' text-anchor='middle' dominant-baseline='middle'%3EPhoto coming soon%3C/text%3E%3C/svg%3E";
+			const galleryImages = [
+				{
+					src: "../../../Images/Projects/pizzaShop/spotlight.jpg",
+					alt: "Spotlights",
+					caption: "Spotlights"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/bushes.jpg",
+					alt: "Bushes",
+					caption: "Bushes"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/sign.jpg",
+					alt: "Rockafire Explosion Sign",
+					caption: "Sign"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/barrel.png",
+					alt: "Looney Bird's Barrel",
+					caption: "Looney Bird's Barrel"
+				},
+				{
+					src:  "../../../Images/Projects/pizzaShop/masks.jpg",
+					alt: "Painted Rockafire Masks",
+					caption: "Painted Masks"
+				},
+				{
+					src:  "../../../Images/Projects/pizzaShop/clothings.jpg",
+					alt: "Clothings",
+					caption: "Clothings"
+				},
+				{
+					src:  "../../../Images/Projects/pizzaShop/fur.jpg",
+					alt: "Fur",
+					caption: "Character Fur"
+				},
+				{
+					src:  "../../../Images/Projects/pizzaShop/guitar.webp",
+					alt: "Showbiz character guitar",
+					caption: "Character Guitar",
+					fit: "contain"
+				}
+			];
+			let currentImageIndex = 0;
+			const galleryImage = document.querySelector("#parts-gallery-image");
+			const galleryCaption = document.querySelector("#parts-gallery-caption");
+			const galleryCount = document.querySelector("#parts-gallery-count");
+
+			function showGalleryImage(index) {
+				currentImageIndex = (index + galleryImages.length) % galleryImages.length;
+				const image = galleryImages[currentImageIndex];
+				galleryImage.src = image.src;
+				galleryImage.alt = image.alt;
+				galleryImage.classList.toggle("gallery-image-contain", image.fit === "contain");
+				galleryCaption.textContent = image.caption;
+				galleryCount.textContent = `Image ${currentImageIndex + 1} of ${galleryImages.length}`;
+			}
+
+			document.querySelector(".gallery-previous").addEventListener("click", () => {
+				showGalleryImage(currentImageIndex - 1);
+			});
+			document.querySelector(".gallery-next").addEventListener("click", () => {
+				showGalleryImage(currentImageIndex + 1);
+			});
+			showGalleryImage(currentImageIndex);
+		</script>
 	</body>
 </html>
