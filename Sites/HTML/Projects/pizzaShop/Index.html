@@ -47,29 +47,75 @@
 					<div class="band-content">
 						<p>Meet the talented musicians who bring the magic of Showbiz Pizza Place to life!</p>
 
-						<div class="band-category">
-							<h3>Stage Right</h3>
-							<ul>
-								<li>Rolf &amp; Earl</li>
-							</ul>
-						</div>
+						<div class="band-roster-layout">
+							<div class="band-roster">
+								<div class="band-category">
+									<h3>Stage Right</h3>
+									<ul>
+										<li>Rolf &amp; Earl</li>
+									</ul>
+								</div>
 
-						<div class="band-category">
-							<h3>Center Stage</h3>
-							<ul>
-								<li>Duke</li>
-								<li>Fatz</li>
-								<li>Beach Bear</li>
-								<li>Mizi</li>
-							</ul>
-						</div>
+								<div class="band-category">
+									<h3>Center Stage</h3>
+									<ul>
+										<li>Duke</li>
+										<li>Fatz</li>
+										<li>Beach Bear</li>
+										<li>Mitzi</li>
+									</ul>
+								</div>
 
-						<div class="band-category">
-							<h3>Stage Left</h3>
-							<ul>
-								<li>Billy Bob</li>
-								<li>Loony Bird</li>
-							</ul>
+								<div class="band-category">
+									<h3>Stage Left</h3>
+									<ul>
+										<li>Billy Bob</li>
+										<li>Loony Bird</li>
+									</ul>
+								</div>
+							</div>
+
+							<figure class="parts-gallery band-gallery" aria-label="Rock-afire Explosion band image gallery">
+								<div class="gallery-stage">
+									<img id="band-gallery-image" src="../../../Images/Projects/pizzaShop/thumbnail.png" alt="The Rock-afire Explosion performing on stage">
+									<button class="gallery-button gallery-previous" type="button" aria-label="Show previous band image">&#10094;</button>
+									<button class="gallery-button gallery-next" type="button" aria-label="Show next band image">&#10095;</button>
+								</div>
+								<figcaption id="band-gallery-caption" aria-live="polite">The Rock-afire Explosion on stage</figcaption>
+								<p class="gallery-count" id="band-gallery-count" aria-live="polite">Image 1 of 5</p>
+							</figure>
+						</div>
+					</div>
+				</details>
+			</section>
+			<section class="band-section">
+				<details class="band-dropdown">
+					<summary>Rotating Cast</summary>
+
+					<div class="band-content">
+						<p>Meet our rotating cast members. All rotating cast members will be located at stage right when in the resaturant.</p>
+
+						<div class="band-roster-layout">
+							<div class="band-roster">
+								<div class="band-category">
+									<h3>Characters</h3>
+									<ul>
+										<li>Uncle Klunk</li>
+										<li>Statue of Liberty</li>
+										<li>Santa Claus</li>
+									</ul>
+								</div>
+							</div>
+
+							<figure class="parts-gallery band-gallery cast-gallery" aria-label="Rotating cast image gallery">
+								<div class="gallery-stage">
+									<img id="cast-gallery-image" src="../../../Images/Projects/pizzaShop/thumbnail.png" alt="Rotating cast image placeholder">
+									<button class="gallery-button gallery-previous" type="button" aria-label="Show previous rotating cast image">&#10094;</button>
+									<button class="gallery-button gallery-next" type="button" aria-label="Show next rotating cast image">&#10095;</button>
+								</div>
+								<figcaption id="cast-gallery-caption" aria-live="polite">Add rotating cast images here</figcaption>
+								<p class="gallery-count" id="cast-gallery-count" aria-live="polite">Image 1 of 1</p>
+							</figure>
 						</div>
 					</div>
 				</details>
@@ -78,5 +124,116 @@
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 		</footer>
+		<script>
+			const bandGalleryImages = [
+				{
+					src: "../../../Images/Projects/pizzaShop/rolfenearl.png",
+					alt: "Rolfe DeWolfe & Earl Schmerle",
+					caption: "Rolfe DeWolfe & Earl Schmerle ",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/duke.webp",
+					alt: "Dook LaRue",
+					caption: "Dook LaRue",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/fatz.png",
+					alt: "Fatz Geronimo",
+					caption: "Fatz Geronimo",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/beachbear.png",
+					alt: "Beach Bear",
+					caption: "Beach Bear",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/mitzi.jpg",
+					alt: "Mitzi Mozzarella",
+					caption: "Mitzi Mozzarella",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/Billy_Bob_Brockali.webp",
+					alt: "Billy Bob Brockali",
+					caption: "Billy Bob Brockali",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/looney_bird.webp",
+					alt: "Guitar used by a Showbiz character",
+					caption: "Looney Bird",
+					fit: "contain"
+				}
+			];
+			let currentBandImageIndex = 0;
+			const bandGalleryImage = document.querySelector("#band-gallery-image");
+			const bandGalleryCaption = document.querySelector("#band-gallery-caption");
+			const bandGalleryCount = document.querySelector("#band-gallery-count");
+
+			function showBandGalleryImage(index) {
+				currentBandImageIndex = (index + bandGalleryImages.length) % bandGalleryImages.length;
+				const image = bandGalleryImages[currentBandImageIndex];
+				bandGalleryImage.src = image.src;
+				bandGalleryImage.alt = image.alt;
+				bandGalleryImage.classList.toggle("gallery-image-contain", image.fit === "contain");
+				bandGalleryCaption.textContent = image.caption;
+				bandGalleryCount.textContent = `Image ${currentBandImageIndex + 1} of ${bandGalleryImages.length}`;
+			}
+
+			document.querySelector(".band-gallery .gallery-previous").addEventListener("click", () => {
+				showBandGalleryImage(currentBandImageIndex - 1);
+			});
+			document.querySelector(".band-gallery .gallery-next").addEventListener("click", () => {
+				showBandGalleryImage(currentBandImageIndex + 1);
+			});
+			showBandGalleryImage(currentBandImageIndex);
+
+			const castGalleryImages = [
+				{
+					src: "../../../Images/Projects/pizzaShop/klunk.webp",
+					alt: "Uncle Klunk",
+					caption: "Uncle Klunk",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/statueofliberty.webp",
+					alt: "Statue of Liberty",
+					caption: "Statue of Liberty",
+					fit: "contain"
+				},
+				{
+					src: "../../../Images/Projects/pizzaShop/santa.webp",
+					alt: "	Santa Claus",
+					caption: "	Santa Claus",
+					fit: "contain"
+				}
+			];
+			let currentCastImageIndex = 0;
+			const castGalleryImage = document.querySelector("#cast-gallery-image");
+			const castGalleryCaption = document.querySelector("#cast-gallery-caption");
+			const castGalleryCount = document.querySelector("#cast-gallery-count");
+
+			function showCastGalleryImage(index) {
+				currentCastImageIndex = (index + castGalleryImages.length) % castGalleryImages.length;
+				const image = castGalleryImages[currentCastImageIndex];
+				castGalleryImage.src = image.src;
+				castGalleryImage.alt = image.alt;
+				castGalleryCaption.textContent = image.caption;
+				castGalleryImage.classList.toggle("gallery-image-contain", image.fit === "contain");
+				castGalleryCount.textContent = `Image ${currentCastImageIndex + 1} of ${castGalleryImages.length}`;
+			}
+
+			document.querySelector(".cast-gallery .gallery-previous").addEventListener("click", () => {
+				showCastGalleryImage(currentCastImageIndex - 1);
+			});
+			document.querySelector(".cast-gallery .gallery-next").addEventListener("click", () => {
+				showCastGalleryImage(currentCastImageIndex + 1);
+			});
+			showCastGalleryImage(currentCastImageIndex);
+		</script>
 	</body>
 </html>
