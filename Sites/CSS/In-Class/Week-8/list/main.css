@@ -1,0 +1,15 @@
+ul {
+    /* list-style-type: square; */
+    list-style-image: url("../../../../Images/In-Class/Week-8/list/obama.png");
+    margin-left:40px;
+}
+ol {
+    list-style-type:lower-alpha;
+}
+a {
+    text-decoration: none;
+}
+a:hover,a:focus {
+    font-size: 200%;
+    color: #ff00ff;
+}

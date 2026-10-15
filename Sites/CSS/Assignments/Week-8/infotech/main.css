@@ -1,0 +1,29 @@
+ol.upperLetter {
+    list-style-type: upper-alpha;
+}
+ul.noDot {
+    list-style-type:none;
+}
+ul.hollow {
+    list-style-type:circle;
+}
+span.green {
+    color:green;
+}
+/* Unvisited Def: blue
+    Active Def: red
+    Visited Def: purple */
+a {
+    text-decoration: none;
+    color:orange;
+}
+a:hover {
+    font-size: 1.15em;
+    font-weight: bold;
+}
+a:visited {
+    color:green;
+}
+a:active {
+    color:yellow;
+}
