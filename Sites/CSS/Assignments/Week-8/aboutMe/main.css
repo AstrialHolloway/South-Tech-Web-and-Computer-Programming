@@ -30,6 +30,8 @@ header h2 {
 }
 
 nav {
+	display: flex;
+	gap: 12px;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -42,8 +44,10 @@ nav {
 }
 
 nav a {
-	margin-right: 20px;
-	padding: 4px 2px;
+	display: block;
+	padding: 4px 10px;
+	border: 1px solid #fff5f7;
+	border-radius: 4px;
 	color: #fff5f7;
 	text-decoration: none;
 } 
