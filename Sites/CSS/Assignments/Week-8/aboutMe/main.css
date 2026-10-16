@@ -1,0 +1,37 @@
+body {
+	margin: 0;
+	padding-top: 48px;
+}
+
+header {
+    border-bottom:solid black 2px;
+}
+
+nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	width: 100%;
+	padding: 14px 16px;
+	background-color: #222;
+	box-sizing: border-box;
+}
+
+nav a {
+	margin-right: 20px;
+	color: white;
+	text-decoration: none;
+}
+
+nav a:hover {
+	text-decoration: underline;
+}
+
+.pink {
+	color: pink;
+	text-shadow: -1px -1px 0 #555, 1px -1px 0 #555, -1px 1px 0 #555, 1px 1px 0 #555;
+}
+.pink:hover {
+    font-size: 1.5em;
+}
