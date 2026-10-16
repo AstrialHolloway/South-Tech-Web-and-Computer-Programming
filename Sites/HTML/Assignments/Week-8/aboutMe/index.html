@@ -12,17 +12,145 @@
 			<h2>Birthday: Oct 19th</h2>
 		</header>
 		<nav>
-			<a href="index.html">Home</a>
-			<a href="hobbies.html">Hobbies</a>
+			<a href="index.html" title="Main Info">Home</a>
+			<a href="hobbies.html" title="My Favorite Hobbies">Hobbies</a>
 		</nav>
 		<main>
 			<h2>Main Info</h2>
-			<p>My favorite color is <span class="pink">Pink</span>.</p>
-			<p>My zodiac sign is Libra</p>
-			<img src="../../../../Images/Assignments/Week-8/aboutMe/libra.webp" height: 50px>
+			<p>My favorite color is <a href="https://htmlcolorcodes.com/colors/shades-of-pink/" title="Learn More" target="_blank"><span class="pink">Pink</span></a>.</p>
+			<p>My zodiac sign is <a href="https://www.zodiacsign.com/zodiac-signs/libra/" title="Learn More" target="_blank"><span class="pink">Libra</span></a>.</p>
+			<a href="https://www.zodiacsign.com/zodiac-signs/libra/" title="Learn More" target="_blank" class="libra-link"><img src="../../../../Images/Assignments/Week-8/aboutMe/libra.webp" alt="Libra symbol" class="libra"></a>
+			<section class="birthday-countdown" aria-labelledby="countdown-heading">
+				<h2 id="countdown-heading">Birthday Countdown</h2>
+				<p id="countdown" role="timer">Loading...</p>
+			</section>
+			<section>
+				<h2>Dream Jobs</h2>
+				<ol>
+					<li>Game Developer</li>
+					<li>Software Developer</li>
+					<li>Web Developer</li>
+				</ol>
+			</section>
+			<section>
+				<h2>Favorite Foods</h2>
+				<ol>
+					<li>Mac &amp; Cheese</li>
+					<li>Pasta</li>
+					<li>Pizza</li>
+				</ol>
+			</section>
+			<section class="zodiac-finder">
+				<h2>Find Your Zodiac Sign</h2>
+				<p>Enter your birthday to find your Western zodiac sign.</p>
+				<form id="zodiac-form">
+					<label for="birthday">Your birthday</label>
+					<input id="birthday" name="birthday" type="date" required>
+					<button type="submit">Find My Sign</button>
+				</form>
+				<p id="zodiac-result" role="status" aria-live="polite"></p>
+			</section>
 		</main>
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
 		</footer>
+		<script>
+			const centralTimeZone = "America/Chicago";
+			const centralDateFormatter = new Intl.DateTimeFormat("en-US", {
+				timeZone: centralTimeZone,
+				year: "numeric",
+				month: "numeric",
+				day: "numeric"
+			});
+			const centralDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+				timeZone: centralTimeZone,
+				year: "numeric",
+				month: "numeric",
+				day: "numeric",
+				hour: "numeric",
+				minute: "numeric",
+				second: "numeric",
+				hourCycle: "h23"
+			});
+
+			function getCentralDateParts(date) {
+				return Object.fromEntries(
+					centralDateFormatter.formatToParts(date)
+						.filter(part => part.type !== "literal")
+						.map(part => [part.type, Number(part.value)])
+				);
+			}
+
+			function getCentralOffset(date) {
+				const parts = Object.fromEntries(
+					centralDateTimeFormatter.formatToParts(date)
+						.filter(part => part.type !== "literal")
+						.map(part => [part.type, Number(part.value)])
+				);
+				return Date.UTC(
+					parts.year,
+					parts.month - 1,
+					parts.day,
+					parts.hour,
+					parts.minute,
+					parts.second
+				) - date.getTime();
+			}
+
+			function getCentralMidnight(year, month, day) {
+				const utcGuess = Date.UTC(year, month - 1, day);
+				return utcGuess - getCentralOffset(new Date(utcGuess));
+			}
+
+			function updateCountdown() {
+				const now = new Date();
+				const { year, month, day } = getCentralDateParts(now);
+				const countdown = document.getElementById("countdown");
+
+				if (month === 10 && day === 19) {
+					countdown.textContent = "BIRTHDAY";
+					return;
+				}
+
+				const birthdayYear = month < 10 || (month === 10 && day < 19)
+					? year
+					: year + 1;
+				const birthday = getCentralMidnight(birthdayYear, 10, 19);
+				const secondsLeft = Math.floor((birthday - now.getTime()) / 1000);
+				const days = Math.floor(secondsLeft / 86400);
+				const hours = Math.floor((secondsLeft % 86400) / 3600);
+				const minutes = Math.floor((secondsLeft % 3600) / 60);
+				const seconds = secondsLeft % 60;
+
+				countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+			}
+
+			updateCountdown();
+			setInterval(updateCountdown, 1000);
+
+			document.getElementById("zodiac-form").addEventListener("submit", event => {
+				event.preventDefault();
+				const [, month, day] = document.getElementById("birthday").value
+					.match(/^\d{4}-(\d{2})-(\d{2})$/);
+				const date = Number(month) * 100 + Number(day);
+				let sign;
+
+				if (date >= 1222 || date <= 119) sign = "Capricorn";
+				else if (date <= 218) sign = "Aquarius";
+				else if (date <= 320) sign = "Pisces";
+				else if (date <= 419) sign = "Aries";
+				else if (date <= 520) sign = "Taurus";
+				else if (date <= 620) sign = "Gemini";
+				else if (date <= 722) sign = "Cancer";
+				else if (date <= 822) sign = "Leo";
+				else if (date <= 922) sign = "Virgo";
+				else if (date <= 1022) sign = "Libra";
+				else if (date <= 1121) sign = "Scorpio";
+				else sign = "Sagittarius";
+
+				document.getElementById("zodiac-result").textContent =
+					`Your zodiac sign is ${sign}.`;
+			});
+		</script>
 	</body>
 </html>

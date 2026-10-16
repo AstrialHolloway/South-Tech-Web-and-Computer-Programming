@@ -1,10 +1,32 @@
+/*V Main tags below (including main tag ids/classes) V*/
+
 body {
 	margin: 0;
 	padding-top: 48px;
+	background-color: #fff5f7;
+	color: #392b31;
+	font-family: "Trebuchet MS", Arial, sans-serif;
+	line-height: 1.6;
 }
 
+/*V Samantic tags below (including samantic tag ids/classes) V*/
+
 header {
-    border-bottom:solid black 2px;
+	padding: 28px 20px 18px;
+	border-bottom: 2px solid #d9a6b6;
+	background-color: #fffafb;
+	text-align: center;
+}
+
+header h1 {
+	margin: 0;
+	color: #754458;
+}
+
+header h2 {
+	margin: 4px 0 0;
+	color: #805d6a;
+	font-size: 1.2em;
 }
 
 nav {
@@ -13,25 +35,241 @@ nav {
 	left: 0;
 	z-index: 1;
 	width: 100%;
-	padding: 14px 16px;
-	background-color: #222;
+	padding: 10px 16px;
+	background-color: #754458;
 	box-sizing: border-box;
+	box-shadow: 0 2px 8px #392b3126;
 }
 
 nav a {
 	margin-right: 20px;
-	color: white;
+	padding: 4px 2px;
+	color: #fff5f7;
 	text-decoration: none;
-}
+} 
 
 nav a:hover {
 	text-decoration: underline;
+	text-underline-offset: 4px;
+	font-weight: bold;
+}
+
+footer {
+	margin-top: 32px;
+	padding: 8px 20px;
+	border-top: 2px solid #d9a6b6;
+	background-color: #fffafb;
+	text-align: center;
+}
+
+/*V Other tags below (including other tag ids/classes) V*/
+
+main {
+	width: min(760px, calc(100% - 40px));
+	margin: 32px auto;
+}
+
+h2 {
+	color: #754458;
+	line-height: 1.3;
+}
+
+main section {
+	margin: 24px 0;
+	padding: 18px 22px;
+	border: 1px solid #efd3dc;
+	border-radius: 10px;
+	background-color: #fffafb;
+	box-shadow: 0 3px 12px #392b310c;
+}
+
+main section h2 {
+	margin-top: 0;
+}
+
+a {
+	display: inline-block;
+	text-decoration: none;
+	transition: color 160ms ease, transform 160ms ease;
+}
+
+a:hover {
+	font-weight: bold;
+	transform: scale(1.1);
+}
+
+a:focus-visible {
+	border-radius: 2px;
+	outline: 2px solid #d63384;
+	outline-offset: 3px;
+}
+
+a.libra-link {
+	display: block;
+	width: fit-content;
+	max-width: 100%;
+	margin: 20px auto;
+}
+
+img.libra {
+	display: block;
+	width: min(180px, 50vw);
+	height: auto;
+	margin: 0 auto;
+	filter: drop-shadow(0 3px 5px #392b3120);
+}
+
+/*V Classes below V*/
+
+.birthday-countdown {
+	background-color: #f8e1e8;
+	text-align: center;
+}
+
+.birthday-countdown p {
+	margin: 8px 0 0;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.zodiac-finder form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+.zodiac-finder input,
+.zodiac-finder button {
+	min-height: 40px;
+	padding: 8px 12px;
+	border: 1px solid #d9a6b6;
+	border-radius: 6px;
+	font: inherit;
+}
+
+.zodiac-finder input {
+	background-color: white;
+	color: #392b31;
+}
+
+.zodiac-finder button {
+	background-color: #754458;
+	color: #fff5f7;
+	cursor: pointer;
+}
+
+.zodiac-finder button:hover {
+	background-color: #60384a;
+}
+
+.zodiac-finder button:focus-visible,
+.zodiac-finder input:focus-visible {
+	outline: 2px solid #d63384;
+	outline-offset: 2px;
+}
+
+.zodiac-finder #zodiac-result {
+	margin-bottom: 0;
+	color: #754458;
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 .pink {
-	color: pink;
-	text-shadow: -1px -1px 0 #555, 1px -1px 0 #555, -1px 1px 0 #555, 1px 1px 0 #555;
+	color: #d63384;
+	font-weight: bold;
 }
-.pink:hover {
-    font-size: 1.5em;
+
+.dougdougimage {
+	border-radius: 90px;
+	border-style: solid;
+	border-width: 2px;
+	width:100px;
+	height:auto;
+}
+
+.gamingimage {
+	border-radius: 50px;
+	border-style: solid;
+	border-width: 2px;
+	width:200px;
+	height:auto;
+}
+
+.codinggif {
+	border-radius: 50px;
+	border-style: solid;
+	border-width: 2px;
+	width:200px;
+	height:auto;
+}
+
+.hobby-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 18px;
+	margin: 20px 0;
+}
+
+.hobby-gallery img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	border: 2px solid #e6c2ce;
+	border-radius: 12px;
+	box-shadow: 0 3px 10px #392b3118;
+}
+
+.hobby-gallery .dougdougimage {
+	border-radius: 50%;
+}
+
+main li {
+	margin: 6px 0;
+	padding-left: 2px;
+}
+
+/*V IDs below V*/
+
+#dougdoug {
+	color:orange;
+}
+#dougdoug:hover {
+	color: #a970ff;
+}
+
+.live-badge {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 3px 7px;
+	border-radius: 4px;
+	background-color: #d62839;
+	color: white;
+	font-size: 0.7em;
+	font-weight: bold;
+	letter-spacing: 0.04em;
+	vertical-align: middle;
+}
+
+@media (max-width: 480px) {
+	main {
+		width: calc(100% - 28px);
+		margin: 22px auto;
+	}
+
+	main section {
+		padding: 15px;
+	}
+
+	.hobby-gallery {
+		gap: 12px;
+	}
+
+	.hobby-gallery .gamingimage,
+	.hobby-gallery .codinggif {
+		width: min(200px, 100%);
+	}
 }
