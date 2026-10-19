@@ -30,40 +30,12 @@
 				<ul>
 					<li>Coding</li>
 					<li>Gaming</li>
-					<li>Watching <a href="https://www.twitch.tv/dougdoug" target="_blank" title="DougDoug Twitch"><span id="dougdoug">DougDoug</span></a> <span id="dougdoug-live" class="live-badge" role="status" aria-live="polite" hidden>LIVE NOW</span></li>
+					<li>Watching <a href="https://www.twitch.tv/dougdoug" target="_blank" title="DougDoug Twitch"><span id="dougdoug">DougDoug</span></a></li>
 				</ul>
 			</section>
 		</main>
 		<footer>
 			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
 		</footer>
-		<script>
-			const liveBadge = document.getElementById("dougdoug-live");
-
-			async function updateDougDougLiveStatus() {
-				try {
-					const response = await fetch("https://api.ivr.fi/v2/twitch/user?login=dougdoug", {
-						cache: "no-store"
-					});
-
-					if (!response.ok) {
-						throw new Error(`Twitch status request failed with HTTP ${response.status}`);
-					}
-
-					const users = await response.json();
-					if (!Array.isArray(users) || !users[0] || !("stream" in users[0])) {
-						throw new Error("Twitch status response did not contain the expected user data");
-					}
-
-					liveBadge.hidden = users[0].stream?.type !== "live";
-				} catch (error) {
-					liveBadge.hidden = true;
-					console.error("Unable to check DougDoug's Twitch live status:", error);
-				}
-			}
-
-			updateDougDougLiveStatus();
-			setInterval(updateDougDougLiveStatus, 120000);
-		</script>
 	</body>
 </html>
