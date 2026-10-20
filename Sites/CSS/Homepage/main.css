@@ -154,6 +154,16 @@ footer p {
     font-size: 0.98rem;
 }
 
+footer img {
+    display: block;
+    width: min(100%, 400px);
+    max-width: 100%;
+    height: auto;
+    margin: 1rem auto 0;
+    border: 3px solid var(--southTechRed);
+    border-radius: 16px;
+}
+
 footer a {
     color: var(--link);
 }
