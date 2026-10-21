@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>LOl Window</title>
+		<style>
+			body {
+				background: #111;
+				color: white;
+				font-family: Arial, sans-serif;
+				margin: 2rem;
+			}
+
+			main {
+				align-items: center;
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				justify-content: center;
+				min-height: 60vh;
+				text-align: center;
+			}
+
+			button {
+				background: white;
+				border: 0;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 1rem;
+				font-weight: bold;
+				padding: 0.75rem 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<main id="app"></main>
+		<script>
+			const app = document.querySelector("#app");
+
+			if (new URLSearchParams(window.location.search).has("popup")) {
+				document.title = "LOl";
+				document.body.style.cssText = "align-items:center;display:flex;height:100vh;justify-content:center;margin:0;overflow:hidden;text-align:center";
+				app.innerHTML = '<div><h1 style="font-size:4rem;margin:0 0 1rem">LOl</h1><button id="close-button" type="button">Close (T)</button></div>';
+
+				const closeButton = document.querySelector("#close-button");
+				let startTime;
+				let targetScreen;
+
+				function closeWindow() {
+					window.close();
+				}
+
+				function startMoving(target) {
+					targetScreen = target || {
+						left: Number.isFinite(screen.availLeft) ? screen.availLeft : 0,
+						top: Number.isFinite(screen.availTop) ? screen.availTop : 0,
+						width: screen.availWidth,
+						height: screen.availHeight
+					};
+					startTime = performance.now();
+					requestAnimationFrame(moveWindow);
+				}
+
+				function moveWindow(now) {
+					const elapsed = (now - startTime) / 1000;
+					const angle = elapsed * 5;
+					const xRadius = Math.max(0, (targetScreen.width - window.outerWidth) / 2) * 0.8;
+					const yRadius = Math.max(0, (targetScreen.height - window.outerHeight) / 2) * 0.8;
+					const x = targetScreen.left + (targetScreen.width - window.outerWidth) / 2 + Math.sin(angle) * xRadius;
+					const y = targetScreen.top + (targetScreen.height - window.outerHeight) / 2 + Math.sin(angle * 2) * yRadius;
+
+					window.moveTo(x, y);
+					requestAnimationFrame(moveWindow);
+				}
+
+				closeButton.addEventListener("click", closeWindow);
+				document.addEventListener("keydown", (event) => {
+					if (event.key.toLowerCase() === "t") {
+						closeWindow();
+					}
+				});
+
+				window.addEventListener("message", (event) => {
+					if (event.source !== window.opener || event.data?.type !== "target-screen") {
+						return;
+					}
+
+					const target = event.data.screen;
+					if (target && [target.left, target.top, target.width, target.height].every(Number.isFinite)) {
+						startMoving(target);
+					} else {
+						startMoving(null);
+					}
+				});
+				window.opener?.postMessage({ type: "lol-window-ready" }, "*");
+			} else {
+				app.innerHTML = '<h1>LOl Windows</h1><p>Click to open as many small figure-eight windows as you want. Press T in any window to close it.</p><button id="start-button" type="button">Add Window</button><p id="status" aria-live="polite"></p>';
+				let windowCount = 0;
+				const screenRequests = new Map();
+
+				window.addEventListener("message", (event) => {
+					if (event.data?.type !== "lol-window-ready" || !screenRequests.has(event.source)) {
+						return;
+					}
+
+					const popup = event.source;
+					const screenDetailsPromise = screenRequests.get(popup);
+					screenRequests.delete(popup);
+
+					screenDetailsPromise.then(({ details, error }) => {
+						const otherScreen = details?.screens.find((display) => display !== details.currentScreen)
+							|| details?.screens.find((display) => display.isPrimary !== window.screen.isPrimary);
+
+						if (otherScreen) {
+							popup.postMessage({
+								type: "target-screen",
+								screen: {
+									left: otherScreen.availLeft,
+									top: otherScreen.availTop,
+									width: otherScreen.availWidth,
+									height: otherScreen.availHeight
+								}
+							}, "*");
+							document.querySelector("#status").textContent = "Opened on the other monitor. Press T in any window to close it.";
+						} else {
+							popup.postMessage({ type: "target-screen", screen: null }, "*");
+							document.querySelector("#status").textContent = error
+								? `Could not access monitor information; the window opened on this monitor. ${error.message}`
+								: "No other monitor was found, so the window opened on this monitor.";
+						}
+					});
+				});
+
+				document.querySelector("#start-button").addEventListener("click", () => {
+					let screenDetailsPromise;
+					if (typeof window.getScreenDetails === "function") {
+						try {
+							screenDetailsPromise = window.getScreenDetails()
+								.then((details) => ({ details }))
+								.catch((error) => ({ error }));
+						} catch (error) {
+							screenDetailsPromise = Promise.resolve({ error });
+						}
+					} else {
+						screenDetailsPromise = Promise.resolve({ details: null });
+					}
+
+					windowCount += 1;
+					const popup = window.open(`${window.location.pathname}?popup=1`, `lolWindow${windowCount}`, "popup,width=360,height=240");
+
+					if (popup) {
+						screenRequests.set(popup, screenDetailsPromise);
+						document.querySelector("#status").textContent = `${windowCount} moving window${windowCount === 1 ? "" : "s"} opened. Press T in any window to close it.`;
+					} else {
+						windowCount -= 1;
+						document.querySelector("#status").textContent = "The browser blocked the popup. Allow popups for this page, then try again.";
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

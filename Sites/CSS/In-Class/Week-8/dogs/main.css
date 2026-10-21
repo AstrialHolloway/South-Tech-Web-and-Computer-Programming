@@ -1,0 +1,14 @@
+main p {
+    height:350px;
+    width: 300px;
+}
+
+#test {
+    background-image: url("../../../../Images/In-Class/Week-8/dogs/dog1.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+#test:hover {
+    background-image: url("../../../../Images/In-Class/Week-8/dogs/dog2.jpg");
+}

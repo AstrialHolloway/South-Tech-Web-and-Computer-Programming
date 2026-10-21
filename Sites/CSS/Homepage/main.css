@@ -78,22 +78,69 @@ main > p span span,header > h1 span span {
     font-weight: 700;
 }
 
-section {
+main > .section-dropdown {
+    overflow: hidden;
     background: #b4b4b4;
     border: 1px solid var(--panel-border);
     border-radius: 18px;
-    padding: 1.4rem 1.5rem 1.2rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.38);
 }
 
-section h2 {
-    margin: 0 0 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(246, 92, 92, 0.5);
+main > .section-dropdown > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+main > .section-dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
+main > .section-dropdown > summary::after {
+    content: "+";
+    flex: 0 0 auto;
     color: var(--southTechRed);
-    font-size: 1.8rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+main > .section-dropdown[open] > summary::after {
+    content: "\2212";
+}
+
+main > .section-dropdown > summary:focus-visible {
+    outline: 3px solid var(--southTechRed);
+    outline-offset: -4px;
+}
+
+main > .section-dropdown > summary h2 {
+    margin: 0;
+    color: var(--southTechRed);
+    font-size: clamp(1.35rem, 4vw, 1.8rem);
     letter-spacing: 0.04em;
+}
+
+main > .section-dropdown[open] > summary {
+    border-bottom: 2px solid rgba(246, 92, 92, 0.5);
+}
+
+main > .section-dropdown > :not(summary) {
+    margin-right: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+main > .section-dropdown > dl,
+main > .section-dropdown > ol,
+main > .section-dropdown > ul {
+    margin-top: 1rem;
+    margin-bottom: 1.2rem;
 }
 
 dl,ol,ul {
@@ -173,12 +220,27 @@ footer b {
 }
 
 @media (max-width: 700px) {
-    section {
-        padding: 1.1rem 1rem;
+    main {
+        padding: 1.5rem 0.85rem 2rem;
+    }
+
+    main > .section-dropdown {
+        margin-bottom: 1rem;
+        border-radius: 14px;
+    }
+
+    main > .section-dropdown > summary {
+        min-height: 3.75rem;
+        padding: 0.85rem 1rem;
+    }
+
+    main > .section-dropdown > :not(summary) {
+        margin-right: 1rem;
+        margin-left: 1rem;
     }
 
     dd,li {
-        padding: 0.5rem 0.65rem;
+        padding: 0.65rem 0.75rem;
     }
 
     .warning {
