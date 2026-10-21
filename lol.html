@@ -95,7 +95,7 @@
 				});
 				window.opener?.postMessage({ type: "lol-window-ready" }, "*");
 			} else {
-				app.innerHTML = '<h1>LOl Windows</h1><p>Click to open as many small figure-eight windows as you want. Press T in any window to close it.</p><button id="start-button" type="button">Add Window</button><p id="status" aria-live="polite"></p>';
+				app.innerHTML = '<h1>LOl Windows</h1><p>Press T in any window to close it.</p><button id="start-button" type="button">Add Window</button><p id="status" aria-live="polite"></p>';
 				let windowCount = 0;
 				const screenRequests = new Map();
 
