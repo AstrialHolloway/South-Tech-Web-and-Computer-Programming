@@ -1,0 +1,18 @@
+table,th,td {
+    border: 2px solid black; 
+    border-collapse: collapse;
+}
+th {
+    background-color:lightgray;
+}
+th,td {
+    padding:8px 12px;
+}
+caption {
+    font-style:italic;
+    caption-side: bottom;
+    text-align: left;
+}
+.right{
+    text-align:right;
+}

@@ -1,0 +1,44 @@
+h1.one {
+    color:blue
+}
+
+table.one{
+    border:1px solid;
+    border-collapse: collapse;
+}
+th.one {
+    border:1px solid;
+    border-collapse: collapse;
+
+}
+td.one {
+    border:1px solid;
+    border-collapse: collapse;
+    
+}
+tr.blue {
+    background-color: blue;
+    color:white;
+}
+td.blue {
+    text-align:center;
+    border:black solid 1px
+}
+td.blue1 {
+    border:black solid 1px
+}
+td.center {
+    text-align:center;
+}
+table.two {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: left;
+    color: white;
+    background-color:dodgerblue
+}
+th.two {
+    padding-right:100px;
+}
+td.two {
+    padding-right:100px;
+}
