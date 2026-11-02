@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="keyword" content="">
+		<meta name="description" content="">
+		<meta name="viewport" content="">
+		<link rel="stylesheet" href="../../../../CSS/Assignments/Week-10/forms/main.css">
+		<title>Student Information</title>
+	</head>
+	<body>
+		<header>
+			<h1>Student Information</h1>
+		</header>
+		<main>
+			<form>
+				<fieldset method="get">
+					<legend>Student Input</legend>
+					<p>Enter Student Name: <input type="text" id="name" name="name" placeholder="Enter student name" required></p>
+					<p>Enter Age: <input type="number" id="age" name="age" min="10" max="100" required></p>
+					<p>Enter Password: <input type="password" id="pass" name="pass" maxlength="5" placeholder="Limit 5" required></p>
+					<p>Enter Email Address: <input type="email" id="email" name="email" placeholder="Enter email address" required></p>
+
+					<p>Grade:</p>
+					<p>
+						<input type="radio" name="grade" value="freshman">Freshman<br>
+						<input type="radio" name="grade" value="sophomore">Sophomore<br>
+						<input type="radio" name="grade" value="junior">Junior<br>
+						<input type="radio" name="grade" value="senior">Senior<br>
+					</p>
+					
+					<p>Favorite Shop Class:</p>
+					<p>
+						<select name="favClass">
+							<option value="WCP">Web and Computer Programming</option>
+							<option value="CN">Cisco Networking</option>
+							<option value="GD">Graphic Design</option>
+						</select><br>
+					</p>
+
+					<p>Possible plans after high school. Select as many options as you would like:</p>
+					<p>
+						<input type="checkbox" name="plan1" value="IP">Internship Program 
+						<input type="checkbox" name="plan2" value="AP">Apprenticeship Program 
+						<input type="checkbox" name="plan3" value="CC">Community College 
+						<input type="checkbox" name="plan4" value="4YCU">4 Year College or University 
+					</p>
+
+					<br>
+
+					<p>Additional Information:</p>
+					<textarea rows="4" col="50" ></textarea>
+
+					<p>
+						<input type="submit" id="submit" name="submit" value="Complete">
+						<input type="reset" value="Reset" id="reset">
+					</p>
+				</fieldset>
+			</form>
+		</main>
+		<footer>
+			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+		</footer>
+		
+		<script>
+		</script>
+	</body>
+</html>
