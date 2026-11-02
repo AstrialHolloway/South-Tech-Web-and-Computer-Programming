@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="keywords" content="pizza, takeout, resturaunt">
+		<meta name="description" content="">
+		<meta name="viewport" content="">
+		<link rel="stylesheet" href="../../../../CSS/In-Class/Week-10/inputTag/main.css">
+		<title>My Pizza Place</title>
+	</head>
+	<body>
+		<header>
+			<h1>My Pizza Place</h1>
+		</header>
+		<main>
+			<form name="pizza" id="pizza" method="get" action="file.php">
+				<fieldset>
+					<legend>Customer Information</legend>
+					<p>Enter Customer Name: <input type="text" main="customer" id="customer" placeholder="Enter Customer Name" required></p>
+					<p>Enter Age: <input type="number" name="age" id="age" min="2" max="105" required></p>
+					<p>Enter Password: <input type="password" name="pw" id="pw" minlength="8"></p>	
+						<!-- Radio Buttons-->
+					<p>
+						<input type="radio" name="crust" value="thin">Thin Crust<br>
+						<input type="radio" name="crust" value="thick">Thick Crust<br>
+						<input type="radio" name="crust" value="wheat">Wheat Crust<br>
+					</p>
+					<!-- Checkboxes-->
+					<p>
+						Select as many toppings as you would like. An additional &dollar;1 per topping will be applied to your total.<br>
+						<input type="checkbox" name="topping1" value="pepperoni">Pepperoni<br>
+						<input type="checkbox" name="topping2" value="sausage">Sausage<br>
+						<input type="checkbox" name="topping3" value="mushroom">Mushroom<br>
+						<input type="checkbox" name="topping4" value="olive">Olive<br>
+					</p>
+					<!-- Dropdown-->
+					<p>
+						<select name="size">
+							<option value="9">Small, 9'' Pizza</option>
+							<option value="12">Medium, 12'' Pizza</option>
+							<option value="14">Large, 14'' Pizza</option>
+							<option value="16">X-Large, 16'' Pizza</option>
+						</select><br>
+					</p>
+					<br>
+					<br>
+					<textarea rows="5" col="70" placeholder="Enter special requests"></textarea>
+					<p>
+						<input type="submit" id="submit" name="submit" value="Complete">
+						<input type="reset" value="Clear Form" id="reset">
+					</p>
+				</fieldset>
+			</form>
+		</main>
+		<footer>
+			<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+		</footer>
+
+		<script>
+		</script>
+	</body>
+</html>
