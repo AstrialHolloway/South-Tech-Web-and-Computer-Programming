@@ -1,0 +1,52 @@
+table {
+    border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid black;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 6px 12px;
+}
+
+thead th {
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+}
+
+.subheader-row {
+    background-color: #d3d3d3;
+    text-align: center;
+}
+
+.salary-midpoint-cell {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    width: 30%;
+}
+
+.job-cell {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.salary-cell {
+    text-align: center;
+}
+
+tfoot td {
+    background-color: black;
+    text-align: center;
+    font-weight: bold;
+}
+
+tfoot a {
+    color: white;
+    text-decoration: none;
+}
