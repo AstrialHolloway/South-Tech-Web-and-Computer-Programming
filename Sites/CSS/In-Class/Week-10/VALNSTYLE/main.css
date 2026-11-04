@@ -1,0 +1,12 @@
+label {
+	width: 1em;
+	float: left;
+	text-align:right;
+}
+
+input {
+	margin-left:1.5em
+}
+#register {
+	margin-left: 15em;
+}
