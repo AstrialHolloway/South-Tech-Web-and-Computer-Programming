@@ -54,15 +54,17 @@
 						</p>
 
 						<p>What device do you use to listen to music?</p>
-						<select name="device">
+						<select name="device" multiple>
 							<option value="radio">Radio/Stereo</option>
 							<option value="phone">Phone</option>
 							<option value="computer">Computer</option>
 							<option value="MP3Player">MP3 Player</option>
 							<option value="other">Other device</option>
 						</select>
+
 						<p>
-							Favorite Streaming Service: <input type="text" name="favService" id="favService" list="services">
+							Favorite Streaming Service: 
+							<input type="text" name="favService" id="favService" list="services">
 						</p>
 						<datalist id="services">
 							<option value="Spotify"></option>
@@ -71,6 +73,7 @@
 							<option value="Apple Music"></option>
 							<option value="Youtube Music"></option>
 						</datalist>
+						
 						<p>
 							Additional comments:<br>
 							<input type="text">

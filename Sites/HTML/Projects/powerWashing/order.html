@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../../CSS/Projects/">
+	<title>Ashers Powerwashing</title>
+	<style>
+		.hidden {
+			display: none;
+		}
+		.form-container {
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Asher's Powerwashing</h1>
+		<h2>Home</h2>
+	</header>
+	<nav>
+		<p><a href="index.html">Home</a> | <a href="order.html">Order</a> | <a href="contact">Contact</a></p>
+	</nav>
+	<main>
+		<!-- Initial Worker Selection Screen -->
+		<div id="selection-screen">
+			<h3>Select Your Power Washer Worker</h3>
+			<label for="worker-name">Enter Worker Name: </label>
+			<input type="text" id="worker-name">
+			<button id="submit-name-btn">Next</button>
+		</div>
+
+		<!-- Form A: For Kovalsky -->
+		<div id="kovalsky-form-container" class="form-container hidden">
+			<h3>Kovalsky's Form</h3>
+			<form id="kovalsky-form">
+				<fieldset>
+					<input type="submit" name="submit-kovalsky" id="submit-kovalsky">
+					<input type="reset" name="reset-kovalsky" id="reset-kovalsky">
+				</fieldset>
+			</form>
+		</div>
+
+		<!-- Form B: For Everyone Else -->
+		<div id="standard-form-container" class="form-container hidden">
+			<h3>Standard Form</h3>
+			<form id="standard-form">
+				<fieldset>
+					<input type="submit" name="submit-stand" id="submit-stand">
+					<input type="reset" name="reset-stand" id="reset-stand">
+				</fieldset>
+			</form>
+		</div>
+	</main>
+	<footer>
+		<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+	</footer>
+
+	<script>
+		document.getElementById('submit-name-btn').addEventListener('click', function() {
+			const workerName = document.getElementById('worker-name').value.trim();
+			
+			const selectionScreen = document.getElementById('selection-screen');
+			const kovalskyForm = document.getElementById('kovalsky-form-container');
+			const standardForm = document.getElementById('standard-form-container');
+			
+			// Hide the initial screen
+			selectionScreen.classList.add('hidden');
+			
+			// Open form based on the input name
+			if (workerName.toLowerCase() === 'kovalsky') {
+				kovalskyForm.classList.remove('hidden');
+			} else {
+				standardForm.classList.remove('hidden');
+			}
+		});
+	</script>
+</body>
+</html>
