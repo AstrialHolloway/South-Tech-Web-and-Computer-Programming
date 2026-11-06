@@ -1,0 +1,51 @@
+body {
+  background-color: rgb(199, 3, 3);
+  font-family: sans-serif;
+}
+
+.bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.clip-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  
+}
+
+.rotating-bg {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 800px;
+  height: 800px;
+  background-image: url('../../../../Images/In-Class/Week-10/music/record.png');
+  background-size: cover;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  animation: spin 15s linear infinite;
+  z-index: -1;
+}
+
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+fieldset {
+  border-radius: 10px;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  padding: 40px;
+}

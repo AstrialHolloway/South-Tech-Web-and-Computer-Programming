@@ -20,7 +20,30 @@
 		<main>
 			<form>
 				<fieldset>
-
+					<h2>Please complete our survey</h2>
+					<h3>Contact Information</h3>
+					<p>
+						<label>Email address: </label><input type="email" name="email" id="email" required><br>
+						<label>First name: </label><input type="text" name="FName" id="FName" required><br>
+						<label>Last name: </label><input type="text" name="LName" id="LName" required><br>
+					</p>
+					<h3>Contact Information</h3>
+					<p>
+						<label>State: </label><input maxlength="2" type="text" name="state" id="state" required placeholder="Two characters"><br>
+						<label>Zip code: </label><input pattern="[A-Za-Z]{2}" maxlength="5"  type="text" name="zipcode" id="zipcode" required placeholder="Five digits"><br>
+					</p>
+					<h3>How did you hear about us?</h3>
+					<p>
+						<label>Web Search: </label><input type="checkbox" name="Search" id="email"><br>
+						<label>Facebook: </label><input type="checkbox" name="FaceB" id="email"><br>
+						<label>Twitter: </label><input type="checkbox" name="Twitter" id="email"><br>
+						<label>Email message: </label><input type="checkbox" name="Email" id="email"><br>
+					</p>
+					<h3>Thank you for taking our survey!</h3>
+					<p class="center">
+						<input type="submit" class="button" name="submit" id="submit" required>
+						<input type="reset" class="button" name="reset" id="reset" required><br>
+					</p>
 				</fieldset>
 			</form>
 		</main>

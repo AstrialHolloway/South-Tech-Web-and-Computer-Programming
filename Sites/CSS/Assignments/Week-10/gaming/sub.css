@@ -1,1 +1,29 @@
- 
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+fieldset {
+    border-color: blue;
+}
+
+h2,label {
+    color:blue;
+}
+
+.button {
+    background-color: lightgray;
+    color: black;
+    border: solid gray;
+    padding: 3px 25px;
+    font-size: 12px;
+    border-radius: 0px;
+    box-shadow: 4px 4px 0 blue;
+    margin-right: 20px;
+}
+label {
+    width: 150px;
+    float:left;
+}
+.center {
+    text-align: center;
+}

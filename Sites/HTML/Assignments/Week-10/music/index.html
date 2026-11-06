@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="icon" href="../../../../Images/In-Class/Week-10/music/record.png">
+		<link rel="stylesheet" href="../../../../CSS/Assignments/Week-10/music/main.css">
+		<title>Tunes Records</title>
+	</head>
+	<body>
+<div class="bg-container">
+	<!-- This container centers and clips the image -->
+	<div class="clip-wrapper">
+		<div class="rotating-bg"></div>
+	</div>
+  
+	<div class="content">
+		<header>
+				<h1>Tunes Records</h1>
+			</header>
+			<main>
+				<form>
+					<fieldset>
+						<legend>Contact Info</legend>
+						<p>
+							<label for="name">Name: </label><input type="text" name="name" id="name" required><br><br>
+							<label for="email">Email: </label><input type="email" name="email" id="email" requited>
+						</p>
+					</fieldset>
+					<fieldset>
+						<legend>Music Preferences</legend>
+						
+						<p>
+							What type(s) of music do you prefer?<br>
+							<label for="jazz">Jazz: </label><input type="checkbox" name="jazz" id="jazz"><br>
+							<label for="rock">Rock: </label><input type="checkbox" name="rock" id="rock" ><br>
+							<label for="easyListening">Easy Listening: </label><input type="checkbox" name="easyListening" id="easyListening" ><br>
+							<label for="country">Country: </label><input type="checkbox" name="country" id="country" >
+						</p>
+
+						<p>
+							When you are you most likely to listen to music?<br>
+							<input type="radio" name="whereListening" value="car"><label for="car"> In the car</label><br>
+							<input type="radio" name="whereListening" value="exercising" ><label for="exercising"> While exercising</label><br>
+							<input type="radio" name="whereListening" value="school" ><label for="school"> At school</label><br>
+							<input type="radio" name="whereListening" value="meals" ><label for="meals"> During meals</label><br>
+							<input type="radio" name="whereListening" value="allDay" ><label for="allDay"> All day long</label>
+						</p>
+
+						<p>What device do you use to listen to music?</p>
+						<select name="device">
+							<option value="radio">Radio/Stereo</option>
+							<option value="phone">Phone</option>
+							<option value="computer">Computer</option>
+							<option value="MP3Player">MP3 Player</option>
+							<option value="other">Other device</option>
+						</select>
+						<p>
+							Favorite Streaming Service: <input type="text" name="favService" id="favService" list="services">
+						</p>
+						<datalist id="services">
+							<option value="Spotify"></option>
+							<option value="Pandora"></option>
+							<option value="iHeartRadio"></option>
+							<option value="Apple Music"></option>
+							<option value="Youtube Music"></option>
+						</datalist>
+						<p>
+							Additional comments:<br>
+							<input type="text">
+						</p>
+						<p>
+							<input type="submit" name="submit" id="submit">
+							<input type="reset" name="reset" id="reset" >
+						</p>
+					</fieldset>
+				</form>
+			</main>
+			<footer>
+				<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+			</footer>
+	</div>
+
+		
+	</div>	
+	<script>
+	</script>
+	
+	</body>
+</html>
