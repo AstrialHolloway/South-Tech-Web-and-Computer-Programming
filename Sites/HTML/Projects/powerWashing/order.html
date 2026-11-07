@@ -3,41 +3,87 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="../../../CSS/Projects/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../../../CSS/Projects/powerWashing/main.css">
 	<title>Ashers Powerwashing</title>
-	<style>
-		.hidden {
-			display: none;
-		}
-		.form-container {
-			margin-top: 20px;
-		}
-	</style>
 </head>
 <body>
 	<header>
 		<h1>Asher's Powerwashing</h1>
-		<h2>Home</h2>
+		<h2>Order</h2>
 	</header>
 	<nav>
-		<p><a href="index.html">Home</a> | <a href="order.html">Order</a> | <a href="contact">Contact</a></p>
+		<p><a href="index.html">Home</a><a href="contact.html">Information</a><a href="order.html" aria-current="page">Order</a></p>
 	</nav>
 	<main>
 		<!-- Initial Worker Selection Screen -->
 		<div id="selection-screen">
-			<h3>Select Your Power Washer Worker</h3>
+			<h2>Start your order</h2>
+			<p>Choose your worker to continue.</p>
 			<label for="worker-name">Enter Worker Name: </label>
 			<input type="text" id="worker-name">
 			<button id="submit-name-btn">Next</button>
 		</div>
 
-		<!-- Form A: For Kovalsky -->
+		<!-- Form A: Fictional story scenario for Kovalsky -->
 		<div id="kovalsky-form-container" class="form-container hidden">
-			<h3>Kovalsky's Form</h3>
+			<h3>Kovalsky's Fictional Story Scenario</h3>
 			<form id="kovalsky-form">
 				<fieldset>
-					<input type="submit" name="submit-kovalsky" id="submit-kovalsky">
-					<input type="reset" name="reset-kovalsky" id="reset-kovalsky">
+					<legend>Cleanup Info</legend>
+					<label for="alias-kovalsky">Alias:</label>
+					<input type="text" name="alias" id="alias-kovalsky" required><br>
+					<label for="email-kovalsky">Email Address:</label>
+					<input type="email" name="email" id="email-kovalsky" required><br>
+
+					<p>When would you like the crime scene cleaned up?</p>
+					<div class="choice-row">
+						<label for="released-kovalsky">Before police arrive</label>
+						<input type="radio" name="scene-status" id="released-kovalsky" value="before-police-arrive" required>
+					</div>
+					<div class="choice-row">
+						<label for="not-released-kovalsky">After police arrive</label>
+						<input type="radio" name="scene-status" id="not-released-kovalsky" value="after-police-arrive">
+					</div>
+
+					<p>Cleanup services requested:</p>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="surface-cleaning-kovalsky" value="surface-cleaning">
+						<label for="surface-cleaning-kovalsky">Hard-surface cleaning</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="disinfection-kovalsky" value="disinfection">
+						<label for="disinfection-kovalsky">Disinfection</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="odor-treatment-kovalsky" value="odor-treatment">
+						<label for="odor-treatment-kovalsky">Odor treatment</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="biohazard-kovalsky" value="certified-biohazard-cleanup">
+						<label for="biohazard-kovalsky">Certified biohazard cleanup</label>
+					</div>
+
+					<label for="scene-type-kovalsky">Scene location type:</label>
+					<select name="scene-type" id="scene-type-kovalsky" required>
+						<option value="">Choose a location type</option>
+						<option value="residence">Residence</option>
+						<option value="business">Business</option>
+						<option value="vehicle">Vehicle</option>
+						<option value="outdoor">Outdoor area</option>
+						<option value="public">Public space</option>
+						<option value="other">Other</option>
+					</select><br>
+
+					<label for="comments-kovalsky">Access or scheduling information:</label><br>
+					<textarea name="comments" id="comments-kovalsky" rows="5" cols="40"></textarea><br>
+					<label for="areas-kovalsky">Approximate number of areas to clean:</label>
+					<input type="number" name="areas" id="areas-kovalsky" min="1"><br>
+					<label for="areas-kovalsky">Approximate number of bodies to dispose of:</label>
+					<input type="number" name="bodies" id="bodies" min="0"><br>
+					<input type="submit" name="submit-kovalsky" id="submit-kovalsky" value="Submit">
+					<input type="reset" name="reset-kovalsky" id="reset-kovalsky" value="Reset">
+					<h6>All stuff stated in this form is fictional and is not for a real company</h6>
 				</fieldset>
 			</form>
 		</div>
@@ -47,14 +93,63 @@
 			<h3>Standard Form</h3>
 			<form id="standard-form">
 				<fieldset>
-					<input type="submit" name="submit-stand" id="submit-stand">
-					<input type="reset" name="reset-stand" id="reset-stand">
+					<legend>Customer and service information</legend>
+					<label for="first-name-stand">First Name:</label>
+					<input type="text" name="first-name" id="first-name-stand" required><br>
+					<label for="last-name-stand">Last Name:</label>
+					<input type="text" name="last-name" id="last-name-stand" required><br>
+					<label for="email-stand">Email Address:</label>
+					<input type="email" name="email" id="email-stand" required><br>
+
+					<p>Property Type:</p>
+					<div class="choice-row">
+						<label for="residential-stand">Residential</label>
+						<input type="radio" name="property-type" id="residential-stand" value="residential" required>
+					</div>
+					<div class="choice-row">
+						<label for="commercial-stand">Commercial</label>
+						<input type="radio" name="property-type" id="commercial-stand" value="commercial">
+					</div>
+
+					<p>Services Requested:</p>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="house-wash-stand" value="house-wash">
+						<label for="house-wash-stand">House wash</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="driveway-stand" value="driveway">
+						<label for="driveway-stand">Driveway</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="patio-stand" value="patio">
+						<label for="patio-stand">Patio</label>
+					</div>
+					<div class="choice-row">
+						<input type="checkbox" name="services" id="deck-stand" value="deck">
+						<label for="deck-stand">Deck</label>
+					</div>
+
+					<label for="surface-stand">Surface to clean:</label>
+					<select name="surface" id="surface-stand" required>
+						<option value="">Choose a surface</option>
+						<option value="siding">House siding</option>
+						<option value="concrete">Concrete</option>
+						<option value="deck">Deck</option>
+						<option value="patio">Patio</option>
+						<option value="fence">Fence</option>
+						<option value="other">Other</option>
+					</select><br>
+
+					<label for="comments-stand">Comments or Additional Information:</label><br>
+					<textarea name="comments" id="comments-stand" rows="5" cols="40"></textarea><br>
+					<input type="submit" name="submit-stand" id="submit-stand" value="Submit">
+					<input type="reset" name="reset-stand" id="reset-stand" value="Reset">
 				</fieldset>
 			</form>
 		</div>
 	</main>
 	<footer>
-		<p>&copy; 2026 Asher <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+		<p>&copy; 2026 Asher <b>|</b> <a href="../../../../index.html">Main Homepage</a></p>
 	</footer>
 
 	<script>
@@ -70,6 +165,7 @@
 			
 			// Open form based on the input name
 			if (workerName.toLowerCase() === 'kovalsky') {
+				document.body.classList.add('kovalsky-active');
 				kovalskyForm.classList.remove('hidden');
 			} else {
 				standardForm.classList.remove('hidden');
