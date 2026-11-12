@@ -15,9 +15,6 @@ const upgrades = {
     basket: { name: 'Giant Basket', icon: '🧺', initialCost: 300, growth: 1.5, production: 0, clickPower: 10, previous: 'gloves', requiredOwned: 5 },
     tractor: { name: 'Olive Tractor', icon: '🚜', initialCost: 1800, growth: 1.55, production: 0, clickPower: 50, previous: 'basket', requiredOwned: 5 },
     goldenTouch: { name: 'Golden Touch', icon: '🪙', initialCost: 10000, growth: 1.6, production: 0, clickPower: 250, previous: 'tractor', requiredOwned: 5 },
-    prestigePress: { name: 'Prestige Press', icon: '🌟', initialCost: 1000, growth: 1.5, production: 250, clickPower: 0, prestigeRequired: 1 },
-    starGrove: { name: 'Star Grove', icon: '🌠', initialCost: 10000, growth: 1.6, production: 2500, clickPower: 0, prestigeRequired: 2 },
-    cosmicBasket: { name: 'Cosmic Basket', icon: '🌌', initialCost: 50000, growth: 1.7, production: 0, clickPower: 1000, prestigeRequired: 3 },
     ancientGrove: { name: 'Ancient Grove', icon: '🌲', initialCost: 60000, growth: 1.6, production: 2500, clickPower: 0, previous: 'orchard', requiredOwned: 5 },
     oliveEstate: { name: 'Olive Estate', icon: '🏡', initialCost: 300000, growth: 1.65, production: 12000, clickPower: 0, previous: 'ancientGrove', requiredOwned: 5 },
     sunlitTerrace: { name: 'Sunlit Terrace', icon: '☀️', initialCost: 1500000, growth: 1.7, production: 60000, clickPower: 0, previous: 'oliveEstate', requiredOwned: 5 },
@@ -27,7 +24,10 @@ const upgrades = {
     oliveHarvester: { name: 'Olive Harvester', icon: '🚛', initialCost: 250000, growth: 1.7, production: 0, clickPower: 7500, previous: 'harvestScythe', requiredOwned: 5 },
     titanBasket: { name: 'Titan Basket', icon: '🧺', initialCost: 1250000, growth: 1.75, production: 0, clickPower: 40000, previous: 'oliveHarvester', requiredOwned: 5 },
     emeraldTouch: { name: 'Emerald Touch', icon: '💚', initialCost: 7500000, growth: 1.8, production: 0, clickPower: 200000, previous: 'titanBasket', requiredOwned: 5 },
-    infiniteGatherer: { name: 'Infinite Gatherer', icon: '♾️', initialCost: 50000000, growth: 1.85, production: 0, clickPower: 1000000, previous: 'emeraldTouch', requiredOwned: 5 }
+    infiniteGatherer: { name: 'Infinite Gatherer', icon: '♾️', initialCost: 50000000, growth: 1.85, production: 0, clickPower: 1000000, previous: 'emeraldTouch', requiredOwned: 5 },
+    prestigePress: { name: 'Prestige Press', icon: '🌟', initialCost: 1000, growth: 1.5, production: 250, clickPower: 0, prestigeRequired: 1 },
+    starGrove: { name: 'Star Grove', icon: '🌠', initialCost: 10000, growth: 1.6, production: 2500, clickPower: 0, prestigeRequired: 2 },
+    cosmicBasket: { name: 'Cosmic Basket', icon: '🌌', initialCost: 50000, growth: 1.7, production: 0, clickPower: 1000, prestigeRequired: 3 }
 };
 
 const defaultState = () => ({
