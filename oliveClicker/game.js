@@ -17,7 +17,17 @@ const upgrades = {
     goldenTouch: { name: 'Golden Touch', icon: '🪙', initialCost: 10000, growth: 1.6, production: 0, clickPower: 250, previous: 'tractor', requiredOwned: 5 },
     prestigePress: { name: 'Prestige Press', icon: '🌟', initialCost: 1000, growth: 1.5, production: 250, clickPower: 0, prestigeRequired: 1 },
     starGrove: { name: 'Star Grove', icon: '🌠', initialCost: 10000, growth: 1.6, production: 2500, clickPower: 0, prestigeRequired: 2 },
-    cosmicBasket: { name: 'Cosmic Basket', icon: '🌌', initialCost: 50000, growth: 1.7, production: 0, clickPower: 1000, prestigeRequired: 3 }
+    cosmicBasket: { name: 'Cosmic Basket', icon: '🌌', initialCost: 50000, growth: 1.7, production: 0, clickPower: 1000, prestigeRequired: 3 },
+    ancientGrove: { name: 'Ancient Grove', icon: '🌲', initialCost: 60000, growth: 1.6, production: 2500, clickPower: 0, previous: 'orchard', requiredOwned: 5 },
+    oliveEstate: { name: 'Olive Estate', icon: '🏡', initialCost: 300000, growth: 1.65, production: 12000, clickPower: 0, previous: 'ancientGrove', requiredOwned: 5 },
+    sunlitTerrace: { name: 'Sunlit Terrace', icon: '☀️', initialCost: 1500000, growth: 1.7, production: 60000, clickPower: 0, previous: 'oliveEstate', requiredOwned: 5 },
+    royalOrchard: { name: 'Royal Orchard', icon: '👑', initialCost: 10000000, growth: 1.75, production: 300000, clickPower: 0, previous: 'sunlitTerrace', requiredOwned: 5 },
+    worldTree: { name: 'World Tree', icon: '🌍', initialCost: 100000000, growth: 1.8, production: 1500000, clickPower: 0, previous: 'royalOrchard', requiredOwned: 5 },
+    harvestScythe: { name: 'Harvest Scythe', icon: '🌾', initialCost: 50000, growth: 1.65, production: 0, clickPower: 1500, previous: 'goldenTouch', requiredOwned: 5 },
+    oliveHarvester: { name: 'Olive Harvester', icon: '🚛', initialCost: 250000, growth: 1.7, production: 0, clickPower: 7500, previous: 'harvestScythe', requiredOwned: 5 },
+    titanBasket: { name: 'Titan Basket', icon: '🧺', initialCost: 1250000, growth: 1.75, production: 0, clickPower: 40000, previous: 'oliveHarvester', requiredOwned: 5 },
+    emeraldTouch: { name: 'Emerald Touch', icon: '💚', initialCost: 7500000, growth: 1.8, production: 0, clickPower: 200000, previous: 'titanBasket', requiredOwned: 5 },
+    infiniteGatherer: { name: 'Infinite Gatherer', icon: '♾️', initialCost: 50000000, growth: 1.85, production: 0, clickPower: 1000000, previous: 'emeraldTouch', requiredOwned: 5 }
 };
 
 const defaultState = () => ({
@@ -150,7 +160,8 @@ function olivesPerClick() {
     const baseClickPower = 1 + Object.entries(upgrades).reduce((total, [name, upgrade]) =>
         total + clickUpgradeAmount(upgrade.clickPower, state.owned[name]), 0
     );
-    return Math.min(MAX_GAME_VALUE, baseClickPower * Math.min(MAX_GAME_VALUE, 1 + 0.5 * state.prestige));
+    const prestigeMultiplier = Math.min(MAX_GAME_VALUE, 1 + 0.5 * state.prestige);
+    return Math.min(MAX_GAME_VALUE, baseClickPower * prestigeMultiplier * (activeEvent?.clickMultiplier ?? 1));
 }
 
 function upgradeAmount(amount, owned) {
@@ -201,6 +212,7 @@ function showRandomEvent() {
     const events = [
         { category: 'goodEvents', title: 'Olive boom!', message: 'The harvest is thriving: production doubled for 20 seconds.', multiplier: 2 },
         { category: 'goodEvents', title: 'Perfect weather!', message: 'Gentle sunshine boosts production by 50% for 20 seconds.', multiplier: 1.5 },
+        { category: 'goodEvents', title: 'Harvest Moon', message: 'The Harvest Moon doubles production and click yields for 20 seconds.', multiplier: 2, clickMultiplier: 2 },
         { category: 'badEvents', title: 'A swarm of pests!', message: 'Pests slow production to half speed for 20 seconds.', multiplier: 0.5 },
         { category: 'badEvents', title: 'The oil spill!', message: 'A messy spill slows production to 25% for 20 seconds.', multiplier: 0.25 }
     ].filter((event) => settings[event.category] && !settings.disableEvents);
@@ -208,7 +220,11 @@ function showRandomEvent() {
 
     const event = events[Math.floor(Math.random() * events.length)];
 
-    activeEvent = { category: event.category, multiplier: event.multiplier };
+    activeEvent = {
+        category: event.category,
+        multiplier: event.multiplier,
+        clickMultiplier: event.clickMultiplier ?? 1
+    };
     elements.eventTitle.textContent = event.title;
     elements.eventMessage.textContent = event.message;
     elements.eventPopup.hidden = false;
