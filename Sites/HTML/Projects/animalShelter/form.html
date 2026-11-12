@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!-- DO ../../../../ FOR FILES THAT ARE NOT HTML -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="keyword" content="APA, animal, pet, adoption">
+		<meta name="description" content="Our website is all about pet adoption centers.">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" href="../../../Images/Projects/animalShelter/icon2.png">
+		<link rel="stylesheet" href="../../../CSS/Projects/animalShelter/main.css">
+		<title>Chili's Adoption Center</title>
+	</head>
+	<body>
+		<nav class="navbar">
+			<a href="index.html">Home</a>
+			<a href="form.html">Adoption Form</a>
+			<a href="contact.html">Contact</a>
+		</nav>
+
+		<header class="hero-header">
+			<h1><img class="header-icon" src="../../../Images/Projects/animalShelter/icon2.png" alt="">Pet Adoption Center</h1>
+			<p>Were a pet adoption center that treats there pets with the most utter love and care.</p>
+		</header>
+		<main>
+				<form name="adoptionform" id="adoptionform" method="post" action="file.php">
+				<fieldset>
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="first">First Name</label>
+							<input type="text" name="first" id="first" placeholder="Jane" required>
+						</div>
+
+						<div class="form-group">
+							<label for="last">Last Name</label>
+							<input type="text" id="last" name="last" placeholder="Doe" required>
+						</div>
+					</div>
+
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="email">Email Address</label>
+							<input type="email" id="email" name="email" placeholder="jane@example.com" required>
+						</div>
+
+						<div class="form-group">
+							<label for="phone">Phone Number</label>
+							<input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" required>
+						</div>
+					</div>
+
+					<div class="form-group full-width">
+						<label>Preferred Contact Method</label>
+						<div class="radio-group">
+							<label class="radio-label">
+								<input type="radio" name="preferredContact" value="email" checked> Email Address
+							</label>
+							<label class="radio-label">
+								<input type="radio" name="preferredContact" value="text"> Text Message
+							</label>
+							<label class="radio-label">
+								<input type="radio" name="preferredContact" value="phone"> Phone Call
+							</label>
+						</div>
+					</div>
+
+                    <div class="form-group">
+							<label for="itemType">What type of pet are you looking for?</label>
+							<select id="itemType" name="itemType">
+								<option value="dog">Dog</option>
+								<option value="cat">Cat</option>
+								<option value="lizard">Lizard</option>
+								<option value="snake">Snake</option>
+								<option value="spider">Spider</option>
+								<option value="other">Other</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="collection">Why are you interested in adopting an animal?(select all that apply)
+                            </label>
+							<select id="collection" name="collection">
+								<option value="lonely">Lonely</option>
+								<option value="kids">Kids want an animal</option>
+								<option value="friend">Other pet needs a friend</option>
+								<option value="other">Other</option>
+							</select>
+						</div>
+
+                          <div class="form-group full-width">
+						<label>Have you had a pet in the past(or do you currently have a pet)</label>
+						<div class="radio-group">
+							<label class="radio-label">
+								<input type="radio" name="radio1" value="yes"> Yes
+							</label>
+							<label class="radio-label">
+								<input type="radio" name="radio1" value="no"> No
+							</label>
+						</div>
+
+                         <div class="form-group full-width">
+						<label>Would you consent to monthly home checks for the first 3 months of you having your pet</label>
+						<div class="radio-group">
+							<label class="radio-label">
+								<input type="radio" name="radio2" value="yes"> Yes
+							</label>
+							<label class="radio-label">
+								<input type="radio" name="radio2" value="no"> No
+							</label>
+						</div>
+
+					<div class="form-group full-width">
+						<label for="comments">Comments & Special Requests</label>
+						<textarea id="comments" name="comments" rows="4" placeholder="Ask any questions here!"></textarea>
+					</div>
+
+					<div class="button-group">
+						<input type="submit" id="submit" value="Submit Registration">
+						<input type="reset" id="reset" value="Reset">
+					</div>
+				</fieldset>
+			</form>
+		</main>
+		<footer>
+			<p>&copy; 2026 Asher &amp; Robbie <b>|</b> <a href="../../../../../index.html">Main Homepage</a></p>
+		</footer>
+		
+		<script>
+		</script>
+	</body>
+</html>
