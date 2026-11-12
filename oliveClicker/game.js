@@ -1,4 +1,5 @@
 const SAVE_KEY = 'oliveClickerSave';
+const SETTINGS_KEY = 'oliveClickerSettings';
 const SAVE_VERSION = 2;
 const MAX_GAME_VALUE = 1e300;
 const PRESTIGE_BASE_COST = 5_000_000;
@@ -45,7 +46,14 @@ const elements = {
     saveStatus: document.querySelector('#save-status'),
     resetButton: document.querySelector('#reset-button'),
     resetDialog: document.querySelector('#reset-dialog'),
-    confirmReset: document.querySelector('#confirm-reset')
+    confirmReset: document.querySelector('#confirm-reset'),
+    settingsToggle: document.querySelector('#settings-toggle'),
+    settingsPanel: document.querySelector('#settings-panel'),
+    disableEvents: document.querySelector('#disable-events'),
+    eventSettings: document.querySelector('#event-settings'),
+    goodEvents: document.querySelector('#good-events'),
+    badEvents: document.querySelector('#bad-events'),
+    removeOliveParticles: document.querySelector('#remove-olive-particles')
 };
 
 const numberFormat = new Intl.NumberFormat(undefined, {
@@ -94,7 +102,39 @@ function loadGame() {
     }
 }
 
+function defaultSettings() {
+    return {
+        disableEvents: false,
+        goodEvents: true,
+        badEvents: true,
+        removeOliveParticles: false
+    };
+}
+
+function loadSettings() {
+    try {
+        const savedValue = localStorage.getItem(SETTINGS_KEY);
+        if (!savedValue) return defaultSettings();
+
+        const savedSettings = JSON.parse(savedValue);
+        const defaults = defaultSettings();
+        const loadedSettings = Object.fromEntries(Object.keys(defaults).map((name) => [
+            name,
+            typeof savedSettings[name] === 'boolean' ? savedSettings[name] : defaults[name]
+        ]));
+        if (loadedSettings.disableEvents) {
+            loadedSettings.goodEvents = false;
+            loadedSettings.badEvents = false;
+        }
+        return loadedSettings;
+    } catch (error) {
+        console.error('Unable to load Olive Clicker settings.', error);
+        return defaultSettings();
+    }
+}
+
 let state = loadGame();
+let settings = loadSettings();
 let activeEvent = null;
 let eventExpiryTimer = null;
 
@@ -140,6 +180,7 @@ function isUpgradeUnlocked(upgrade) {
 }
 
 function spawnFallingOlive() {
+    if (settings.removeOliveParticles) return;
     if (elements.fallingOlives.childElementCount >= MAX_BACKGROUND_OLIVES) return;
 
     const olive = document.createElement('span');
@@ -158,14 +199,16 @@ function hideEventPopup() {
 
 function showRandomEvent() {
     const events = [
-        { title: 'Olive boom!', message: 'The harvest is thriving: production doubled for 20 seconds.', multiplier: 2 },
-        { title: 'Perfect weather!', message: 'Gentle sunshine boosts production by 50% for 20 seconds.', multiplier: 1.5 },
-        { title: 'A swarm of pests!', message: 'Pests slow production to half speed for 20 seconds.', multiplier: 0.5 },
-        { title: 'The oil spill!', message: 'A messy spill slows production to 25% for 20 seconds.', multiplier: 0.25 }
-    ];
+        { category: 'goodEvents', title: 'Olive boom!', message: 'The harvest is thriving: production doubled for 20 seconds.', multiplier: 2 },
+        { category: 'goodEvents', title: 'Perfect weather!', message: 'Gentle sunshine boosts production by 50% for 20 seconds.', multiplier: 1.5 },
+        { category: 'badEvents', title: 'A swarm of pests!', message: 'Pests slow production to half speed for 20 seconds.', multiplier: 0.5 },
+        { category: 'badEvents', title: 'The oil spill!', message: 'A messy spill slows production to 25% for 20 seconds.', multiplier: 0.25 }
+    ].filter((event) => settings[event.category] && !settings.disableEvents);
+    if (events.length === 0) return;
+
     const event = events[Math.floor(Math.random() * events.length)];
 
-    activeEvent = { multiplier: event.multiplier };
+    activeEvent = { category: event.category, multiplier: event.multiplier };
     elements.eventTitle.textContent = event.title;
     elements.eventMessage.textContent = event.message;
     elements.eventPopup.hidden = false;
@@ -199,6 +242,47 @@ function saveGame() {
         console.error('Unable to save Olive Clicker progress.', error);
         elements.saveStatus.textContent = 'Could not save progress in this browser';
     }
+}
+
+function saveSettings() {
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (error) {
+        console.error('Unable to save Olive Clicker settings.', error);
+        elements.saveStatus.textContent = 'Could not save settings in this browser';
+    }
+}
+
+function renderSettings() {
+    elements.disableEvents.checked = settings.disableEvents;
+    elements.goodEvents.checked = settings.goodEvents;
+    elements.badEvents.checked = settings.badEvents;
+    elements.eventSettings.disabled = settings.disableEvents;
+    elements.removeOliveParticles.checked = settings.removeOliveParticles;
+    elements.fallingOlives.hidden = settings.removeOliveParticles;
+}
+
+function clearActiveEvent() {
+    activeEvent = null;
+    window.clearTimeout(eventExpiryTimer);
+    hideEventPopup();
+    render();
+}
+
+function handleSettingsChange() {
+    settings.disableEvents = elements.disableEvents.checked;
+    settings.goodEvents = !settings.disableEvents && elements.goodEvents.checked;
+    settings.badEvents = !settings.disableEvents && elements.badEvents.checked;
+    settings.removeOliveParticles = elements.removeOliveParticles.checked;
+
+    if (settings.disableEvents
+        || (activeEvent && !settings[activeEvent.category])) {
+        clearActiveEvent();
+    }
+    if (settings.removeOliveParticles) elements.fallingOlives.replaceChildren();
+
+    renderSettings();
+    saveSettings();
 }
 
 function render() {
@@ -262,6 +346,25 @@ elements.prestigeDialog.addEventListener('submit', (event) => {
 
 elements.dismissEvent.addEventListener('click', hideEventPopup);
 
+elements.settingsToggle.addEventListener('click', () => {
+    const isOpen = elements.settingsPanel.hidden;
+    elements.settingsPanel.hidden = !isOpen;
+    elements.settingsToggle.setAttribute('aria-expanded', String(isOpen));
+    elements.settingsToggle.setAttribute('aria-label', isOpen ? 'Close settings' : 'Open settings');
+});
+
+elements.disableEvents.addEventListener('change', handleSettingsChange);
+elements.goodEvents.addEventListener('change', handleSettingsChange);
+elements.badEvents.addEventListener('change', handleSettingsChange);
+elements.removeOliveParticles.addEventListener('change', handleSettingsChange);
+
+window.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+
+    event.preventDefault();
+    elements.oliveButton.focus();
+});
+
 elements.resetButton.addEventListener('click', () => {
     elements.resetDialog.showModal();
 });
@@ -296,4 +399,5 @@ window.setInterval(saveGame, 5000);
 window.addEventListener('pagehide', saveGame);
 
 render();
+renderSettings();
 scheduleRandomEvent();

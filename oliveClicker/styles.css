@@ -94,6 +94,78 @@ button {
     font: inherit;
 }
 
+.settings-toggle {
+    position: fixed;
+    z-index: 6;
+    top: 18px;
+    left: 18px;
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(255, 249, 242, 0.35);
+    border-radius: 50%;
+    background: rgba(57, 44, 50, 0.96);
+    color: #f0d8b0;
+    box-shadow: 0 8px 22px rgba(37, 27, 32, 0.32);
+    font-size: 1.45rem;
+    cursor: pointer;
+}
+
+.settings-panel {
+    position: fixed;
+    z-index: 6;
+    top: 74px;
+    left: 18px;
+    width: min(270px, calc(100vw - 36px));
+    padding: 16px;
+    border: 1px solid rgba(255, 249, 242, 0.25);
+    border-radius: 14px;
+    background: rgba(57, 44, 50, 0.98);
+    box-shadow: 0 12px 34px rgba(37, 27, 32, 0.38);
+}
+
+.settings-panel[hidden] {
+    display: none;
+}
+
+.settings-panel h2 {
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+}
+
+.setting-option {
+    display: flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 9px;
+    color: #e1d2c9;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.setting-option input {
+    accent-color: #e3c99e;
+}
+
+.event-settings {
+    margin: 8px 0;
+    padding: 7px 10px 9px;
+    border: 1px solid rgba(255, 249, 242, 0.2);
+    border-radius: 9px;
+}
+
+.event-settings legend {
+    padding: 0 4px;
+    color: #f0d8b0;
+    font-size: 0.78rem;
+}
+
+.event-settings:disabled {
+    opacity: 0.5;
+}
+
 .game {
     width: min(100%, 980px);
     margin: 0 auto;

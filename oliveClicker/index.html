@@ -10,6 +10,29 @@
     </head>
     <body>
         <div class="falling-olives" id="falling-olives" aria-hidden="true"></div>
+        <button class="settings-toggle" id="settings-toggle" type="button" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">⚙</button>
+        <section class="settings-panel" id="settings-panel" aria-labelledby="settings-title" hidden>
+            <h2 id="settings-title">Settings</h2>
+            <label class="setting-option">
+                <input id="disable-events" type="checkbox">
+                <span>Disable events</span>
+            </label>
+            <fieldset class="event-settings" id="event-settings">
+                <legend>Random events</legend>
+                <label class="setting-option">
+                    <input id="good-events" type="checkbox" checked>
+                    <span>Good events</span>
+                </label>
+                <label class="setting-option">
+                    <input id="bad-events" type="checkbox" checked>
+                    <span>Bad events</span>
+                </label>
+            </fieldset>
+            <label class="setting-option">
+                <input id="remove-olive-particles" type="checkbox">
+                <span>Remove olive particles</span>
+            </label>
+        </section>
         <aside class="event-popup" id="event-popup" aria-live="assertive" hidden>
             <div>
                 <strong id="event-title"></strong>
