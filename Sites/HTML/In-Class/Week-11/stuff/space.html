@@ -567,8 +567,11 @@
 					});
 				}
 
+				let thanksObamaPlayed = false;
+
 				function playThanksObamaAudio() {
-					if (!soundEnabled || !thanksObamaAudio.paused) return;
+					if (!soundEnabled || thanksObamaPlayed || !thanksObamaAudio.paused) return;
+					thanksObamaPlayed = true;
 					thanksObamaAudio.currentTime = 0;
 					const playback = thanksObamaAudio.play();
 					if (playback) playback.catch(showAudioError);
