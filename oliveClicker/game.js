@@ -3,7 +3,7 @@ const SETTINGS_KEY = 'oliveClickerSettings';
 const SAVE_VERSION = 2;
 const MAX_GAME_VALUE = 1e300;
 const PRESTIGE_BASE_COST = 5_000_000;
-const MAX_BACKGROUND_OLIVES = 40;
+const MAX_BACKGROUND_OLIVES = 100;
 
 const upgrades = {
     press: { name: 'Olive Press', icon: '⚙️', initialCost: 15, growth: 1.35, production: 1, clickPower: 0 },
