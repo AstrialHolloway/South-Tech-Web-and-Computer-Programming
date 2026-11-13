@@ -567,11 +567,8 @@
 					});
 				}
 
-				let thanksObamaPlayed = false;
-
 				function playThanksObamaAudio() {
-					if (!soundEnabled || thanksObamaPlayed || !thanksObamaAudio.paused) return;
-					thanksObamaPlayed = true;
+					if (!soundEnabled || !thanksObamaAudio.paused) return;
 					thanksObamaAudio.currentTime = 0;
 					const playback = thanksObamaAudio.play();
 					if (playback) playback.catch(showAudioError);
@@ -1007,28 +1004,39 @@
 							lasers.splice(i, 1);
 							continue;
 						}
-						const points = laser.path;
+						if (laser.path.length > 2 && !laser.curveSoundPlayed && soundEnabled) {
+							laser.curveSoundPlayed = true;
+							playThanksObamaAudio();
+						}
+						const pathPosition = progress * (laser.path.length - 1);
+						const completeSegments = Math.floor(pathPosition);
+						const partialSegment = pathPosition - completeSegments;
 						context.globalAlpha = alpha;
 						context.strokeStyle = laser.color;
 						context.lineWidth = 3;
-						context.shadowBlur = 16;
+						context.shadowBlur = 18;
 						context.shadowColor = laser.color;
 						context.beginPath();
-						context.moveTo(points[0].x, points[0].y);
-						for (let j = 1; j < points.length; j++) {
-							context.lineTo(points[j].x, points[j].y);
+						context.moveTo(laser.path[0].x, laser.path[0].y);
+						for (let pointIndex = 1; pointIndex <= completeSegments; pointIndex++) {
+							context.lineTo(laser.path[pointIndex].x, laser.path[pointIndex].y);
+						}
+						if (completeSegments < laser.path.length - 1) {
+							const from = laser.path[completeSegments];
+							const to = laser.path[completeSegments + 1];
+							context.lineTo(
+								from.x + (to.x - from.x) * partialSegment,
+								from.y + (to.y - from.y) * partialSegment
+							);
 						}
 						context.stroke();
-						context.globalAlpha = 1;
-						if (progress >= 1) {
+						context.globalAlpha = alpha * 0.52;
+						context.lineWidth = 8;
+						context.stroke();
+						if (laser.life >= laser.duration) {
 							if (laser.target && meteors.includes(laser.target)) {
-								const target = laser.target;
-								const hitIndex = meteors.indexOf(target);
-								if (hitIndex >= 0) {
-									meteors.splice(hitIndex, 1);
-									splitMeteor(target);
-									playThanksObamaAudio();
-								}
+								splitMeteor(laser.target);
+								meteors.splice(meteors.indexOf(laser.target), 1);
 							}
 							lasers.splice(i, 1);
 						}
