@@ -555,14 +555,27 @@
 					console.error("Could not play a game audio clip.", error);
 				}
 
-				function playObamaAudio(image) {
-					if (!soundEnabled || (image.dataset.audioPlayed && !obamaAudio.paused)) return;
-					image.dataset.audioPlayed = "true";
-					obamaAudio.currentTime = 0;
-					obamaAudio.loop = true;
-					const playback = obamaAudio.play();
+				function playThanksObamaAudio() {
+					if (!soundEnabled) return;
+				
+					const player = thanksObamaAudio.cloneNode(true);
+					player.removeAttribute("id");
+					thanksObamaPlayers.add(player);
+					document.body.appendChild(player);
+				
+					const removePlayer = () => {
+						thanksObamaPlayers.delete(player);
+						player.remove();
+					};
+					player.addEventListener("ended", removePlayer, { once: true });
+					player.addEventListener("error", () => {
+						removePlayer();
+						showAudioError(player.error);
+					}, { once: true });
+				
+					const playback = player.play();
 					if (playback) playback.catch((error) => {
-						delete image.dataset.audioPlayed;
+						removePlayer();
 						showAudioError(error);
 					});
 				}
