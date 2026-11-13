@@ -600,6 +600,11 @@
 						obamaAudio.currentTime = 0;
 						thanksObamaAudio.pause();
 						thanksObamaAudio.currentTime = 0;
+						for (const player of thanksObamaPlayers) {
+							player.pause();
+							player.remove();
+						}
+						thanksObamaPlayers.clear();
 					}
 				});
 				obamaAudio.addEventListener("error", () => showAudioError(obamaAudio.error));
