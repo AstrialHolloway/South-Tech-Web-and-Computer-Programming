@@ -1,47 +1,1046 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030612"><title>Galactic Scrimmage</title>
-<style>
-:root{color-scheme:dark;font-family:"Segoe UI",Arial,sans-serif;background:#030612;color:#e7faff}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:radial-gradient(ellipse at 50% 78%,rgba(30,21,86,.62),transparent 46%),radial-gradient(ellipse at 12% 35%,rgba(7,61,93,.38),transparent 36%),#030612}#battlefield{position:fixed;inset:0;width:100%;height:100%;z-index:0}.space-haze{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(2,5,17,.15),transparent 25%,transparent 68%,rgba(3,5,17,.5)),radial-gradient(ellipse at 50% 54%,transparent 35%,rgba(2,5,16,.36))}.hud{position:fixed;inset:0;z-index:3;pointer-events:none}.panel{position:absolute;min-width:190px;padding:11px 15px 12px;border:1px solid rgba(77,222,255,.72);background:linear-gradient(135deg,rgba(4,22,38,.88),rgba(4,10,25,.72));box-shadow:inset 0 0 18px #19b5ff1f,0 0 18px #00aaff29;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px));text-shadow:0 0 8px currentColor}.panel-label{display:block;margin-bottom:5px;color:#54deff;font-size:.68rem;font-weight:800;letter-spacing:.2em}.panel-value{font:700 clamp(1rem,1.8vw,1.45rem) Consolas,"Courier New",monospace;letter-spacing:.08em}.score{top:24px;left:26px;color:#eaff71;border-color:#e0ff5ccc}.score .panel-label{color:#eaff71}.vitals{position:absolute;top:24px;right:26px;display:grid;gap:10px;width:min(230px,34vw)}.vital{padding:9px 12px 10px;border:1px solid #55ff9fb3;background:#041718d1;color:#a7ffc6;font:700 .68rem Consolas,monospace}.vital.shield{border-color:#c575ffc2;background:#170924d6;color:#e3c2ff}.vital-heading{display:flex;justify-content:space-between;margin-bottom:7px;letter-spacing:.17em}.meter{height:7px;overflow:hidden;border:1px solid currentColor;background:#0008}.meter-fill{width:84%;height:100%;background:currentColor}.shield .meter-fill{width:98%}.radar{position:absolute;top:156px;right:26px;width:170px;height:170px;overflow:hidden;border:2px solid #b55cff;border-radius:50%;background:radial-gradient(circle,transparent 0 24%,#c45bff61 24.5% 25%,transparent 25.5% 49%,#c45bff61 49.5% 50%,transparent 50.5% 74%,#c45bff61 74.5% 75%,transparent 75.5%),radial-gradient(circle,#3f0c85c2,#070519e8);box-shadow:inset 0 0 24px #cd57ff3d,0 0 18px #c03fff61}.radar:before,.radar:after{content:"";position:absolute;background:#d384ff57;pointer-events:none}.radar:before{top:50%;width:100%;height:1px}.radar:after{left:50%;height:100%;width:1px}.radar-title{position:absolute;top:133px;right:26px;z-index:4;color:#e8c1ff;font:700 .62rem Consolas,monospace;letter-spacing:.16em}.radar-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(transparent 0 300deg,#51ffa108 325deg,#51ffa166);animation:sweep 4s linear infinite}.blip{position:absolute;z-index:2;width:5px;height:5px;border-radius:50%;background:#59ff9d;box-shadow:0 0 8px 2px #59ff9d;animation:blink 1.5s ease-in-out infinite alternate;transform:translate(-50%,-50%)}.blip.one{top:31%;left:31%}.blip.two{top:62%;left:74%}.blip.three{top:75%;left:43%}.blip.hostile{top:45%;left:63%;background:#ff526d;box-shadow:0 0 8px 2px #ff526d}.radar-contact{position:absolute;z-index:2;width:5px;height:5px;border-radius:50%;background:#ffb45c;box-shadow:0 0 7px 2px #ff754c;transform:translate(-50%,-50%);pointer-events:none}.radar-contact.fragment-contact{width:3px;height:3px;background:#ffe0a0;box-shadow:0 0 5px #ff9860}.obama-track{position:absolute;z-index:5;display:none;width:8px;height:8px;border:1px solid #fff3ad;border-radius:50%;background:#ffe66d;box-shadow:0 0 5px 2px #ffe66d;transform:translate(-50%,-50%)}.obama-track.is-active{display:block}.obama-track span{position:absolute;top:50%;left:calc(100% + 5px);padding:2px 3px;transform:translateY(-50%);background:#0f0d1ee8;color:#fff3ad;font:800 .5rem Consolas,monospace;white-space:nowrap}.obama-track.to-left span{right:calc(100% + 5px);left:auto}.weapon{bottom:26px;left:26px;min-width:240px;color:#9af4ff}.weapon .panel-value{font-size:1rem}.ammo-readout{display:flex;gap:4px;margin-top:9px}.ammo-readout i{width:5px;height:15px;border:1px solid #5aeaff;background:#5aeaff}.ammo-readout i:last-child,.ammo-readout i:nth-last-child(2){background:transparent}.overheat{position:absolute;top:50%;left:50%;padding:12px 20px;transform:translate(-50%,-50%);border:2px solid #ff514b;background:#26040ac2;color:#ff7368;font:900 clamp(.9rem,2vw,1.35rem) Consolas,monospace;letter-spacing:.18em;animation:pulse .9s infinite alternate;white-space:nowrap}.overheat:before,.overheat:after{content:"!!";margin:0 9px}.ship{position:absolute;bottom:-1vh;left:50%;width:clamp(125px,18vw,230px);filter:drop-shadow(0 0 18px #2ebBff9e);animation:ship 3.2s ease-in-out infinite}.ship svg{display:block;width:100%;height:auto}.obama-flyby{position:fixed;top:0;left:0;z-index:2;width:100px;height:auto;border:1px solid #85e6ffbf;pointer-events:none;will-change:left}.audio-toggle{position:fixed;right:8px;bottom:30px;z-index:12;padding:7px 10px;border:1px solid #4bdcffb3;background:#041121e6;color:#a4efff;font:700 .65rem Consolas,monospace;letter-spacing:.08em;cursor:pointer}.audio-toggle[aria-pressed=true]{border-color:#57ff9dcc;color:#a7ffc6}.audio-toggle:focus-visible{outline:2px solid white;outline-offset:3px}.radar-glitch{position:absolute;z-index:6;width:22px;height:22px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 0 9px #23d9ff)}.radar-glitch i{position:absolute;width:8px;height:7px;background:#23d9ff;box-shadow:0 0 8px #23d9ff}.radar-glitch i:nth-child(2){background:#ff3157;box-shadow:0 0 8px #ff3157}.radar-glitch i:nth-child(3){background:#57aaff;box-shadow:0 0 8px #57aaff}.radar-glitch i:nth-child(4){background:#f54265;box-shadow:0 0 7px #f54265}.radar-glitch.active{animation:glitch-shake .06s steps(2,end) infinite}.radar-glitch.active i:nth-child(even){animation:glitch-flicker .1s steps(2,end) infinite}@keyframes sweep{to{transform:rotate(360deg)}}@keyframes blink{from{opacity:.42}to{opacity:1}}@keyframes pulse{from{opacity:.72}to{opacity:1}}@keyframes ship{0%,100%{transform:translate(-50%,0) rotate(-1deg)}50%{transform:translate(-50%,-14px) rotate(1deg)}}@keyframes glitch-shake{0%{translate:-4px 3px;rotate:-7deg}50%{translate:4px -3px;rotate:7deg}100%{translate:-3px -4px;rotate:-6deg}}@keyframes glitch-flicker{50%{opacity:.1;translate:5px -4px}}@media(max-width:600px){.score{top:14px;left:14px;min-width:0;padding:9px 11px}.vitals{top:14px;right:14px;width:min(180px,43vw);gap:7px}.vital{padding:7px 9px}.radar{top:145px;right:14px;width:130px;height:130px}.radar-title{top:125px;right:14px}.weapon{bottom:154px;left:14px;min-width:205px;padding:9px 11px}.ship{width:clamp(120px,34vw,175px)}}@media(prefers-reduced-motion:reduce){.radar-glitch.active,.radar-glitch.active i{animation-duration:.25s!important}}
-</style>
-</head>
-<body>
-<canvas id="battlefield" aria-label="Animated space battle with stars, meteors, and laser fire"></canvas><div class="space-haze" aria-hidden="true"></div>
-<main class="hud" aria-label="Galactic Scrimmage game display"><div class="panel score"><span class="panel-label">SCORE</span><strong class="panel-value">018350</strong></div><div class="vitals"><div class="vital"><div class="vital-heading"><span>HEALTH</span><strong>84%</strong></div><div class="meter"><div class="meter-fill"></div></div></div><div class="vital shield"><div class="vital-heading"><span>SHIELD</span><strong>98%</strong></div><div class="meter"><div class="meter-fill"></div></div></div></div><span class="radar-title">RADAR // SECTOR 07</span><div class="radar" role="img" aria-label="Radar scope tracking meteors and a moving O.B.A.M.A. contact"><span class="radar-sweep"></span><i class="blip one"></i><i class="blip two"></i><i class="blip three"></i><i class="blip hostile"></i><span class="obama-track"><span>O.B.A.M.A.</span></span></div><div class="panel weapon"><span class="panel-label">WEAPON SYSTEM</span><strong class="panel-value">MK-II BLASTER</strong><span class="panel-label" style="margin:10px 0 0">AMMO // 10</span><span class="ammo-readout" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="overheat">OVERHEAT</div><div class="ship" aria-label="Player spacecraft flying through battlefield"><svg viewBox="0 0 240 250" aria-hidden="true"><defs><linearGradient id="hull" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#f0fcff"/><stop offset=".42" stop-color="#63cbe8"/><stop offset="1" stop-color="#163c72"/></linearGradient><linearGradient id="engine" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#dfffff" stop-opacity=".95"/><stop offset=".35" stop-color="#31d9ff" stop-opacity=".86"/><stop offset="1" stop-color="#1680ff" stop-opacity="0"/></linearGradient></defs><path d="M92 168L77 218l28-19 15 45 15-45 28 19-15-50Z" fill="url(#engine)"/><path d="M114 38l-11 54-78 66-7 32 78-26 14 40 10 12 10-12 14-40 78 26-7-32-78-66-11-54-6-19Z" fill="url(#hull)" stroke="#bcefff" stroke-width="3"/><path d="M120 43v140" stroke="#f1ffff" stroke-width="3" opacity=".8"/><path d="M104 101l-55 56 45-14zM136 101l55 56-45-14z" fill="#225c9b" stroke="#6de5ff" stroke-width="2"/><path d="M120 72c-18 19-17 44 0 59 17-15 18-40 0-59Z" fill="#72f5ff" stroke="#e2ffff" stroke-width="3"/><path d="M24 173l55-16-11 20-45 10zM216 173l-55-16 11 20 45 10z" fill="#e84f66" stroke="#ffb5c1" stroke-width="2"/><circle cx="120" cy="155" r="5" fill="#f3ffb0"/></svg></div></main>
-<a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Barack_H._Obama_(4x5).png" target="_blank" rel="noopener noreferrer">Portrait: Pete Souza / CC BY 3.0</a><button class="audio-toggle" id="audio-toggle" type="button" aria-pressed="false">TAP TO ENABLE AUDIO</button>
-<audio id="obamna-audio" preload="auto"><source src="../../../../Media/In-Class/Week-11/obamna.mp3" type="audio/mpeg"></audio><audio id="thanks-obama-audio" preload="auto"><source src="../../../../Media/In-Class/Week-11/thanks-obama-mp3cut.mp3" type="audio/mpeg"></audio>
-<script>
-(()=>{
-const canvas=document.getElementById("battlefield"),ctx=canvas.getContext("2d"),radar=document.querySelector(".radar"),track=document.querySelector(".obama-track"),obamna=document.getElementById("obamna-audio"),thanks=document.getElementById("thanks-obama-audio"),toggle=document.getElementById("audio-toggle"),ship=document.querySelector(".ship");
-const stars=[],meteors=[],lasers=[],explosions=[];let w=0,h=0,ratio=1,last=0,lastMeteor=0,lastLaser=0,nextExplosion=0,nextFlyby=0,activeImage=null,soundEnabled=false,glitch=null,glitchEnd=0,nextGlitchCheck=0,jitter=0;
-const random=(a,b)=>Math.random()*(b-a)+a;
-function resize(){w=innerWidth;h=innerHeight;ratio=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);stars.length=0;for(let i=0;i<Math.min(230,Math.round(w*h/5500));i++)stars.push({x:Math.random()*w,y:Math.random()*h,size:random(.5,2),speed:random(12,65),alpha:random(.35,1),tint:Math.random()>.82?"#7ceaff":"#fff"})}
-function play(audio){return audio.play()}
-function updateAudioUI(playing){soundEnabled=playing;toggle.setAttribute("aria-pressed",String(playing));toggle.textContent=playing?"MUTE AUDIO":"TAP TO ENABLE AUDIO"}
-function tryStartAudio(){obamna.loop=true;const result=play(obamna);if(result&&result.then)result.then(()=>updateAudioUI(true)).catch(()=>updateAudioUI(false));else updateAudioUI(true)}
-function stopAudio(){obamna.pause();obamna.loop=false;thanks.pause();try{obamna.currentTime=0;thanks.currentTime=0}catch(_){}updateAudioUI(false)}
-toggle.addEventListener("click",()=>{if(soundEnabled)stopAudio();else tryStartAudio()});
-function safeThanks(){if(!soundEnabled||!thanks.paused)return;try{thanks.currentTime=0}catch(_){}const p=play(thanks);if(p&&p.catch)p.catch(()=>{})}
-function createMeteor(x,y,r,fragment=false){const contact=document.createElement("i");contact.className="radar-contact"+(fragment?" fragment-contact":"");contact.setAttribute("aria-hidden","true");radar.appendChild(contact);return{x,y,r,vertices:Array.from({length:9},()=>r*random(.72,1.24)),vx:fragment?random(-180,180):random(-28,28),vy:fragment?random(100,260):random(90,155),rotation:random(0,Math.PI*2),spin:random(-1.5,1.5),fragment,targeted:false,contact}}
-function explosion(x,y,r,color){const particles=[];for(let i=0,n=Math.round(random(18,30)*Math.min(r/20,1.5));i<n;i++){const a=random(0,Math.PI*2),s=random(35,220)*Math.min(r/18,1.6);particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:random(1.2,4),alpha:random(.65,1)})}explosions.push({x,y,r,color,particles,life:0,duration:.65})}
-function split(m){explosion(m.x,m.y,m.r*1.6,"#ffb34e");if(m.fragment)return;for(let i=0,n=Math.round(random(5,8));i<n;i++){const f=createMeteor(m.x+random(-m.r*.5,m.r*.5),m.y+random(-m.r*.5,m.r*.5),random(Math.max(3,m.r*.16),Math.max(5,m.r*.32)),true);f.vx+=m.vx*.35;f.vy+=m.vy*.35;meteors.push(f)}}
-function addMeteor(){const r=random(Math.min(14,w*.035),Math.min(30,w*.075));meteors.push(createMeteor(random(w*.08,w*.92),random(-h*.12,h*.2),r))}
-function flyby(){const iw=random(76,122),dir=Math.random()>.5?1:-1,sx=dir>0?-iw:w+iw,ex=dir>0?w+iw:-iw,img=document.createElement("img");img.className="obama-flyby";img.src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Barack_H._Obama_%284x5%29.png";img.alt="Barack Obama";img.style.width=iw+"px";img.style.top=random(12,72)+"vh";activeImage=img;track.classList.add("is-active");document.body.appendChild(img);const anim=img.animate([{left:sx+"px"},{left:ex+"px"}],{duration:random(6500,10500),easing:"linear"});const clean=()=>{img.remove();if(activeImage===img){activeImage=null;track.classList.remove("is-active");obamna.pause();obamna.loop=false;try{obamna.currentTime=0}catch(_){}}};anim.onfinish=clean;img.onerror=clean}
-function startGlitch(now){if(glitch)return;glitch=document.createElement("span");glitch.className="radar-glitch active";glitch.setAttribute("aria-hidden","true");for(let i=0;i<4;i++)glitch.appendChild(document.createElement("i"));radar.appendChild(glitch);glitchEnd=now+random(6000,10000);jitter=0}
-function updateGlitch(now){if(!nextGlitchCheck)nextGlitchCheck=now+60000;if(now>=nextGlitchCheck){nextGlitchCheck=now+60000;if(Math.random()<.01){startGlitch(now)}}if(!glitch)return;if(now>=glitchEnd){glitch.remove();glitch=null;return}if(now-jitter>55){jitter=now;glitch.style.left=random(10,90)+"%";glitch.style.top=random(10,90)+"%";for(const shard of glitch.children){shard.style.left=random(-7,15)+"px";shard.style.top=random(-7,15)+"px";shard.style.width=random(4,8)+"px";shard.style.height=random(4,8)+"px"}}}
-function interval(a,b,r){const dx=b.x-a.x,dy=b.y-a.y;let en=0,ex=1;for(const[p,q]of[[-dx,a.x-r.left],[dx,r.right-a.x],[-dy,a.y-r.top],[dy,r.bottom-a.y]]){if(!p){if(q<0)return null;continue}const t=q/p;if(p<0){if(t>ex)return null;en=Math.max(en,t)}else{if(t<en)return null;ex=Math.min(ex,t)}}return en<=ex?[en,ex]:null}
-function obamaBounds(d){if(!activeImage||!activeImage.isConnected)return null;const b=activeImage.getBoundingClientRect(),m=Number(activeImage.dataset.flybySpeed||0)*d+12;return{left:b.left-m,right:b.right+m,top:b.top-10,bottom:b.bottom+10}}
-function laserPath(start,end,d){const box=obamaBounds(d),hit=box&&interval(start,end,box);if(!hit)return[start,end];const len=Math.hypot(end.x-start.x,end.y-start.y)||1;if(hit[0]<=0||hit[1]>=1)return null;const pad=8/len,t0=Math.max(0,hit[0]-pad),t1=Math.min(1,hit[1]+pad),entry={x:start.x+(end.x-start.x)*t0,y:start.y+(end.y-start.y)*t0},exit={x:start.x+(end.x-start.x)*t1,y:start.y+(end.y-start.y)*t1},nx=-(end.y-start.y)/len,ny=(end.x-start.x)/len,mid={x:(entry.x+exit.x)/2,y:(entry.y+exit.y)/2},offset=Math.max(box.right-box.left,box.bottom-box.top)*.65+18;for(const side of[-1,1]){const c={x:mid.x+nx*offset*side,y:mid.y+ny*offset*side},path=[start,entry];let prev=entry,ok=true;for(let i=1;i<=32;i++){const t=i/32,u=1-t,p={x:u*u*entry.x+2*u*t*c.x+t*t*exit.x,y:u*u*entry.y+2*u*t*c.y+t*t*exit.y};if(interval(prev,p,box)){ok=false;break}path.push(p);prev=p}if(ok)return path.concat(end)}return null}
-function drawMeteor(m){const speed=Math.hypot(m.vx,m.vy)||1,tail=m.r*(m.fragment?3:4.5),tx=m.x-m.vx/speed*tail,ty=m.y-m.vy/speed*tail,g=ctx.createLinearGradient(tx,ty,m.x,m.y);g.addColorStop(0,"transparent");g.addColorStop(1,m.fragment?"#ff9860":"#ffb45c");ctx.strokeStyle=g;ctx.lineWidth=Math.max(1.5,m.r*.45);ctx.shadowBlur=m.fragment?8:18;ctx.shadowColor="#ff754c";ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(m.x,m.y);ctx.stroke();const rock=ctx.createRadialGradient(m.x-m.r*.35,m.y-m.r*.4,1,m.x,m.y,m.r*1.25);rock.addColorStop(0,"#ffe0a0");rock.addColorStop(.32,"#c86b45");rock.addColorStop(1,"#38243a");ctx.fillStyle=rock;ctx.strokeStyle="#ffcf8a";ctx.lineWidth=m.fragment?.8:1.4;ctx.beginPath();m.vertices.forEach((v,i)=>{const a=m.rotation+i/m.vertices.length*Math.PI*2,x=m.x+Math.cos(a)*v,y=m.y+Math.sin(a)*v;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fill();if(!m.fragment)ctx.stroke()}
-function addLaser(){const b=ship.getBoundingClientRect(),start={x:b.left+b.width/2,y:b.top+b.height*.08},duration=random(.28,.4),targets=meteors.filter(m=>!m.fragment&&!m.targeted&&m.y<h*.76).sort((a,b)=>a.y-b.y);let target=null,path=null;for(const m of targets){const p=laserPath(start,{x:m.x,y:m.y},duration);if(p){target=m;path=p;break}}if(!target){for(let i=0;i<8;i++){const p=laserPath(start,{x:start.x+random(-w*.32,w*.32),y:random(h*.12,h*.48)},duration);if(p){path=p;break}}if(!path)return}else target.targeted=true;let length=0;for(let i=1;i<path.length;i++)length+=Math.hypot(path[i].x-path[i-1].x,path[i].y-path[i-1].y);lasers.push({path,length,target,life:0,duration,color:Math.random()>.5?"#39edff":"#86fbff",played:false})}
-function drawExplosions(dt){for(let i=explosions.length-1;i>=0;i--){const e=explosions[i];e.life+=dt;const p=Math.min(e.life/e.duration,1),a=1-p;ctx.globalAlpha=a;ctx.strokeStyle=e.color;ctx.lineWidth=Math.max(1,e.r*.12*a);ctx.shadowBlur=20;ctx.shadowColor=e.color;ctx.beginPath();ctx.arc(e.x,e.y,e.r*(.25+p),0,Math.PI*2);ctx.stroke();ctx.fillStyle="#ffd789";ctx.beginPath();ctx.arc(e.x,e.y,e.r*(.4+p*.35)*a,0,Math.PI*2);ctx.fill();for(const q of e.particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.97;q.vy*=.97;ctx.globalAlpha=a*q.alpha;ctx.fillStyle=e.color;ctx.fillRect(q.x,q.y,q.size,q.size)}ctx.globalAlpha=1;if(p>=1)explosions.splice(i,1)}}
-function draw(now){const dt=Math.min((now-(last||now))/1000,.04);last=now;const time=now/1000;if(!nextFlyby)nextFlyby=now+random(1800,4200);if(now>=nextFlyby){flyby();nextFlyby=now+random(12000,21000)}updateGlitch(now);ctx.clearRect(0,0,w,h);for(const s of stars){s.y+=s.speed*dt;if(s.y>h+2){s.y=-2;s.x=Math.random()*w}ctx.globalAlpha=s.alpha*(.72+Math.sin(time*2+s.x)*.18);ctx.fillStyle=s.tint;ctx.fillRect(s.x,s.y,s.size,s.size)}ctx.globalAlpha=1;
-if(activeImage&&activeImage.isConnected){const b=activeImage.getBoundingClientRect();if(b.right>0&&b.left<w){const x=Math.max(0,Math.min(1,(b.left+b.width/2)/w)),y=Math.max(0,Math.min(1,(b.top+b.height/2)/h));track.style.left=x*100+"%";track.style.top=y*100+"%";track.classList.toggle("to-left",x>.68);if(soundEnabled&&activeImage.complete&&activeImage.naturalWidth&&!obamna.paused){} }else{obamna.pause();obamna.loop=false;track.classList.remove("is-active")}}
-if(now-lastMeteor>1050){addMeteor();lastMeteor=now}if(now-lastLaser>540){addLaser();lastLaser=now}if(now>nextExplosion){explosion(random(w*.12,w*.88),random(h*.12,h*.7),random(12,24),"#ff765e");nextExplosion=now+random(2800,5200)}
-for(let i=meteors.length-1;i>=0;i--){const m=meteors[i];m.x+=m.vx*dt;m.y+=m.vy*dt;m.rotation+=m.spin*dt;m.contact.style.left=Math.max(0,Math.min(100,m.x/w*100))+"%";m.contact.style.top=Math.max(0,Math.min(100,m.y/h*100))+"%";drawMeteor(m);if(m.y>h+m.r*5||m.x< -m.r*5||m.x>w+m.r*5){m.contact.remove();meteors.splice(i,1)}}
-for(let i=lasers.length-1;i>=0;i--){const l=lasers[i];l.life+=dt;const p=Math.min(l.life/l.duration,1);const distance=l.length*p;ctx.globalAlpha=Math.max(0,1-p);ctx.strokeStyle=l.color;ctx.lineWidth=3;ctx.shadowBlur=18;ctx.shadowColor=l.color;ctx.beginPath();ctx.moveTo(l.path[0].x,l.path[0].y);let rem=distance;for(let j=1;j<l.path.length;j++){const a=l.path[j-1],b=l.path[j],seg=Math.hypot(b.x-a.x,b.y-a.y);if(rem>=seg){ctx.lineTo(b.x,b.y);rem-=seg}else{const t=seg?rem/seg:1;ctx.lineTo(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);break}}ctx.stroke();ctx.globalAlpha*=.52;ctx.lineWidth=8;ctx.stroke();ctx.globalAlpha=1;if(!l.played&&l.path.length>2&&distance>l.length*.2){l.played=true;safeThanks()}if(p>=1){if(l.target&&meteors.includes(l.target)){const idx=meteors.indexOf(l.target);split(l.target);l.target.contact.remove();meteors.splice(idx,1)}lasers.splice(i,1)}}ctx.globalAlpha=1;ctx.shadowBlur=0;drawExplosions(dt);requestAnimationFrame(draw)}
-window.addEventListener("resize",resize);resize();requestAnimationFrame(draw);
-})();
-</script>
-</body></html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#030612">
+		<title>Galactic Scrimmage</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				font-family: "Segoe UI", Arial, sans-serif;
+				background: #030612;
+				color: #e7faff;
+				font-synthesis: none;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				overflow: hidden;
+			}
+
+			body {
+				background:
+					radial-gradient(ellipse at 50% 78%, rgba(30, 21, 86, 0.62), transparent 46%),
+					radial-gradient(ellipse at 12% 35%, rgba(7, 61, 93, 0.38), transparent 36%),
+					#030612;
+			}
+
+			#battlefield {
+				position: fixed;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				display: block;
+				z-index: 0;
+			}
+
+			.space-haze {
+				position: fixed;
+				inset: 0;
+				z-index: 1;
+				pointer-events: none;
+				background:
+					linear-gradient(180deg, rgba(2, 5, 17, 0.15), transparent 25%, transparent 68%, rgba(3, 5, 17, 0.5)),
+					radial-gradient(ellipse at 50% 54%, transparent 35%, rgba(2, 5, 16, 0.36) 100%);
+			}
+
+			.hud {
+				position: fixed;
+				inset: 0;
+				z-index: 3;
+				pointer-events: none;
+			}
+
+			.panel {
+				position: absolute;
+				min-width: 190px;
+				padding: 11px 15px 12px;
+				border: 1px solid rgba(77, 222, 255, 0.72);
+				background: linear-gradient(135deg, rgba(4, 22, 38, 0.88), rgba(4, 10, 25, 0.72));
+				box-shadow: inset 0 0 18px rgba(25, 181, 255, 0.12), 0 0 18px rgba(0, 170, 255, 0.16);
+				clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 13px 100%, 0 calc(100% - 13px));
+				text-shadow: 0 0 8px currentColor;
+			}
+
+			.panel-label {
+				display: block;
+				margin-bottom: 5px;
+				color: #54deff;
+				font-size: 0.68rem;
+				font-weight: 800;
+				letter-spacing: 0.2em;
+			}
+
+			.panel-value {
+				font-family: Consolas, "Courier New", monospace;
+				font-size: clamp(1rem, 1.8vw, 1.45rem);
+				font-weight: 700;
+				letter-spacing: 0.08em;
+			}
+
+			.score {
+				top: 24px;
+				left: 26px;
+				color: #eaff71;
+				border-color: rgba(224, 255, 92, 0.8);
+				box-shadow: inset 0 0 18px rgba(224, 255, 92, 0.08), 0 0 18px rgba(224, 255, 92, 0.12);
+			}
+
+			.score .panel-label {
+				color: #eaff71;
+			}
+
+			.vitals {
+				position: absolute;
+				top: 24px;
+				right: 26px;
+				display: grid;
+				gap: 10px;
+				width: min(230px, 34vw);
+			}
+
+			.vital {
+				padding: 9px 12px 10px;
+				border: 1px solid rgba(85, 255, 159, 0.7);
+				background: rgba(4, 23, 24, 0.82);
+				box-shadow: inset 0 0 15px rgba(50, 255, 144, 0.08), 0 0 16px rgba(50, 255, 144, 0.12);
+				color: #a7ffc6;
+				font-family: Consolas, "Courier New", monospace;
+			}
+
+			.vital.shield {
+				border-color: rgba(197, 117, 255, 0.76);
+				background: rgba(23, 9, 36, 0.84);
+				box-shadow: inset 0 0 15px rgba(197, 117, 255, 0.1), 0 0 16px rgba(197, 117, 255, 0.12);
+				color: #e3c2ff;
+			}
+
+			.vital-heading {
+				display: flex;
+				justify-content: space-between;
+				gap: 10px;
+				margin-bottom: 7px;
+				font-size: 0.68rem;
+				font-weight: 800;
+				letter-spacing: 0.17em;
+			}
+
+			.meter {
+				height: 7px;
+				overflow: hidden;
+				border: 1px solid currentColor;
+				background: rgba(0, 0, 0, 0.55);
+			}
+
+			.meter-fill {
+				width: 84%;
+				height: 100%;
+				background: currentColor;
+				box-shadow: 0 0 9px currentColor;
+			}
+
+			.shield .meter-fill {
+				width: 98%;
+			}
+
+			.radar {
+				position: absolute;
+				top: 156px;
+				right: 26px;
+				width: 170px;
+				height: 170px;
+				overflow: hidden;
+				border-radius: 50%;
+				border: 2px solid #b55cff;
+				background:
+					radial-gradient(circle, transparent 0 24%, rgba(196, 91, 255, 0.38) 24.5% 25%, transparent 25.5% 49%, rgba(196, 91, 255, 0.38) 49.5% 50%, transparent 50.5% 74%, rgba(196, 91, 255, 0.38) 74.5% 75%, transparent 75.5%),
+					radial-gradient(circle, rgba(63, 12, 85, 0.76), rgba(7, 5, 25, 0.91));
+				box-shadow: inset 0 0 24px rgba(205, 87, 255, 0.24), 0 0 18px rgba(192, 63, 255, 0.38);
+			}
+
+			.radar::before,
+			.radar::after {
+				content: "";
+				position: absolute;
+				background: rgba(211, 132, 255, 0.34);
+			}
+
+			.radar::before {
+				top: 50%;
+				left: 0;
+				width: 100%;
+				height: 1px;
+			}
+
+			.radar::after {
+				top: 0;
+				left: 50%;
+				width: 1px;
+				height: 100%;
+			}
+
+			.radar-title {
+				position: absolute;
+				top: 133px;
+				right: 26px;
+				z-index: 4;
+				color: #e8c1ff;
+				font-family: Consolas, "Courier New", monospace;
+				font-size: 0.62rem;
+				font-weight: 700;
+				letter-spacing: 0.16em;
+				text-shadow: 0 0 7px #c34aff;
+			}
+
+			.radar-sweep {
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				background: conic-gradient(from 0deg, transparent 0deg 300deg, rgba(81, 255, 161, 0.03) 325deg, rgba(81, 255, 161, 0.4) 360deg);
+				transform-origin: center;
+				animation: radar-sweep 4s linear infinite;
+			}
+
+			.blip {
+				position: absolute;
+				z-index: 1;
+				width: 5px;
+				height: 5px;
+				border-radius: 50%;
+				background: #59ff9d;
+				box-shadow: 0 0 8px 2px #59ff9d;
+				animation: blip 1.5s ease-in-out infinite alternate;
+				transform: translate(-50%, -50%);
+			}
+
+			.blip.one { top: 31%; left: 31%; }
+			.blip.two { top: 62%; left: 74%; animation-delay: 0.5s; }
+			.blip.three { top: 75%; left: 43%; animation-delay: 0.9s; }
+			.blip.hostile {
+				top: 45%;
+				left: 63%;
+				background: #ff526d;
+				box-shadow: 0 0 8px 2px #ff526d;
+			}
+
+			.obama-track {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				z-index: 3;
+				display: none;
+				width: 8px;
+				height: 8px;
+				border: 1px solid #fff3ad;
+				border-radius: 50%;
+				background: #ffe66d;
+				box-shadow: 0 0 5px 2px #ffe66d;
+				transform: translate(-50%, -50%);
+			}
+
+			.obama-track.is-active {
+				display: block;
+			}
+
+			.obama-track span {
+				position: absolute;
+				top: 50%;
+				left: calc(100% + 5px);
+				padding: 2px 3px;
+				transform: translateY(-50%);
+				background: rgba(15, 13, 30, 0.9);
+				color: #fff3ad;
+				font-family: Consolas, "Courier New", monospace;
+				font-size: 0.5rem;
+				font-weight: 800;
+				letter-spacing: 0.08em;
+				text-shadow: 0 0 6px #ffdc65;
+				white-space: nowrap;
+			}
+
+			.obama-track.to-left span {
+				right: calc(100% + 5px);
+				left: auto;
+			}
+
+			.obama-track.below span {
+				top: calc(100% + 5px);
+				right: auto;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			.weapon {
+				bottom: 26px;
+				left: 26px;
+				min-width: 240px;
+				color: #9af4ff;
+			}
+
+			.weapon .panel-value {
+				font-size: 1rem;
+			}
+
+			.ammo-readout {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				margin-top: 9px;
+			}
+
+			.ammo-readout i {
+				width: 5px;
+				height: 15px;
+				border: 1px solid #5aeaff;
+				background: #5aeaff;
+				box-shadow: 0 0 6px rgba(90, 234, 255, 0.65);
+				transform: skew(-12deg);
+			}
+
+			.ammo-readout i:last-child,
+			.ammo-readout i:nth-last-child(2) {
+				background: transparent;
+				box-shadow: none;
+			}
+
+			.overheat {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				padding: 12px 20px;
+				transform: translate(-50%, -50%);
+				border: 2px solid #ff514b;
+				background: rgba(38, 4, 10, 0.76);
+				color: #ff7368;
+				font-family: Consolas, "Courier New", monospace;
+				font-size: clamp(0.9rem, 2vw, 1.35rem);
+				font-weight: 900;
+				letter-spacing: 0.18em;
+				text-shadow: 0 0 12px #ff2929;
+				box-shadow: inset 0 0 18px rgba(255, 55, 55, 0.16), 0 0 20px rgba(255, 40, 40, 0.28);
+				animation: warning-pulse 0.9s ease-in-out infinite alternate;
+				white-space: nowrap;
+			}
+
+			.overheat::before,
+			.overheat::after {
+				content: "!!";
+				margin: 0 9px;
+			}
+
+			.ship {
+				position: absolute;
+				bottom: -1vh;
+				left: 50%;
+				width: clamp(125px, 18vw, 230px);
+				transform: translateX(-50%);
+				filter: drop-shadow(0 0 18px rgba(46, 187, 255, 0.62));
+				animation: ship-flight 3.2s ease-in-out infinite;
+			}
+
+			.ship svg {
+				display: block;
+				width: 100%;
+				height: auto;
+			}
+
+			.obama-flyby {
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 2;
+				width: 100px;
+				height: auto;
+				border: 1px solid rgba(133, 230, 255, 0.75);
+				border-radius: 3px;
+				box-shadow: 0 0 16px rgba(67, 201, 255, 0.45);
+				pointer-events: none;
+				will-change: left;
+			}
+
+			.photo-credit {
+				position: fixed;
+				right: 8px;
+				bottom: 7px;
+				z-index: 4;
+				color: rgba(210, 224, 242, 0.72);
+				font-size: 0.62rem;
+				text-decoration: none;
+			}
+
+			.photo-credit:hover {
+				color: #ffffff;
+				text-decoration: underline;
+			}
+
+			.audio-toggle {
+				position: fixed;
+				right: 8px;
+				bottom: 30px;
+				z-index: 4;
+				padding: 7px 10px;
+				border: 1px solid rgba(75, 220, 255, 0.7);
+				background: rgba(4, 17, 33, 0.9);
+				color: #a4efff;
+				font: 700 0.65rem Consolas, "Courier New", monospace;
+				letter-spacing: 0.12em;
+				cursor: pointer;
+			}
+
+			.audio-toggle[aria-pressed="true"] {
+				border-color: rgba(87, 255, 157, 0.8);
+				color: #a7ffc6;
+			}
+
+			.audio-toggle:focus-visible {
+				outline: 2px solid #ffffff;
+				outline-offset: 3px;
+			}
+
+			@keyframes radar-sweep {
+				to { transform: rotate(360deg); }
+			}
+
+			@keyframes blip {
+				from { opacity: 0.42; }
+				to { opacity: 1; }
+			}
+
+			@keyframes warning-pulse {
+				from { opacity: 0.72; box-shadow: inset 0 0 12px rgba(255, 55, 55, 0.12), 0 0 10px rgba(255, 40, 40, 0.18); }
+				to { opacity: 1; box-shadow: inset 0 0 22px rgba(255, 55, 55, 0.24), 0 0 24px rgba(255, 40, 40, 0.42); }
+			}
+
+			@keyframes ship-flight {
+				0%, 100% { transform: translate(-50%, 0) rotate(-1deg); }
+				50% { transform: translate(-50%, -14px) rotate(1deg); }
+			}
+
+			@media (max-width: 600px) {
+				.score { top: 14px; left: 14px; min-width: 0; padding: 9px 11px; }
+				.vitals { top: 14px; right: 14px; width: min(180px, 43vw); gap: 7px; }
+				.vital { padding: 7px 9px; }
+				.vital-heading { font-size: 0.58rem; }
+				.radar { top: 145px; right: 14px; width: 130px; height: 130px; }
+				.radar-title { top: 125px; right: 14px; font-size: 0.56rem; }
+				.weapon { bottom: 154px; left: 14px; min-width: 205px; padding: 9px 11px; }
+				.weapon .panel-value { font-size: 0.84rem; }
+				.overheat { top: 62%; padding: 9px 10px; letter-spacing: 0.1em; }
+				.overheat::before, .overheat::after { margin: 0 4px; }
+				.ship { width: clamp(120px, 34vw, 175px); }
+				.photo-credit { max-width: 150px; text-align: right; }
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				*, *::before, *::after { animation-duration: 8s !important; }
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="battlefield" aria-label="Animated space battle with stars, meteors, and laser fire"></canvas>
+		<div class="space-haze" aria-hidden="true"></div>
+		<main class="hud" aria-label="Galactic Scrimmage game display">
+			<div class="panel score">
+				<span class="panel-label">SCORE</span>
+				<strong class="panel-value">018350</strong>
+			</div>
+
+			<div class="vitals">
+				<div class="vital">
+					<div class="vital-heading"><span>HEALTH</span><strong>84%</strong></div>
+					<div class="meter"><div class="meter-fill"></div></div>
+				</div>
+				<div class="vital shield">
+					<div class="vital-heading"><span>SHIELD</span><strong>98%</strong></div>
+					<div class="meter"><div class="meter-fill"></div></div>
+				</div>
+			</div>
+
+			<span class="radar-title">RADAR // SECTOR 07</span>
+			<div class="radar" role="img" aria-label="Circular radar scope with range rings and a moving O.B.A.M.A. contact">
+				<span class="radar-sweep"></span>
+				<i class="blip one"></i>
+				<i class="blip two"></i>
+				<i class="blip three"></i>
+				<i class="blip hostile"></i>
+				<span class="obama-track"><span>O.B.A.M.A.</span></span>
+			</div>
+
+			<div class="panel weapon">
+				<span class="panel-label">WEAPON SYSTEM</span>
+				<strong class="panel-value">MK-II BLASTER</strong>
+				<span class="panel-label" style="margin: 10px 0 0;">AMMO // 10</span>
+				<span class="ammo-readout" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+			</div>
+
+			<div class="overheat">OVERHEAT</div>
+
+			<div class="ship" aria-label="Player spacecraft flying through the battlefield">
+				<svg viewBox="0 0 240 250" role="img" aria-hidden="true">
+					<defs>
+						<linearGradient id="hull" x1="0" x2="1" y1="0" y2="1">
+							<stop offset="0" stop-color="#f0fcff"/>
+							<stop offset="0.42" stop-color="#63cbe8"/>
+							<stop offset="1" stop-color="#163c72"/>
+						</linearGradient>
+						<linearGradient id="engine" x1="0" x2="0" y1="0" y2="1">
+							<stop offset="0" stop-color="#dfffff" stop-opacity=".95"/>
+							<stop offset=".35" stop-color="#31d9ff" stop-opacity=".86"/>
+							<stop offset="1" stop-color="#1680ff" stop-opacity="0"/>
+						</linearGradient>
+					</defs>
+					<path d="M92 168 L77 218 L105 199 L120 244 L135 199 L163 218 L148 168Z" fill="url(#engine)" opacity=".9"/>
+					<path d="M114 38 L103 92 L25 158 L18 190 L96 164 L110 204 L120 216 L130 204 L144 164 L222 190 L215 158 L137 92 L126 38 L120 19Z" fill="url(#hull)" stroke="#bcefff" stroke-width="3"/>
+					<path d="M120 43 L120 183" stroke="#f1ffff" stroke-width="3" opacity=".8"/>
+					<path d="M104 101 L49 157 L94 143Z" fill="#225c9b" stroke="#6de5ff" stroke-width="2"/>
+					<path d="M136 101 L191 157 L146 143Z" fill="#225c9b" stroke="#6de5ff" stroke-width="2"/>
+					<path d="M120 72 C102 91 103 116 120 131 C137 116 138 91 120 72Z" fill="#72f5ff" stroke="#e2ffff" stroke-width="3"/>
+					<path d="M24 173 L79 157 L68 177 L23 187Z M216 173 L161 157 L172 177 L217 187Z" fill="#e84f66" stroke="#ffb5c1" stroke-width="2"/>
+					<circle cx="120" cy="155" r="5" fill="#f3ffb0"/>
+				</svg>
+			</div>
+		</main>
+		<a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Barack_H._Obama_(4x5).png" target="_blank" rel="noopener noreferrer">Portrait: Pete Souza / CC BY 3.0</a>
+		<button class="audio-toggle" id="audio-toggle" type="button" aria-pressed="false">ENABLE AUDIO</button>
+		<audio id="obamna-audio" preload="auto">
+			<source src="../../../../Media/In-Class/Week-11/obamna.mp3" type="audio/mpeg">
+		</audio>
+		<audio id="thanks-obama-audio" preload="auto">
+			<source src="../../../../Media/In-Class/Week-11/thanks-obama-mp3cut.mp3" type="audio/mpeg">
+		</audio>
+
+		<script>
+			(() => {
+				const canvas = document.getElementById("battlefield");
+				const context = canvas.getContext("2d");
+				const radar = document.querySelector(".radar");
+				const obamaTrack = document.querySelector(".obama-track");
+				const obamaAudio = document.getElementById("obamna-audio");
+				const thanksObamaAudio = document.getElementById("thanks-obama-audio");
+				const audioToggle = document.getElementById("audio-toggle");
+				const stars = [];
+				const meteors = [];
+				const lasers = [];
+				const explosions = [];
+				let activeObamaImage = null;
+				let soundEnabled = false;
+				let width = 0;
+				let height = 0;
+				let pixelRatio = 1;
+				let lastMeteor = 0;
+				let lastLaser = 0;
+				let nextExplosion = 0;
+				let nextFlyby = 0;
+
+				function random(min, max) {
+					return Math.random() * (max - min) + min;
+				}
+
+				function showAudioError(error) {
+					soundEnabled = false;
+					obamaAudio.pause();
+					obamaAudio.loop = false;
+					thanksObamaAudio.pause();
+					audioToggle.setAttribute("aria-pressed", "false");
+					audioToggle.textContent = "AUDIO UNAVAILABLE";
+					audioToggle.disabled = true;
+					console.error("Could not play a game audio clip.", error);
+				}
+
+				function playObamaAudio(image) {
+					if (!soundEnabled || (image.dataset.audioPlayed && !obamaAudio.paused)) return;
+					image.dataset.audioPlayed = "true";
+					obamaAudio.currentTime = 0;
+					obamaAudio.loop = true;
+					const playback = obamaAudio.play();
+					if (playback) playback.catch((error) => {
+						delete image.dataset.audioPlayed;
+						showAudioError(error);
+					});
+				}
+
+				function playThanksObamaAudio() {
+					if (!soundEnabled || !thanksObamaAudio.paused) return;
+					thanksObamaAudio.currentTime = 0;
+					const playback = thanksObamaAudio.play();
+					if (playback) playback.catch(showAudioError);
+				}
+
+				audioToggle.addEventListener("click", () => {
+					soundEnabled = !soundEnabled;
+					audioToggle.setAttribute("aria-pressed", String(soundEnabled));
+					audioToggle.textContent = soundEnabled ? "MUTE AUDIO" : "ENABLE AUDIO";
+					if (soundEnabled && activeObamaImage && activeObamaImage.complete && activeObamaImage.naturalWidth > 0) {
+						playObamaAudio(activeObamaImage);
+					}
+					if (!soundEnabled) {
+						obamaAudio.pause();
+						obamaAudio.loop = false;
+						obamaAudio.currentTime = 0;
+						thanksObamaAudio.pause();
+						thanksObamaAudio.currentTime = 0;
+					}
+				});
+				obamaAudio.addEventListener("error", () => showAudioError(obamaAudio.error));
+				thanksObamaAudio.addEventListener("error", () => showAudioError(thanksObamaAudio.error));
+
+				function createMeteor(x, y, radius, fragment) {
+					const vertices = [];
+					for (let i = 0; i < 9; i++) {
+						vertices.push(radius * random(0.72, 1.24));
+					}
+					return {
+						x,
+						y,
+						radius,
+						vertices,
+						vx: fragment ? random(-180, 180) : random(-28, 28),
+						vy: fragment ? random(100, 260) : random(90, 155),
+						rotation: random(0, Math.PI * 2),
+						spin: random(-1.5, 1.5),
+						targeted: false,
+						fragment
+					};
+				}
+
+				function createExplosion(x, y, radius, color) {
+					const particles = [];
+					const count = Math.round(random(18, 30) * Math.min(radius / 20, 1.5));
+					for (let i = 0; i < count; i++) {
+						const angle = random(0, Math.PI * 2);
+						const speed = random(35, 220) * Math.min(radius / 18, 1.6);
+						particles.push({
+							x,
+							y,
+							vx: Math.cos(angle) * speed,
+							vy: Math.sin(angle) * speed,
+							size: random(1.2, 4),
+							alpha: random(0.65, 1)
+						});
+					}
+					explosions.push({ x, y, radius, color, particles, life: 0, duration: 0.65 });
+				}
+
+				function addObamaFlyby() {
+					const imageWidth = random(76, 122);
+					const direction = Math.random() > 0.5 ? 1 : -1;
+					const startX = direction > 0 ? -imageWidth : width + imageWidth;
+					const endX = direction > 0 ? width + imageWidth : -imageWidth;
+					const image = document.createElement("img");
+					image.className = "obama-flyby";
+					image.src = "https://upload.wikimedia.org/wikipedia/commons/e/ec/Barack_H._Obama_%284x5%29.png";
+					image.alt = "Barack Obama";
+					image.style.width = `${imageWidth}px`;
+					image.style.top = `${random(12, 72)}vh`;
+					activeObamaImage = image;
+					obamaTrack.classList.add("is-active");
+					document.body.appendChild(image);
+					const flybyDuration = random(6500, 10500);
+					image.dataset.flybySpeed = String(Math.abs(endX - startX) / (flybyDuration / 1000));
+					const flyby = image.animate(
+						[{ left: `${startX}px` }, { left: `${endX}px` }],
+						{ duration: flybyDuration, easing: "linear" }
+					);
+					const removeImage = () => {
+						image.remove();
+						if (activeObamaImage === image) {
+							obamaAudio.pause();
+							obamaAudio.loop = false;
+							obamaAudio.currentTime = 0;
+							activeObamaImage = null;
+							obamaTrack.classList.remove("is-active");
+						}
+					};
+					flyby.onfinish = removeImage;
+					image.onerror = removeImage;
+				}
+
+				function updateObamaRadar() {
+					if (!activeObamaImage || !activeObamaImage.isConnected) {
+						obamaTrack.classList.remove("is-active");
+						return;
+					}
+					const bounds = activeObamaImage.getBoundingClientRect();
+					if (bounds.right <= 0 || bounds.left >= width) {
+						obamaAudio.pause();
+						obamaAudio.loop = false;
+						obamaAudio.currentTime = 0;
+						obamaTrack.classList.remove("is-active");
+						return;
+					}
+					const x = Math.max(0, Math.min(1, (bounds.left + bounds.width / 2) / width));
+					const y = Math.max(0, Math.min(1, (bounds.top + bounds.height / 2) / height));
+					obamaTrack.style.left = `${x * 100}%`;
+					obamaTrack.style.top = `${y * 100}%`;
+					obamaTrack.classList.toggle("to-left", x > 0.68);
+					obamaTrack.classList.toggle("below", y < 0.28);
+					obamaTrack.classList.add("is-active");
+					if (activeObamaImage.complete && activeObamaImage.naturalWidth > 0) {
+						playObamaAudio(activeObamaImage);
+					}
+				}
+
+				function getObamaSafetyBounds(duration) {
+					if (!activeObamaImage || !activeObamaImage.isConnected) return null;
+					const bounds = activeObamaImage.getBoundingClientRect();
+					const travelMargin = Number(activeObamaImage.dataset.flybySpeed || 0) * duration + 12;
+					return {
+						left: bounds.left - travelMargin,
+						right: bounds.right + travelMargin,
+						top: bounds.top - 10,
+						bottom: bounds.bottom + 10
+					};
+				}
+
+				function segmentIntersectsRect(start, end, bounds) {
+					const dx = end.x - start.x;
+					const dy = end.y - start.y;
+					let minTime = 0;
+					let maxTime = 1;
+
+					function clip(p, q) {
+						if (p === 0) return q >= 0;
+						const time = q / p;
+						if (p < 0) {
+							if (time > maxTime) return false;
+							minTime = Math.max(minTime, time);
+						} else {
+							if (time < minTime) return false;
+							maxTime = Math.min(maxTime, time);
+						}
+						return true;
+					}
+
+					return clip(-dx, start.x - bounds.left) &&
+						clip(dx, bounds.right - start.x) &&
+						clip(-dy, start.y - bounds.top) &&
+						clip(dy, bounds.bottom - start.y);
+				}
+
+				function buildLaserPath(startX, startY, endX, endY, duration) {
+					const start = { x: startX, y: startY };
+					const end = { x: endX, y: endY };
+					const bounds = getObamaSafetyBounds(duration);
+					if (!bounds || !segmentIntersectsRect(start, end, bounds)) return [start, end];
+					if (
+						(start.x >= bounds.left && start.x <= bounds.right && start.y >= bounds.top && start.y <= bounds.bottom) ||
+						(end.x >= bounds.left && end.x <= bounds.right && end.y >= bounds.top && end.y <= bounds.bottom)
+					) {
+						return null;
+					}
+
+					const dx = end.x - start.x;
+					const dy = end.y - start.y;
+					const length = Math.hypot(dx, dy) || 1;
+					const normalX = -dy / length;
+					const normalY = dx / length;
+					const midpointX = (start.x + end.x) / 2;
+					const midpointY = (start.y + end.y) / 2;
+					const offsetStart = Math.max(bounds.right - bounds.left, bounds.bottom - bounds.top) + 24;
+					const offsetStep = Math.max(18, offsetStart * 0.2);
+					const maxOffset = Math.hypot(width, height) * 2;
+
+					for (let offset = offsetStart; offset <= maxOffset; offset += offsetStep) {
+						for (const side of [-1, 1]) {
+							const controlX = midpointX + normalX * offset * side;
+							const controlY = midpointY + normalY * offset * side;
+							const path = [start];
+							let previous = start;
+							let safe = true;
+							for (let step = 1; step <= 40; step++) {
+								const progress = step / 40;
+								const inverse = 1 - progress;
+								const point = {
+									x: inverse * inverse * start.x + 2 * inverse * progress * controlX + progress * progress * end.x,
+									y: inverse * inverse * start.y + 2 * inverse * progress * controlY + progress * progress * end.y
+								};
+								if (segmentIntersectsRect(previous, point, bounds)) {
+									safe = false;
+									break;
+								}
+								path.push(point);
+								previous = point;
+							}
+							if (safe) return path;
+						}
+					}
+					return null;
+				}
+
+				function resize() {
+					width = window.innerWidth;
+					height = window.innerHeight;
+					pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+					canvas.width = Math.round(width * pixelRatio);
+					canvas.height = Math.round(height * pixelRatio);
+					context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+					stars.length = 0;
+					for (let i = 0; i < Math.min(230, Math.round(width * height / 5500)); i++) {
+						stars.push({
+							x: Math.random() * width,
+							y: Math.random() * height,
+							size: random(0.5, 2),
+							speed: random(12, 65),
+							alpha: random(0.35, 1),
+							tint: Math.random() > 0.82 ? "#7ceaff" : "#ffffff"
+						});
+					}
+				}
+
+				function addMeteor() {
+					const radius = random(Math.min(14, width * 0.035), Math.min(30, width * 0.075));
+					meteors.push(createMeteor(random(width * 0.08, width * 0.92), random(-height * 0.12, height * 0.28), radius, false));
+				}
+
+				function addLaser() {
+					const shipBounds = document.querySelector(".ship").getBoundingClientRect();
+					const startX = shipBounds.left + shipBounds.width / 2;
+					const startY = shipBounds.top + shipBounds.height * 0.08;
+					const duration = random(0.28, 0.4);
+					const candidates = meteors
+						.filter((meteor) => !meteor.fragment && !meteor.targeted && meteor.y < height * 0.76)
+						.sort((first, second) => first.y - second.y);
+					let target = null;
+					let path = null;
+					for (const meteor of candidates) {
+						const candidatePath = buildLaserPath(startX, startY, meteor.x, meteor.y, duration);
+						if (candidatePath) {
+							target = meteor;
+							path = candidatePath;
+							break;
+						}
+					}
+					let endX = target ? target.x : 0;
+					let endY = target ? target.y : 0;
+					if (!target) {
+						for (let attempt = 0; attempt < 8; attempt++) {
+							endX = startX + random(-width * 0.32, width * 0.32);
+							endY = random(height * 0.12, height * 0.48);
+							path = buildLaserPath(startX, startY, endX, endY, duration);
+							if (path) break;
+						}
+						if (!path) return;
+					}
+					if (target) target.targeted = true;
+					lasers.push({
+						x: startX,
+						y: startY,
+						endX,
+						endY,
+						target,
+						path,
+						life: 0,
+						duration,
+						color: Math.random() > 0.5 ? "#39edff" : "#86fbff"
+					});
+				}
+
+				function drawMeteor(meteor) {
+					const speed = Math.hypot(meteor.vx, meteor.vy) || 1;
+					const tailLength = meteor.fragment ? meteor.radius * 3 : meteor.radius * 4.5;
+					const tailX = meteor.x - meteor.vx / speed * tailLength;
+					const tailY = meteor.y - meteor.vy / speed * tailLength;
+					const trail = context.createLinearGradient(tailX, tailY, meteor.x, meteor.y);
+					trail.addColorStop(0, "transparent");
+					trail.addColorStop(1, meteor.fragment ? "#ff9860" : "#ffb45c");
+					context.strokeStyle = trail;
+					context.lineWidth = Math.max(1.5, meteor.radius * 0.45);
+					context.shadowBlur = meteor.fragment ? 8 : 18;
+					context.shadowColor = "#ff754c";
+					context.beginPath();
+					context.moveTo(tailX, tailY);
+					context.lineTo(meteor.x, meteor.y);
+					context.stroke();
+
+					const rock = context.createRadialGradient(
+						meteor.x - meteor.radius * 0.35,
+						meteor.y - meteor.radius * 0.4,
+						1,
+						meteor.x,
+						meteor.y,
+						meteor.radius * 1.25
+					);
+					rock.addColorStop(0, "#ffe0a0");
+					rock.addColorStop(0.32, "#c86b45");
+					rock.addColorStop(1, "#38243a");
+					context.fillStyle = rock;
+					context.strokeStyle = "#ffcf8a";
+					context.lineWidth = meteor.fragment ? 0.8 : 1.4;
+					context.beginPath();
+					for (let i = 0; i < meteor.vertices.length; i++) {
+						const angle = meteor.rotation + i / meteor.vertices.length * Math.PI * 2;
+						const x = meteor.x + Math.cos(angle) * meteor.vertices[i];
+						const y = meteor.y + Math.sin(angle) * meteor.vertices[i];
+						if (i === 0) context.moveTo(x, y);
+						else context.lineTo(x, y);
+					}
+					context.closePath();
+					context.fill();
+					if (!meteor.fragment) context.stroke();
+				}
+
+				function splitMeteor(meteor) {
+					createExplosion(meteor.x, meteor.y, meteor.radius * 1.6, "#ffb34e");
+					const fragmentCount = Math.round(random(5, 8));
+					for (let i = 0; i < fragmentCount; i++) {
+						const fragment = createMeteor(
+							meteor.x + random(-meteor.radius * 0.5, meteor.radius * 0.5),
+							meteor.y + random(-meteor.radius * 0.5, meteor.radius * 0.5),
+							random(Math.max(3, meteor.radius * 0.16), Math.max(5, meteor.radius * 0.32)),
+							true
+						);
+						fragment.vx += meteor.vx * 0.35;
+						fragment.vy += meteor.vy * 0.35;
+						meteors.push(fragment);
+					}
+				}
+
+				function drawExplosions(delta) {
+					for (let i = explosions.length - 1; i >= 0; i--) {
+						const explosion = explosions[i];
+						explosion.life += delta;
+						const progress = Math.min(explosion.life / explosion.duration, 1);
+						const alpha = 1 - progress;
+						context.globalAlpha = alpha;
+						context.strokeStyle = explosion.color;
+						context.lineWidth = Math.max(1, explosion.radius * 0.12 * alpha);
+						context.shadowBlur = 20;
+						context.shadowColor = explosion.color;
+						context.beginPath();
+						context.arc(explosion.x, explosion.y, explosion.radius * (0.25 + progress), 0, Math.PI * 2);
+						context.stroke();
+						context.fillStyle = "#ffd789";
+						context.beginPath();
+						context.arc(explosion.x, explosion.y, explosion.radius * (0.4 + progress * 0.35) * alpha, 0, Math.PI * 2);
+						context.fill();
+						for (const particle of explosion.particles) {
+							particle.x += particle.vx * delta;
+							particle.y += particle.vy * delta;
+							particle.vx *= 0.97;
+							particle.vy *= 0.97;
+							context.globalAlpha = alpha * particle.alpha;
+							context.fillStyle = explosion.color;
+							context.fillRect(particle.x, particle.y, particle.size, particle.size);
+						}
+						context.globalAlpha = 1;
+						if (progress >= 1) explosions.splice(i, 1);
+					}
+				}
+
+				function draw(now) {
+					const time = now / 1000;
+					const delta = Math.min((now - (draw.previous || now)) / 1000, 0.04);
+					draw.previous = now;
+					if (!nextFlyby) nextFlyby = now + random(1800, 4200);
+					if (now >= nextFlyby) {
+						addObamaFlyby();
+						nextFlyby = now + random(12000, 21000);
+					}
+					updateObamaRadar();
+					context.clearRect(0, 0, width, height);
+
+					for (const star of stars) {
+						star.y += star.speed * delta;
+						if (star.y > height + 2) {
+							star.y = -2;
+							star.x = Math.random() * width;
+						}
+						context.globalAlpha = star.alpha * (0.72 + Math.sin(time * 2 + star.x) * 0.18);
+						context.fillStyle = star.tint;
+						context.fillRect(star.x, star.y, star.size, star.size);
+					}
+
+					context.globalAlpha = 1;
+					if (now - lastMeteor > 1050) {
+						addMeteor();
+						lastMeteor = now;
+					}
+					if (now - lastLaser > 540) {
+						addLaser();
+						lastLaser = now;
+					}
+					if (now > nextExplosion) {
+						createExplosion(random(width * 0.12, width * 0.88), random(height * 0.12, height * 0.7), random(12, 24), "#ff765e");
+						nextExplosion = now + random(2800, 5200);
+					}
+
+					for (let i = meteors.length - 1; i >= 0; i--) {
+						const meteor = meteors[i];
+						meteor.x += meteor.vx * delta;
+						meteor.y += meteor.vy * delta;
+						meteor.rotation += meteor.spin * delta;
+						drawMeteor(meteor);
+						if (meteor.y > height + meteor.radius * 5 || meteor.x < -meteor.radius * 5 || meteor.x > width + meteor.radius * 5) {
+							meteors.splice(i, 1);
+						}
+					}
+
+					for (let i = lasers.length - 1; i >= 0; i--) {
+						const laser = lasers[i];
+						laser.life += delta;
+						const alpha = Math.max(0, 1 - laser.life / laser.duration);
+						const progress = Math.min(laser.life / laser.duration, 1);
+						if (laser.target && meteors.includes(laser.target)) {
+							laser.endX = laser.target.x;
+							laser.endY = laser.target.y;
+						}
+						laser.path = buildLaserPath(
+							laser.x,
+							laser.y,
+							laser.endX,
+							laser.endY,
+							Math.max(0, laser.duration - laser.life)
+						);
+						if (!laser.path) {
+							if (laser.target) laser.target.targeted = false;
+							lasers.splice(i, 1);
+							continue;
+						}
+						const points = laser.path;
+						context.globalAlpha = alpha;
+						context.strokeStyle = laser.color;
+						context.lineWidth = 3;
+						context.shadowBlur = 16;
+						context.shadowColor = laser.color;
+						context.beginPath();
+						context.moveTo(points[0].x, points[0].y);
+						for (let j = 1; j < points.length; j++) {
+							context.lineTo(points[j].x, points[j].y);
+						}
+						context.stroke();
+						context.globalAlpha = 1;
+						if (progress >= 1) {
+							if (laser.target && meteors.includes(laser.target)) {
+								const target = laser.target;
+								const hitIndex = meteors.indexOf(target);
+								if (hitIndex >= 0) {
+									meteors.splice(hitIndex, 1);
+									splitMeteor(target);
+									playThanksObamaAudio();
+								}
+							}
+							lasers.splice(i, 1);
+						}
+					}
+
+					drawExplosions(delta);
+					context.globalAlpha = 1;
+					context.shadowBlur = 0;
+					requestAnimationFrame(draw);
+				}
+
+				window.addEventListener("resize", resize);
+				resize();
+				requestAnimationFrame(draw);
+			})();
+		</script>
+	</body>
+</html>
