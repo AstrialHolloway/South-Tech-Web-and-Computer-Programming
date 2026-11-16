@@ -4,32 +4,121 @@ const SAVE_VERSION = 2;
 const MAX_GAME_VALUE = 1e300;
 const PRESTIGE_BASE_COST = 5_000_000;
 const MAX_BACKGROUND_OLIVES = 100;
+const GAME_TICK_MS = 1_000;
+const AUTOSAVE_INTERVAL_MS = 5_000;
+const EVENT_DURATION_MS = 20_000;
+const EVENT_MIN_INTERVAL_MS = 30_000;
+const EVENT_RANDOM_INTERVAL_MS = 30_000;
 
 const upgrades = {
-    press: { name: 'Olive Press', icon: '⚙️', initialCost: 15, growth: 1.35, production: 1, clickPower: 0 },
-    grove: { name: 'Olive Grove', icon: '🌳', initialCost: 100, growth: 1.4, production: 5, clickPower: 0, previous: 'press', requiredOwned: 5 },
-    mill: { name: 'Oil Mill', icon: '🏭', initialCost: 500, growth: 1.45, production: 25, clickPower: 0, previous: 'grove', requiredOwned: 5 },
-    refinery: { name: 'Golden Refinery', icon: '✨', initialCost: 2500, growth: 1.5, production: 100, clickPower: 0, previous: 'mill', requiredOwned: 5 },
-    orchard: { name: 'Grand Orchard', icon: '🌿', initialCost: 12000, growth: 1.55, production: 500, clickPower: 0, previous: 'refinery', requiredOwned: 5 },
-    gloves: { name: 'Picking Gloves', icon: '🧤', initialCost: 50, growth: 1.4, production: 0, clickPower: 1 },
-    basket: { name: 'Giant Basket', icon: '🧺', initialCost: 300, growth: 1.5, production: 0, clickPower: 10, previous: 'gloves', requiredOwned: 5 },
-    tractor: { name: 'Olive Tractor', icon: '🚜', initialCost: 1800, growth: 1.55, production: 0, clickPower: 50, previous: 'basket', requiredOwned: 5 },
-    goldenTouch: { name: 'Golden Touch', icon: '🪙', initialCost: 10000, growth: 1.6, production: 0, clickPower: 250, previous: 'tractor', requiredOwned: 5 },
-    ancientGrove: { name: 'Ancient Grove', icon: '🌲', initialCost: 60000, growth: 1.6, production: 2500, clickPower: 0, previous: 'orchard', requiredOwned: 5 },
-    oliveEstate: { name: 'Olive Estate', icon: '🏡', initialCost: 300000, growth: 1.65, production: 12000, clickPower: 0, previous: 'ancientGrove', requiredOwned: 5 },
-    sunlitTerrace: { name: 'Sunlit Terrace', icon: '☀️', initialCost: 1500000, growth: 1.7, production: 60000, clickPower: 0, previous: 'oliveEstate', requiredOwned: 5 },
-    royalOrchard: { name: 'Royal Orchard', icon: '👑', initialCost: 10000000, growth: 1.75, production: 300000, clickPower: 0, previous: 'sunlitTerrace', requiredOwned: 5 },
-    worldTree: { name: 'World Tree', icon: '🌍', initialCost: 100000000, growth: 1.8, production: 1500000, clickPower: 0, previous: 'royalOrchard', requiredOwned: 5 },
-    harvestScythe: { name: 'Harvest Scythe', icon: '🌾', initialCost: 50000, growth: 1.65, production: 0, clickPower: 1500, previous: 'goldenTouch', requiredOwned: 5 },
-    oliveHarvester: { name: 'Olive Harvester', icon: '🚛', initialCost: 250000, growth: 1.7, production: 0, clickPower: 7500, previous: 'harvestScythe', requiredOwned: 5 },
-    titanBasket: { name: 'Titan Basket', icon: '🧺', initialCost: 1250000, growth: 1.75, production: 0, clickPower: 40000, previous: 'oliveHarvester', requiredOwned: 5 },
-    emeraldTouch: { name: 'Emerald Touch', icon: '💚', initialCost: 7500000, growth: 1.8, production: 0, clickPower: 200000, previous: 'titanBasket', requiredOwned: 5 },
-    infiniteGatherer: { name: 'Infinite Gatherer', icon: '♾️', initialCost: 50000000, growth: 1.85, production: 0, clickPower: 1000000, previous: 'emeraldTouch', requiredOwned: 5 },
-    prestigePress: { name: 'Prestige Press', icon: '🌟', initialCost: 1000, growth: 1.5, production: 250, clickPower: 0, prestigeRequired: 1 },
-    starGrove: { name: 'Star Grove', icon: '🌠', initialCost: 10000, growth: 1.6, production: 2500, clickPower: 0, prestigeRequired: 2 },
-    cosmicBasket: { name: 'Cosmic Basket', icon: '🌌', initialCost: 50000, growth: 1.7, production: 0, clickPower: 1000, prestigeRequired: 3 }
+    // Olive production upgrades
+    press: {
+        name: 'Olive Press', icon: '⚙️', initialCost: 15, growth: 1.35,
+        production: 1, clickPower: 0
+    },
+    grove: {
+        name: 'Olive Grove', icon: '🌳', initialCost: 100, growth: 1.4,
+        production: 5, clickPower: 0, previous: 'press', requiredOwned: 5
+    },
+    mill: {
+        name: 'Oil Mill', icon: '🏭', initialCost: 500, growth: 1.45,
+        production: 25, clickPower: 0, previous: 'grove', requiredOwned: 5
+    },
+    refinery: {
+        name: 'Golden Refinery', icon: '✨', initialCost: 2500, growth: 1.5,
+        production: 100, clickPower: 0, previous: 'mill', requiredOwned: 5
+    },
+    orchard: {
+        name: 'Grand Orchard', icon: '🌿', initialCost: 12000, growth: 1.55,
+        production: 500, clickPower: 0, previous: 'refinery', requiredOwned: 5
+    },
+    ancientGrove: {
+        name: 'Ancient Grove', icon: '🌲', initialCost: 60000, growth: 1.6,
+        production: 2500, clickPower: 0, previous: 'orchard', requiredOwned: 5
+    },
+    oliveEstate: {
+        name: 'Olive Estate', icon: '🏡', initialCost: 300000, growth: 1.65,
+        production: 12000, clickPower: 0, previous: 'ancientGrove', requiredOwned: 5
+    },
+    sunlitTerrace: {
+        name: 'Sunlit Terrace', icon: '☀️', initialCost: 1500000, growth: 1.7,
+        production: 60000, clickPower: 0, previous: 'oliveEstate', requiredOwned: 5
+    },
+    royalOrchard: {
+        name: 'Royal Orchard', icon: '👑', initialCost: 10000000, growth: 1.75,
+        production: 300000, clickPower: 0, previous: 'sunlitTerrace', requiredOwned: 5
+    },
+    worldTree: {
+        name: 'World Tree', icon: '🌍', initialCost: 100000000, growth: 1.8,
+        production: 1500000, clickPower: 0, previous: 'royalOrchard', requiredOwned: 5
+    },
+
+    // Click-power upgrades
+    gloves: {
+        name: 'Picking Gloves', icon: '🧤', initialCost: 50, growth: 1.4,
+        production: 0, clickPower: 1
+    },
+    basket: {
+        name: 'Giant Basket', icon: '🧺', initialCost: 300, growth: 1.5,
+        production: 0, clickPower: 10, previous: 'gloves', requiredOwned: 5
+    },
+    tractor: {
+        name: 'Olive Tractor', icon: '🚜', initialCost: 1800, growth: 1.55,
+        production: 0, clickPower: 50, previous: 'basket', requiredOwned: 5
+    },
+    goldenTouch: {
+        name: 'Golden Touch', icon: '🪙', initialCost: 10000, growth: 1.6,
+        production: 0, clickPower: 250, previous: 'tractor', requiredOwned: 5
+    },
+    harvestScythe: {
+        name: 'Harvest Scythe', icon: '🌾', initialCost: 50000, growth: 1.65,
+        production: 0, clickPower: 1500, previous: 'goldenTouch', requiredOwned: 5
+    },
+    oliveHarvester: {
+        name: 'Olive Harvester', icon: '🚛', initialCost: 250000, growth: 1.7,
+        production: 0, clickPower: 7500, previous: 'harvestScythe', requiredOwned: 5
+    },
+    titanBasket: {
+        name: 'Titan Basket', icon: '🧺', initialCost: 1250000, growth: 1.75,
+        production: 0, clickPower: 40000, previous: 'oliveHarvester', requiredOwned: 5
+    },
+    emeraldTouch: {
+        name: 'Emerald Touch', icon: '💚', initialCost: 7500000, growth: 1.8,
+        production: 0, clickPower: 200000, previous: 'titanBasket', requiredOwned: 5
+    },
+    infiniteGatherer: {
+        name: 'Infinite Gatherer', icon: '♾️', initialCost: 50000000, growth: 1.85,
+        production: 0, clickPower: 1000000, previous: 'emeraldTouch', requiredOwned: 5
+    },
+
+    // Prestige upgrades unlock at the listed prestige level.
+    prestigePress: {
+        name: 'Prestige Press', icon: '🌟', initialCost: 10000000000, growth: 1.5,
+        production: 15000000, clickPower: 0, prestigeRequired: 1
+    },
+    starGrove: {
+        name: 'Star Grove', icon: '🌠', initialCost: 100000000000, growth: 1.6,
+        production: 150000000, clickPower: 0, prestigeRequired: 2
+    },
+    cosmicBasket: {
+        name: 'Cosmic Basket', icon: '🌌', initialCost: 5000000000, growth: 1.7,
+        production: 0, clickPower: 10000000, prestigeRequired: 3
+    },
+    stellarGrove: {
+        name: 'Stellar Grove', icon: '🌌', initialCost: 1000000000000, growth: 1.7,
+        production: 1500000000, clickPower: 0, prestigeRequired: 4
+    },
+    cosmicHarvester: {
+        name: 'Cosmic Harvester', icon: '🚀', initialCost: 50000000000, growth: 1.7,
+        production: 0, clickPower: 100000000, prestigeRequired: 5
+    },
+    infiniteBasket: {
+        name: 'Infinite Basket', icon: '🪐', initialCost: 500000000000, growth: 1.7,
+        production: 0, clickPower: 1000000000, prestigeRequired: 6
+    }
 };
 
+// Runtime state and DOM references
 const defaultState = () => ({
     olives: 0,
     totalClicks: 0,
@@ -71,6 +160,7 @@ const numberFormat = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 1
 });
 
+// Save loading and validation
 function isValidSave(save) {
     return save
         && (save.version === 1 || save.version === SAVE_VERSION)
@@ -148,6 +238,7 @@ let settings = loadSettings();
 let activeEvent = null;
 let eventExpiryTimer = null;
 
+// Production and upgrade calculations
 function productionPerSecond() {
     const baseProduction = Object.entries(upgrades).reduce((total, [name, upgrade]) =>
         total + upgradeAmount(upgrade.production, state.owned[name]), 0
@@ -190,6 +281,7 @@ function isUpgradeUnlocked(upgrade) {
     return previousUnlocked && prestigeUnlocked;
 }
 
+// Random events and visual effects
 function spawnFallingOlive() {
     if (settings.removeOliveParticles) return;
     if (elements.fallingOlives.childElementCount >= MAX_BACKGROUND_OLIVES) return;
@@ -210,11 +302,37 @@ function hideEventPopup() {
 
 function showRandomEvent() {
     const events = [
-        { category: 'goodEvents', title: 'Olive boom!', message: 'The harvest is thriving: production doubled for 20 seconds.', multiplier: 2 },
-        { category: 'goodEvents', title: 'Perfect weather!', message: 'Gentle sunshine boosts production by 50% for 20 seconds.', multiplier: 1.5 },
-        { category: 'goodEvents', title: 'Harvest Moon', message: 'The Harvest Moon doubles production and click yields for 20 seconds.', multiplier: 2, clickMultiplier: 2 },
-        { category: 'badEvents', title: 'A swarm of pests!', message: 'Pests slow production to half speed for 20 seconds.', multiplier: 0.5 },
-        { category: 'badEvents', title: 'The oil spill!', message: 'A messy spill slows production to 25% for 20 seconds.', multiplier: 0.25 }
+        {
+            category: 'goodEvents',
+            title: 'Olive boom!',
+            message: 'The harvest is thriving: production doubled for 20 seconds.',
+            multiplier: 2
+        },
+        {
+            category: 'goodEvents',
+            title: 'Perfect weather!',
+            message: 'Gentle sunshine boosts production by 50% for 20 seconds.',
+            multiplier: 1.5
+        },
+        {
+            category: 'goodEvents',
+            title: 'Harvest Moon',
+            message: 'The Harvest Moon doubles production and click yields for 20 seconds.',
+            multiplier: 2,
+            clickMultiplier: 2
+        },
+        {
+            category: 'badEvents',
+            title: 'A swarm of pests!',
+            message: 'Pests slow production to half speed for 20 seconds.',
+            multiplier: 0.5
+        },
+        {
+            category: 'badEvents',
+            title: 'The oil spill!',
+            message: 'A messy spill slows production to 25% for 20 seconds.',
+            multiplier: 0.25
+        }
     ].filter((event) => settings[event.category] && !settings.disableEvents);
     if (events.length === 0) return;
 
@@ -233,7 +351,7 @@ function showRandomEvent() {
         activeEvent = null;
         hideEventPopup();
         render();
-    }, 20_000);
+    }, EVENT_DURATION_MS);
     render();
 }
 
@@ -241,9 +359,10 @@ function scheduleRandomEvent() {
     window.setTimeout(() => {
         showRandomEvent();
         scheduleRandomEvent();
-    }, 30_000 + Math.random() * 30_000);
+    }, EVENT_MIN_INTERVAL_MS + Math.random() * EVENT_RANDOM_INTERVAL_MS);
 }
 
+// Saving and settings
 function saveGame() {
     try {
         localStorage.setItem(SAVE_KEY, JSON.stringify({
@@ -301,6 +420,7 @@ function handleSettingsChange() {
     saveSettings();
 }
 
+// UI rendering
 function render() {
     elements.oliveCount.textContent = numberFormat.format(state.olives);
     elements.productionRate.textContent = numberFormat.format(productionPerSecond());
@@ -318,11 +438,15 @@ function render() {
         const unlocked = isUpgradeUnlocked(upgrade);
         button.hidden = !unlocked;
         button.disabled = state.olives < cost;
+        const isProductionUpgrade = upgrade.production > 0;
+        const amount = isProductionUpgrade ? upgrade.production : upgrade.clickPower;
+        const unit = isProductionUpgrade ? 'olives/sec' : 'per click';
         button.querySelector('[data-unlock]').textContent =
-            `Next purchase: +${numberFormat.format(upgrade.production ? upgrade.production : upgrade.clickPower)} ${upgrade.production ? 'olives/sec' : 'per click'}`;
+            `Next purchase: +${numberFormat.format(amount)} ${unit}`;
     });
 }
 
+// Player actions and event listeners
 elements.oliveButton.addEventListener('click', () => {
     state.olives = Math.min(MAX_GAME_VALUE, state.olives + olivesPerClick());
     state.totalClicks += 1;
@@ -403,15 +527,16 @@ elements.resetDialog.addEventListener('submit', (event) => {
     }
 });
 
+// Periodic game updates
 window.setInterval(() => {
     const production = productionPerSecond();
     if (production === 0) return;
 
     state.olives = Math.min(MAX_GAME_VALUE, state.olives + production);
     render();
-}, 1000);
+}, GAME_TICK_MS);
 
-window.setInterval(saveGame, 5000);
+window.setInterval(saveGame, AUTOSAVE_INTERVAL_MS);
 window.addEventListener('pagehide', saveGame);
 
 render();

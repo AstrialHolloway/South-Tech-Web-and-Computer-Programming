@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <!-- Background effects and player settings -->
         <div class="falling-olives" id="falling-olives" aria-hidden="true"></div>
         <button class="settings-toggle" id="settings-toggle" type="button" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">⚙</button>
         <section class="settings-panel" id="settings-panel" aria-labelledby="settings-title" hidden>
@@ -33,6 +34,8 @@
                 <span>Remove olive particles</span>
             </label>
         </section>
+
+        <!-- Live event announcements -->
         <aside class="event-popup" id="event-popup" aria-live="assertive" hidden>
             <div>
                 <strong id="event-title"></strong>
@@ -40,6 +43,8 @@
             </div>
             <button class="event-dismiss" id="dismiss-event" type="button" aria-label="Dismiss event">×</button>
         </aside>
+
+        <!-- Current olive totals and production stats -->
         <details class="stats-menu" open>
             <summary>
                 <span aria-hidden="true">🫒</span>
@@ -61,6 +66,8 @@
                 </div>
             </section>
         </details>
+
+        <!-- Main game layout -->
         <main class="game">
             <header class="game-header">
                 <div>
@@ -79,6 +86,7 @@
                         </div>
                     </div>
                     <div class="upgrade-list" id="upgrade-list">
+                        <!-- Production upgrades -->
                         <button class="upgrade" type="button" data-upgrade="press">
                             <span class="upgrade-icon" aria-hidden="true">⚙️</span>
                             <span class="upgrade-info"><strong>Olive Press</strong><span>Produces 1 olive/sec per purchase</span><span data-unlock></span></span>
@@ -129,6 +137,8 @@
                             <span class="upgrade-info"><strong>World Tree</strong><span>Produces 1,500,000 olives/sec per purchase</span><span data-unlock></span></span>
                             <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
+
+                        <!-- Click-power upgrades -->
                         <button class="upgrade" type="button" data-upgrade="gloves">
                             <span class="upgrade-icon" aria-hidden="true">🧤</span>
                             <span class="upgrade-info"><strong>Picking Gloves</strong><span>Click power +1 per purchase</span><span data-unlock></span></span>
@@ -174,22 +184,41 @@
                             <span class="upgrade-info"><strong>Infinite Gatherer</strong><span>Click power +1,000,000 per purchase</span><span data-unlock></span></span>
                             <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
+
+                        <!-- Prestige upgrades -->
                         <button class="upgrade" type="button" data-upgrade="prestigePress">
                             <span class="upgrade-icon" aria-hidden="true">🌟</span>
-                            <span class="upgrade-info"><strong>Prestige Press</strong><span>Produces 250 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-info"><strong>Prestige Press</strong><span>Produces 15,000,000 olives/sec per purchase</span><span data-unlock></span></span>
                             <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="starGrove">
                             <span class="upgrade-icon" aria-hidden="true">🌠</span>
-                            <span class="upgrade-info"><strong>Star Grove</strong><span>Produces 2,500 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-info"><strong>Star Grove</strong><span>Produces 150,000,000 olives/sec per purchase</span><span data-unlock></span></span>
                             <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                         <button class="upgrade" type="button" data-upgrade="cosmicBasket">
                             <span class="upgrade-icon" aria-hidden="true">🌌</span>
-                            <span class="upgrade-info"><strong>Cosmic Basket</strong><span>Click power +1,000 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-info"><strong>Cosmic Basket</strong><span>Click power +10,000,000 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="stellarGrove">
+                            <span class="upgrade-icon" aria-hidden="true">🌌</span>
+                            <span class="upgrade-info"><strong>Stellar Grove</strong><span>Produces 1,500,000,000 olives/sec per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="cosmicHarvester">
+                            <span class="upgrade-icon" aria-hidden="true">🚀</span>
+                            <span class="upgrade-info"><strong>Cosmic Harvester</strong><span>Click power +100,000,000 per purchase</span><span data-unlock></span></span>
+                            <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
+                        </button>
+                        <button class="upgrade" type="button" data-upgrade="infiniteBasket">
+                            <span class="upgrade-icon" aria-hidden="true">🪐</span>
+                            <span class="upgrade-info"><strong>Infinite Basket</strong><span>Click power +1,000,000,000 per purchase</span><span data-unlock></span></span>
                             <span class="upgrade-cost"><span data-cost></span> 🫒</span><span class="upgrade-owned">Owned: <span data-owned></span></span>
                         </button>
                     </div>
+
+                    <!-- Prestige resets upgrades in exchange for a permanent bonus -->
                     <section class="prestige-panel" aria-labelledby="prestige-title">
                         <div>
                             <p class="eyebrow">Start over, harvest more</p>
@@ -209,6 +238,7 @@
             </footer>
         </main>
 
+        <!-- Always-accessible olive collection button and save status -->
         <aside class="click-dock" aria-label="Olive clicker">
             <button class="olive-button" id="olive-button" type="button" aria-label="Collect olives">
                 <img src="olive.png" alt="">
@@ -216,6 +246,7 @@
             <p class="save-status" id="save-status" role="status">Progress saves automatically</p>
         </aside>
 
+        <!-- Confirmation dialogs -->
         <dialog class="reset-dialog" id="reset-dialog" aria-labelledby="reset-title">
             <form method="dialog">
                 <p class="eyebrow">Start fresh?</p>
@@ -228,6 +259,7 @@
             </form>
         </dialog>
 
+        <!-- Prestige confirmation -->
         <dialog class="reset-dialog" id="prestige-dialog" aria-labelledby="prestige-confirm-title">
             <form method="dialog">
                 <p class="eyebrow">A new beginning</p>
@@ -240,6 +272,7 @@
             </form>
         </dialog>
 
+        <!-- Load game logic after the document is parsed -->
         <script src="game.js" defer></script>
     </body>
 </html>
