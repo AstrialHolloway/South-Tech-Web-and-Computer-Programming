@@ -445,7 +445,7 @@
 		</style>
 	</head>
 	<body>
-		<canvas id="battlefield" aria-label="Animated space battle with stars, meteors, and laser fire"></canvas>
+		<canvas id="battlefield" aria-label="Animated space battle with stars, mosquitoes, and laser fire"></canvas>
 		<div class="space-haze" aria-hidden="true"></div>
 		<main class="hud" aria-label="Galactic Scrimmage game display">
 			<div class="panel score">
@@ -517,6 +517,9 @@
 		<audio id="thanks-obama-audio" preload="auto">
 			<source src="../../../../Media/In-Class/Week-11/thanks-obama-mp3cut.mp3" type="audio/mpeg">
 		</audio>
+		<audio id="mosquito-audio" preload="auto">
+			<source src="../../../../Media/In-Class/Week-11/mosquito.mp3" type="audio/mpeg">
+		</audio>
 
 		<script>
 			(() => {
@@ -526,6 +529,7 @@
 				const obamaTrack = document.querySelector(".obama-track");
 				const obamaAudio = document.getElementById("obamna-audio");
 				const thanksObamaAudio = document.getElementById("thanks-obama-audio");
+				const mosquitoAudio = document.getElementById("mosquito-audio");
 				const audioToggle = document.getElementById("audio-toggle");
 				const stars = [];
 				const meteors = [];
@@ -546,10 +550,12 @@
 				}
 
 				function showAudioError(error) {
+					if (error && error.name === "AbortError") return;
 					soundEnabled = false;
 					obamaAudio.pause();
 					obamaAudio.loop = false;
 					thanksObamaAudio.pause();
+					mosquitoAudio.pause();
 					audioToggle.setAttribute("aria-pressed", "false");
 					audioToggle.textContent = "AUDIO UNAVAILABLE";
 					audioToggle.disabled = true;
@@ -575,6 +581,13 @@
 					if (playback) playback.catch(showAudioError);
 				}
 
+				function playMosquitoAudio() {
+					if (!soundEnabled) return;
+					mosquitoAudio.currentTime = 0;
+					const playback = mosquitoAudio.play();
+					if (playback) playback.catch(showAudioError);
+				}
+
 				audioToggle.addEventListener("click", () => {
 					soundEnabled = !soundEnabled;
 					audioToggle.setAttribute("aria-pressed", String(soundEnabled));
@@ -588,10 +601,13 @@
 						obamaAudio.currentTime = 0;
 						thanksObamaAudio.pause();
 						thanksObamaAudio.currentTime = 0;
+						mosquitoAudio.pause();
+						mosquitoAudio.currentTime = 0;
 					}
 				});
 				obamaAudio.addEventListener("error", () => showAudioError(obamaAudio.error));
 				thanksObamaAudio.addEventListener("error", () => showAudioError(thanksObamaAudio.error));
+				mosquitoAudio.addEventListener("error", () => showAudioError(mosquitoAudio.error));
 
 				function createMeteor(x, y, radius, fragment) {
 					const vertices = [];
@@ -844,48 +860,61 @@
 					});
 				}
 
-				function drawMeteor(meteor) {
-					const speed = Math.hypot(meteor.vx, meteor.vy) || 1;
-					const tailLength = meteor.fragment ? meteor.radius * 3 : meteor.radius * 4.5;
-					const tailX = meteor.x - meteor.vx / speed * tailLength;
-					const tailY = meteor.y - meteor.vy / speed * tailLength;
-					const trail = context.createLinearGradient(tailX, tailY, meteor.x, meteor.y);
-					trail.addColorStop(0, "transparent");
-					trail.addColorStop(1, meteor.fragment ? "#ff9860" : "#ffb45c");
-					context.strokeStyle = trail;
-					context.lineWidth = Math.max(1.5, meteor.radius * 0.45);
-					context.shadowBlur = meteor.fragment ? 8 : 18;
-					context.shadowColor = "#ff754c";
+				function drawMosquito(mosquito) {
+					context.save();
+					context.translate(mosquito.x, mosquito.y);
+					context.rotate(mosquito.rotation);
+					context.scale(mosquito.radius / 18, mosquito.radius / 18);
+
+					context.shadowBlur = 8;
+					context.shadowColor = "#72f6d2";
+					context.fillStyle = "rgba(151, 255, 235, 0.52)";
+					context.strokeStyle = "#c5fff3";
+					context.lineWidth = 1.2;
 					context.beginPath();
-					context.moveTo(tailX, tailY);
-					context.lineTo(meteor.x, meteor.y);
+					context.ellipse(-2, -4, 8, 3, -0.35, 0, Math.PI * 2);
+					context.ellipse(-2, 4, 8, 3, 0.35, 0, Math.PI * 2);
+					context.fill();
 					context.stroke();
 
-					const rock = context.createRadialGradient(
-						meteor.x - meteor.radius * 0.35,
-						meteor.y - meteor.radius * 0.4,
-						1,
-						meteor.x,
-						meteor.y,
-						meteor.radius * 1.25
-					);
-					rock.addColorStop(0, "#ffe0a0");
-					rock.addColorStop(0.32, "#c86b45");
-					rock.addColorStop(1, "#38243a");
-					context.fillStyle = rock;
-					context.strokeStyle = "#ffcf8a";
-					context.lineWidth = meteor.fragment ? 0.8 : 1.4;
-					context.beginPath();
-					for (let i = 0; i < meteor.vertices.length; i++) {
-						const angle = meteor.rotation + i / meteor.vertices.length * Math.PI * 2;
-						const x = meteor.x + Math.cos(angle) * meteor.vertices[i];
-						const y = meteor.y + Math.sin(angle) * meteor.vertices[i];
-						if (i === 0) context.moveTo(x, y);
-						else context.lineTo(x, y);
+					context.shadowBlur = 5;
+					context.strokeStyle = "#7de6a4";
+					context.lineWidth = 1.5;
+					for (const side of [-1, 1]) {
+						for (const legX of [-6, -1, 4]) {
+							context.beginPath();
+							context.moveTo(legX, side * 2);
+							context.lineTo(legX - 4, side * 8);
+							context.lineTo(legX - 8, side * 11);
+							context.stroke();
+						}
 					}
-					context.closePath();
+
+					context.strokeStyle = "#b5f58a";
+					context.lineWidth = 2.5;
+					context.beginPath();
+					context.moveTo(-11, 0);
+					context.lineTo(9, 0);
+					context.stroke();
+					context.fillStyle = "#c7f58d";
+					context.beginPath();
+					context.ellipse(-4, 0, 7, 2.2, 0, 0, Math.PI * 2);
 					context.fill();
-					if (!meteor.fragment) context.stroke();
+					context.fillStyle = "#e8ffb0";
+					context.beginPath();
+					context.arc(11, 0, 3.2, 0, Math.PI * 2);
+					context.fill();
+					context.strokeStyle = "#e8ffb0";
+					context.lineWidth = 1.2;
+					context.beginPath();
+					context.moveTo(14, 0);
+					context.lineTo(25, 0);
+					context.moveTo(11, -2);
+					context.quadraticCurveTo(14, -8, 18, -7);
+					context.moveTo(11, 2);
+					context.quadraticCurveTo(14, 8, 18, 7);
+					context.stroke();
+					context.restore();
 				}
 
 				function splitMeteor(meteor) {
@@ -960,7 +989,7 @@
 					}
 
 					context.globalAlpha = 1;
-					if (now - lastMeteor > 1050) {
+					if (now - lastMeteor > 4000) {
 						addMeteor();
 						lastMeteor = now;
 					}
@@ -978,7 +1007,7 @@
 						meteor.x += meteor.vx * delta;
 						meteor.y += meteor.vy * delta;
 						meteor.rotation += meteor.spin * delta;
-						drawMeteor(meteor);
+						drawMosquito(meteor);
 						if (meteor.y > height + meteor.radius * 5 || meteor.x < -meteor.radius * 5 || meteor.x > width + meteor.radius * 5) {
 							meteors.splice(i, 1);
 						}
@@ -1036,6 +1065,7 @@
 						context.stroke();
 						if (laser.life >= laser.duration) {
 							if (laser.target && meteors.includes(laser.target)) {
+								playMosquitoAudio();
 								splitMeteor(laser.target);
 								meteors.splice(meteors.indexOf(laser.target), 1);
 							}
