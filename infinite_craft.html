@@ -104,6 +104,11 @@
             cursor: grabbing;
         }
 
+        /* Subtle golden accent for global first discoveries */
+        .element-pill.is-global-first {
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+
         /* Canvas instance specific */
         .canvas-instance {
             position: absolute;
@@ -241,20 +246,45 @@
             pointer-events: none;
             z-index: 50;
         }
+
+        /* Notification banner toast */
+        @keyframes toastSlideUp {
+            0% { opacity: 0; transform: translate(-50%, 12px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -8px); }
+        }
+        .status-toast {
+            animation: toastSlideUp 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
 
     <!-- LEFT/MAIN WORKSPACE -->
     <main id="workspace" class="relative flex-1 h-[62vh] md:h-full overflow-hidden">
-        <!-- Top-Left Minimal Brand & Discovery Counter -->
-        <div class="absolute top-4 left-4 z-30 flex items-center gap-3 pointer-events-none">
+        <!-- Top-Left Minimal Brand, Discovery Counter, Global Discoveries & AI Status Badge -->
+        <div class="absolute top-4 left-4 z-30 flex flex-wrap items-center gap-2 pointer-events-none">
             <div class="px-3 py-1.5 rounded-lg border text-sm font-semibold tracking-tight flex items-center gap-2 shadow-sm pointer-events-auto"
                  style="background-color: var(--ui-btn-bg); border-color: var(--border-color); color: var(--pill-text);">
                 <span>Infinite Craft</span>
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full"
                       style="background-color: var(--ui-btn-hover); color: var(--ui-muted);"
                       id="discovery-counter">4 discovered</span>
+            </div>
+
+            <button id="btn-global-badge" title="Filter Global First Discoveries"
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 shadow-sm pointer-events-auto transition-all hover:opacity-90"
+                    style="background-color: var(--ui-btn-bg); border-color: var(--border-color); color: var(--ui-muted);">
+                <span class="text-amber-500">✦</span>
+                <span id="global-counter">0 Global Firsts</span>
+            </button>
+
+            <div id="ai-status-badge"
+                 class="px-2.5 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 shadow-sm pointer-events-auto transition-colors"
+                 style="background-color: var(--ui-btn-bg); border-color: var(--border-color); color: var(--ui-muted);">
+                <span id="ai-status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span id="ai-status-text">AI Engine Ready</span>
             </div>
         </div>
 
@@ -267,6 +297,9 @@
 
         <!-- Active Canvas Elements Layer -->
         <div id="canvas-layer" class="absolute inset-0 w-full h-full"></div>
+
+        <!-- Status Toast Container -->
+        <div id="toast-container" class="pointer-events-none fixed bottom-16 left-1/2 md:left-[calc(50%-175px)] z-50"></div>
 
         <!-- Bottom-Left Minimal Utility Controls -->
         <div class="absolute bottom-4 left-4 z-30 flex flex-wrap items-center gap-2">
@@ -298,7 +331,7 @@
                 </svg>
             </button>
 
-            <button id="btn-reset" title="Reset All Progress"
+            <button id="btn-reset" title="Reset Progress & Global Discoveries"
                     class="control-btn px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm">
                 Reset
             </button>
@@ -319,7 +352,7 @@
             </div>
         </div>
 
-        <!-- Bottom Search & Sort Controls (Neal.fun signature layout) -->
+        <!-- Bottom Search, Filter & Sort Controls (Neal.fun signature layout) -->
         <div class="p-2.5 border-t flex flex-col gap-2" style="border-color: var(--border-color); background-color: var(--bg-sidebar);">
             <div class="relative flex items-center">
                 <svg class="w-4 h-4 absolute left-3 pointer-events-none" style="color: var(--ui-muted);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -333,39 +366,86 @@
                 </button>
             </div>
 
-            <div class="flex items-center justify-between gap-1.5 text-xs">
-                <span class="font-medium pl-1" style="color: var(--ui-muted);">Sort by:</span>
+            <div class="flex items-center justify-between gap-1 text-xs">
+                <button id="btn-filter-firsts" title="Show only Global First Discoveries"
+                        class="px-2 py-1 rounded-md font-medium border transition-colors flex items-center gap-1"
+                        style="background-color: var(--pill-bg); border-color: var(--border-color); color: var(--ui-muted);">
+                    <span class="text-amber-500">✦</span>
+                    <span>Firsts</span>
+                </button>
+
                 <div class="flex items-center gap-1">
-                    <button data-sort="time" class="sort-btn px-2.5 py-1 rounded-md font-medium border transition-colors">Time</button>
-                    <button data-sort="name" class="sort-btn px-2.5 py-1 rounded-md font-medium border transition-colors">Name</button>
-                    <button data-sort="emoji" class="sort-btn px-2.5 py-1 rounded-md font-medium border transition-colors">Emoji</button>
+                    <button data-sort="time" class="sort-btn px-2 py-1 rounded-md font-medium border transition-colors">Time</button>
+                    <button data-sort="name" class="sort-btn px-2 py-1 rounded-md font-medium border transition-colors">Name</button>
+                    <button data-sort="emoji" class="sort-btn px-2 py-1 rounded-md font-medium border transition-colors">Emoji</button>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Custom Non-Blocking Confirmation Modal for Reset -->
-    <div id="reset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px] p-4">
-        <div class="w-full max-w-xs rounded-xl border p-5 shadow-xl"
+    <!-- Custom Granular Reset Modal -->
+    <div id="reset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-[1px] p-4">
+        <div class="w-full max-w-sm rounded-xl border p-5 shadow-xl"
              style="background-color: var(--bg-sidebar); border-color: var(--border-color); color: var(--pill-text);">
-            <h3 class="text-base font-semibold mb-1.5">Reset Progress?</h3>
+            <h3 class="text-base font-semibold mb-1">Reset Options</h3>
             <p class="text-xs leading-relaxed mb-4" style="color: var(--ui-muted);">
-                This will clear all discovered elements and cached recipes, returning you to Water, Fire, Wind, and Earth.
+                Choose whether to reset your personal inventory, wipe the Global Discoveries &amp; AI recipe cache, or perform a full factory reset.
             </p>
-            <div class="flex justify-end gap-2">
-                <button id="cancel-reset" class="control-btn px-3 py-1.5 rounded-lg text-xs font-medium">Cancel</button>
-                <button id="confirm-reset" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors">Reset Everything</button>
+            <div class="flex flex-col gap-2 mb-4">
+                <button id="reset-global-only"
+                        class="w-full text-left px-3.5 py-2.5 rounded-lg border text-xs font-medium transition-colors flex items-center justify-between hover:border-amber-500/60"
+                        style="background-color: var(--pill-bg); border-color: var(--border-color);">
+                    <div>
+                        <div class="font-semibold text-amber-600 dark:text-amber-400">✦ Reset Global Discoveries &amp; Cache</div>
+                        <div class="text-[11px] opacity-75 mt-0.5">Clears all Global First Discoveries &amp; cached AI answers</div>
+                    </div>
+                    <span class="text-xs opacity-60">→</span>
+                </button>
+
+                <button id="reset-personal-only"
+                        class="w-full text-left px-3.5 py-2.5 rounded-lg border text-xs font-medium transition-colors flex items-center justify-between hover:border-blue-500/60"
+                        style="background-color: var(--pill-bg); border-color: var(--border-color);">
+                    <div>
+                        <div class="font-semibold">Reset Personal Inventory</div>
+                        <div class="text-[11px] opacity-75 mt-0.5">Returns your sidebar to Water, Fire, Wind, and Earth</div>
+                    </div>
+                    <span class="text-xs opacity-60">→</span>
+                </button>
+
+                <button id="confirm-reset"
+                        class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold">Reset Everything (Full Wipe)</div>
+                        <div class="text-[11px] text-red-100 mt-0.5">Wipes personal items, global discoveries &amp; all caches</div>
+                    </div>
+                    <span class="text-xs">→</span>
+                </button>
+            </div>
+            <div class="flex justify-end">
+                <button id="cancel-reset" class="control-btn px-3.5 py-1.5 rounded-lg text-xs font-medium">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
         /**
-         * INFINITE CRAFT - Core Engine & State
+         * INFINITE CRAFT - Dynamic AI Synthesis Engine & Global Discoveries
          */
-        const STORAGE_KEY_ITEMS = 'infinite_craft_items_v1';
-        const STORAGE_KEY_RECIPES = 'infinite_craft_recipes_v1';
-        const STORAGE_KEY_PREFS = 'infinite_craft_prefs_v1';
+        // Fresh v3 keys ensure old cached "Alchemy" fallbacks are completely cleared
+        const STORAGE_KEY_ITEMS = 'infinite_craft_items_v3';
+        const STORAGE_KEY_RECIPES = 'infinite_craft_recipes_v3';
+        const STORAGE_KEY_GLOBAL = 'infinite_craft_global_discoveries_v3';
+        const STORAGE_KEY_PREFS = 'infinite_craft_prefs_v3';
+
+        // Purge legacy storage keys so old cached recipes & fallbacks never pollute the infinite AI pool
+        try {
+            [
+                'infinite_craft_items_v1', 'infinite_craft_recipes_v1', 'infinite_craft_prefs_v1',
+                'infinite_craft_items_v2', 'infinite_craft_recipes_v2', 'infinite_craft_global_discoveries_v2', 'infinite_craft_prefs_v2'
+            ].forEach(k => {
+                if (localStorage.getItem(k) !== null) localStorage.removeItem(k);
+            });
+        } catch (e) {}
 
         // Starting 4 Elements
         const INITIAL_ELEMENTS = [
@@ -375,61 +455,26 @@
             { name: 'Earth', emoji: '🌍', discoveredAt: 4, isFirstDiscovery: false }
         ];
 
-        // Pre-seeded Classic Recipes (Zero-latency canonical combos)
+        // Minimal 6 Fundamental Starter Combos (Everything else is dynamically synthesized by Gemini AI!)
         const SEED_RECIPES = {
             'Earth+Water': { name: 'Plant', emoji: '🌱' },
             'Fire+Water': { name: 'Steam', emoji: '💨' },
             'Earth+Fire': { name: 'Lava', emoji: '🌋' },
             'Earth+Wind': { name: 'Dust', emoji: '🌫️' },
             'Water+Wind': { name: 'Wave', emoji: '🌊' },
-            'Fire+Wind': { name: 'Smoke', emoji: '💨' },
-            'Water+Water': { name: 'Lake', emoji: '🏞️' },
-            'Fire+Fire': { name: 'Volcano', emoji: '🌋' },
-            'Wind+Wind': { name: 'Tornado', emoji: '🌪️' },
-            'Earth+Earth': { name: 'Mountain', emoji: '⛰️' },
-            'Lava+Water': { name: 'Stone', emoji: '🪨' },
-            'Fire+Plant': { name: 'Ash', emoji: '⚱️' },
-            'Plant+Water': { name: 'Swamp', emoji: '🐊' },
-            'Plant+Wind': { name: 'Dandelion', emoji: '🌼' },
-            'Earth+Plant': { name: 'Tree', emoji: '🌳' },
-            'Lake+Water': { name: 'Ocean', emoji: '🌊' },
-            'Ocean+Water': { name: 'Sea', emoji: '🌊' },
-            'Steam+Wind': { name: 'Cloud', emoji: '☁️' },
-            'Cloud+Water': { name: 'Rain', emoji: '🌧️' },
-            'Earth+Rain': { name: 'Mud', emoji: '💩' },
-            'Fire+Mud': { name: 'Brick', emoji: '🧱' },
-            'Stone+Wind': { name: 'Sand', emoji: '🏖️' },
-            'Fire+Sand': { name: 'Glass', emoji: '🪟' },
-            'Lake+Lava': { name: 'Obsidian', emoji: '🖤' },
-            'Plant+Plant': { name: 'Forest', emoji: '🌲' },
-            'Tree+Tree': { name: 'Forest', emoji: '🌲' },
-            'Cloud+Cloud': { name: 'Storm', emoji: '⛈️' },
-            'Fire+Storm': { name: 'Lightning', emoji: '⚡' },
-            'Life+Mud': { name: 'Human', emoji: '🧑' },
-            'Lightning+Swamp': { name: 'Life', emoji: '🧬' },
-            'Energy+Swamp': { name: 'Life', emoji: '🧬' },
-            'Fire+Steam': { name: 'Engine', emoji: '🚂' },
-            'Mountain+Wind': { name: 'Avalanche', emoji: '🏔️' },
-            'Mountain+Water': { name: 'River', emoji: '🏞️' },
-            'Earth+Lava': { name: 'Volcano', emoji: '🌋' },
-            'Dust+Water': { name: 'Mud', emoji: '💩' },
-            'Dust+Fire': { name: 'Gunpowder', emoji: '💥' },
-            'Fire+Stone': { name: 'Metal', emoji: '⚙️' },
-            'Metal+Wind': { name: 'Windmill', emoji: '🎡' },
-            'Rain+Sun': { name: 'Rainbow', emoji: '🌈' },
-            'Fire+Sky': { name: 'Sun', emoji: '☀️' },
-            'Cloud+Sky': { name: 'Weather', emoji: '🌤️' },
-            'Air+Cloud': { name: 'Sky', emoji: '🌌' },
-            'Cloud+Wind': { name: 'Sky', emoji: '🌌' }
+            'Fire+Wind': { name: 'Smoke', emoji: '💨' }
         };
 
         // Application State
         let discoveredItems = [];
         let recipeCache = {};
+        let globalDiscoveries = []; // Tracks all global first discoveries made in this world
         let canvasInstances = [];
         let nextInstanceId = 1;
         let topZIndex = 20;
+        let activeAIRequests = 0;
         let sortMode = 'time'; // 'time' | 'name' | 'emoji'
+        let filterFirstsOnly = false;
         let searchQuery = '';
         let soundEnabled = true;
         let darkMode = false;
@@ -440,10 +485,26 @@
         const sidebarEl = document.getElementById('sidebar');
         const inventoryListEl = document.getElementById('inventory-list');
         const discoveryCounterEl = document.getElementById('discovery-counter');
+        const globalCounterEl = document.getElementById('global-counter');
+        const aiStatusDotEl = document.getElementById('ai-status-dot');
+        const aiStatusTextEl = document.getElementById('ai-status-text');
         const emptyHintEl = document.getElementById('empty-hint');
         const searchInputEl = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
         const trashBannerEl = document.getElementById('sidebar-trash-banner');
+        const filterFirstsBtn = document.getElementById('btn-filter-firsts');
+
+        function setAIStatus(state, label) {
+            aiStatusTextEl.textContent = label;
+            aiStatusDotEl.className = 'w-2 h-2 rounded-full transition-colors';
+            if (state === 'crafting') {
+                aiStatusDotEl.classList.add('bg-blue-500', 'animate-ping');
+            } else if (state === 'error') {
+                aiStatusDotEl.classList.add('bg-amber-500');
+            } else {
+                aiStatusDotEl.classList.add('bg-emerald-500');
+            }
+        }
 
         /**
          * SYNTHESIZED WEB AUDIO ENGINE (Zero external assets)
@@ -537,23 +598,44 @@
         })();
 
         /**
-         * PERSISTENCE & INITIALIZATION
+         * PERSISTENCE, STATUS TOASTS & INITIALIZATION
          */
+        function showStatusToast(message, accentColor = '#3b82f6') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            container.innerHTML = '';
+            const toast = document.createElement('div');
+            toast.className = 'status-toast px-3.5 py-1.5 rounded-full text-xs font-medium shadow-lg border whitespace-nowrap';
+            toast.style.backgroundColor = darkMode ? '#1e293b' : '#ffffff';
+            toast.style.borderColor = accentColor;
+            toast.style.color = darkMode ? '#f8fafc' : '#0f172a';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
         function loadState() {
             try {
                 const savedItems = localStorage.getItem(STORAGE_KEY_ITEMS);
                 const savedRecipes = localStorage.getItem(STORAGE_KEY_RECIPES);
+                const savedGlobal = localStorage.getItem(STORAGE_KEY_GLOBAL);
                 const savedPrefs = localStorage.getItem(STORAGE_KEY_PREFS);
 
                 if (savedItems) {
                     discoveredItems = JSON.parse(savedItems);
                 } else {
-                    discoveredItems = [...INITIAL_ELEMENTS];
+                    discoveredItems = INITIAL_ELEMENTS.map(el => ({ ...el }));
                 }
 
                 recipeCache = { ...SEED_RECIPES };
                 if (savedRecipes) {
                     Object.assign(recipeCache, JSON.parse(savedRecipes));
+                }
+
+                if (savedGlobal) {
+                    globalDiscoveries = JSON.parse(savedGlobal);
+                } else {
+                    globalDiscoveries = [];
                 }
 
                 if (savedPrefs) {
@@ -563,124 +645,44 @@
                     sortMode = prefs.sortMode || 'time';
                 }
             } catch (err) {
-                discoveredItems = [...INITIAL_ELEMENTS];
+                discoveredItems = INITIAL_ELEMENTS.map(el => ({ ...el }));
                 recipeCache = { ...SEED_RECIPES };
+                globalDiscoveries = [];
             }
 
             applyTheme();
             updateSoundIcon();
             updateSortButtons();
+            updateFilterFirstsButton();
             renderSidebar();
-            updateCounter();
+            updateCounters();
+            updateEmptyHint();
         }
 
         function saveState() {
             try {
                 localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(discoveredItems));
                 localStorage.setItem(STORAGE_KEY_RECIPES, JSON.stringify(recipeCache));
+                localStorage.setItem(STORAGE_KEY_GLOBAL, JSON.stringify(globalDiscoveries));
                 localStorage.setItem(STORAGE_KEY_PREFS, JSON.stringify({
                     soundEnabled,
                     darkMode,
                     sortMode
                 }));
             } catch (e) {
-                // Ignore quota issues if localStorage is full
+                // Ignore storage quota errors
             }
-        }
-
-        function getRecipeKey(a, b) {
-            return [a.trim(), b.trim()].sort((x, y) => x.localeCompare(y)).join('+');
         }
 
         /**
-         * GEMINI API INTEGRATION FOR INFINITE COMBINATIONS
-         */
-        async function fetchCombinationFromAI(elemA, elemB) {
-            const apiKey = ""; // Provided at runtime by environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-            const systemPrompt = `You are the crafting engine for the game Infinite Craft.
-Combine two input concepts/elements into ONE logical, clever, humorous, or pop-culture resulting concept.
-Rules:
-1. Return ONLY a JSON object with keys "emoji" (a single fitting emoji) and "name" (a concise 1 to 3 word title-cased noun or phrase).
-2. Be creative, intuitive, and playful like Neal.fun's Infinite Craft.
-3. Never return empty strings or explanations.`;
-
-            const userQuery = `Combine "${elemA}" + "${elemB}"`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            emoji: { type: "STRING" },
-                            name: { type: "STRING" }
-                        },
-                        required: ["emoji", "name"]
-                    }
-                }
-            };
-
-            let delay = 800;
-            for (let attempt = 0; attempt < 4; attempt++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (rawText) {
-                        const parsed = JSON.parse(rawText);
-                        if (parsed.name && parsed.emoji) {
-                            // Clean name and ensure single leading emoji
-                            const cleanName = String(parsed.name).trim().slice(0, 36);
-                            const cleanEmoji = Array.from(String(parsed.emoji).trim())[0] || '✨';
-                            return { name: cleanName, emoji: cleanEmoji, isAI: true };
-                        }
-                    }
-                } catch (err) {
-                    if (attempt < 3) {
-                        await new Promise(r => setTimeout(r, delay));
-                        delay *= 2;
-                    }
-                }
-            }
-
-            // Deterministic creative fallback if offline / API unavailable
-            return {
-                name: `${elemA} ${elemB}`.slice(0, 32),
-                emoji: '✨',
-                isAI: true
-            };
-        }
-
-        async function resolveRecipe(elemA, elemB) {
-            const key = getRecipeKey(elemA, elemB);
-            if (recipeCache[key]) {
-                return { ...recipeCache[key], isAI: false };
-            }
-
-            const result = await fetchCombinationFromAI(elemA, elemB);
-            recipeCache[key] = { name: result.name, emoji: result.emoji };
-            saveState();
-            return result;
-        }
-
-        /**
-         * SIDEBAR RENDERING & FILTERING
+         * SIDEBAR RENDERING & COUNTERS
          */
         function renderSidebar(highlightName = null) {
             let items = [...discoveredItems];
+
+            if (filterFirstsOnly) {
+                items = items.filter(item => item.isFirstDiscovery);
+            }
 
             if (searchQuery.trim() !== '') {
                 const q = searchQuery.toLowerCase();
@@ -703,7 +705,9 @@ Rules:
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'w-full text-center py-8 text-xs';
                 emptyMsg.style.color = 'var(--ui-muted)';
-                emptyMsg.textContent = 'No matching items found';
+                emptyMsg.textContent = filterFirstsOnly
+                    ? 'No Global First Discoveries yet — combine new elements!'
+                    : 'No matching items found';
                 inventoryListEl.appendChild(emptyMsg);
                 return;
             }
@@ -711,25 +715,30 @@ Rules:
             items.forEach(item => {
                 const pill = document.createElement('div');
                 pill.className = 'element-pill';
+                if (item.isFirstDiscovery) {
+                    pill.classList.add('is-global-first');
+                }
                 if (highlightName && item.name.toLowerCase() === highlightName.toLowerCase()) {
                     pill.classList.add('new-discovery-flash');
                 }
-                pill.innerHTML = `<span class="text-base leading-none pointer-events-none">${item.emoji}</span><span class="pointer-events-none">${escapeHtml(item.name)}</span>`;
+                const starBadge = item.isFirstDiscovery
+                    ? `<span class="text-[11px] text-amber-500 pointer-events-none" title="Global First Discovery">✦</span>`
+                    : '';
+                pill.innerHTML = `<span class="text-base leading-none pointer-events-none">${item.emoji}</span><span class="pointer-events-none">${escapeHtml(item.name)}</span>${starBadge}`;
 
-                // Pointer down starts dragging a fresh clone onto workspace
                 pill.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0 && e.pointerType === 'mouse') return;
                     e.preventDefault();
                     startSidebarDrag(e, item);
                 });
 
-                // Quick tap/click on mobile or desktop also spawns conveniently if not dragged
                 inventoryListEl.appendChild(pill);
             });
         }
 
-        function updateCounter() {
+        function updateCounters() {
             discoveryCounterEl.textContent = `${discoveredItems.length} discovered`;
+            globalCounterEl.textContent = `${globalDiscoveries.length} Global First${globalDiscoveries.length === 1 ? '' : 's'}`;
         }
 
         function updateEmptyHint() {
@@ -738,6 +747,208 @@ Rules:
             } else {
                 emptyHintEl.style.opacity = '1';
             }
+        }
+
+        function getRecipeKey(a, b) {
+            return [a.trim(), b.trim()].sort((x, y) => x.localeCompare(y)).join('+');
+        }
+
+        /**
+         * SMART TITLE CASING & POST-PROCESSING VALIDATION
+         */
+        function toTitleCase(str) {
+            const minorWords = new Set(['of', 'the', 'and', 'in', 'on', 'at', 'to', 'a', 'an', 'for']);
+            return str
+                .replace(/[^\w\s'-]/g, '')
+                .trim()
+                .split(/\s+/)
+                .slice(0, 3)
+                .map((word, idx) => {
+                    if (/^[A-Z0-9]{2,4}$/.test(word)) return word; // Preserve acronyms like AI, UFO, DNA
+                    const lower = word.toLowerCase();
+                    if (idx > 0 && minorWords.has(lower)) return lower;
+                    return lower.charAt(0).toUpperCase() + lower.slice(1);
+                })
+                .join(' ');
+        }
+
+        function isLazyConcatenation(elemA, elemB, candidate) {
+            const a = elemA.toLowerCase().trim();
+            const b = elemB.toLowerCase().trim();
+            const c = candidate.toLowerCase().trim();
+            return c === `${a} ${b}` || c === `${b} ${a}` || c === `${a}${b}` || c === `${b}${a}`;
+        }
+
+        /**
+         * INFINITE POOL GEMINI AI SYNTHESIS ENGINE
+         * Dynamically combines any two concepts into a fitting emoji + 1-3 word name.
+         */
+        async function fetchCombinationFromAI(elemA, elemB, strictRetry = false) {
+            const apiKey = ""; // Provided at runtime by environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `You are the infinite alchemy engine for Neal.fun's Infinite Craft.
+Combine ANY two input elements ("A" + "B") into ONE logical, clever, humorous, scientific, or pop-culture concept.
+
+CRITICAL RULES:
+1. NEVER just concatenate or stick the two input words side-by-side (e.g., NEVER output "Water Fire", "Tree Robot", or "Moon Cheese").
+2. Make a real conceptual leap: think cause-and-effect, inventions, nature, mythology, history, movies, games, idioms, or science.
+3. Output a concise 1 to 3 word Title-Cased noun or proper noun (under 28 characters).
+4. Pick ONE single, expressive emoji that vividly represents the resulting concept.
+5. Never output generic filler words like "Alchemy" or "Combination".
+6. Return ONLY valid JSON matching {"emoji": "...", "name": "..."}.
+
+EXAMPLES:
+- "Water" + "Water" -> {"emoji": "🏞️", "name": "Lake"}
+- "Fire" + "Fire" -> {"emoji": "🌋", "name": "Volcano"}
+- "Lava" + "Water" -> {"emoji": "🪨", "name": "Stone"}
+- "Plant" + "Water" -> {"emoji": "🐊", "name": "Swamp"}
+- "Lightning" + "Swamp" -> {"emoji": "🧬", "name": "Life"}
+- "Life" + "Mud" -> {"emoji": "🧑", "name": "Human"}
+- "Human" + "Star" -> {"emoji": "🌟", "name": "Celebrity"}
+- "Computer" + "Life" -> {"emoji": "🤖", "name": "AI"}
+- "Bird" + "Fire" -> {"emoji": "🔥", "name": "Phoenix"}
+- "Internet" + "Cat" -> {"emoji": "😹", "name": "Meme"}`;
+
+            const userQuery = strictRetry
+                ? `Combine "${elemA}" + "${elemB}" into a single creative noun/concept. Do NOT simply put "${elemA}" and "${elemB}" next to each other.`
+                : `What do "${elemA}" + "${elemB}" combine to make?`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    temperature: strictRetry ? 0.75 : 0.55,
+                    topP: 0.92,
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            emoji: { type: "STRING" },
+                            name: { type: "STRING" }
+                        },
+                        required: ["emoji", "name"]
+                    }
+                }
+            };
+
+            let delay = 700;
+            for (let attempt = 0; attempt < 4; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (rawText) {
+                        const parsed = JSON.parse(rawText);
+                        if (parsed.name && parsed.emoji) {
+                            const cleanName = toTitleCase(String(parsed.name)).slice(0, 30);
+                            const cleanEmoji = Array.from(String(parsed.emoji).trim())[0] || '✨';
+
+                            // Reject lazy word-mashups once and re-ask AI with stricter creativity
+                            if (cleanName && isLazyConcatenation(elemA, elemB, cleanName) && !strictRetry) {
+                                return fetchCombinationFromAI(elemA, elemB, true);
+                            }
+
+                            if (cleanName && cleanName.toLowerCase() !== 'alchemy') {
+                                return { name: cleanName, emoji: cleanEmoji, isAI: true };
+                            }
+                        }
+                    }
+                } catch (err) {
+                    if (attempt < 3) {
+                        await new Promise(r => setTimeout(r, delay));
+                        delay *= 2;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        async function resolveRecipe(elemA, elemB) {
+            const key = getRecipeKey(elemA, elemB);
+            if (recipeCache[key]) {
+                return { ...recipeCache[key], isAI: false };
+            }
+
+            activeAIRequests++;
+            setAIStatus('crafting', 'AI Crafting...');
+
+            try {
+                const result = await fetchCombinationFromAI(elemA, elemB);
+                if (result) {
+                    recipeCache[key] = { name: result.name, emoji: result.emoji };
+                    saveState();
+                    return result;
+                }
+                setAIStatus('error', 'Offline Mode');
+                const fallback = synthesizeOfflineFallback(elemA, elemB);
+                recipeCache[key] = { name: fallback.name, emoji: fallback.emoji };
+                saveState();
+                return fallback;
+            } finally {
+                activeAIRequests = Math.max(0, activeAIRequests - 1);
+                if (activeAIRequests === 0 && aiStatusTextEl.textContent === 'AI Crafting...') {
+                    setAIStatus('ready', 'AI Engine Ready');
+                }
+            }
+        }
+
+        /**
+         * SMART OFFLINE FALLBACK ENGINE (Used only if school firewall blocks external AI requests)
+         */
+        function synthesizeOfflineFallback(elemA, elemB) {
+            const pair = [elemA.toLowerCase(), elemB.toLowerCase()].sort();
+            const key = pair.join('+');
+            const extendedKnowledge = {
+                'fire+fire': { name: 'Volcano', emoji: '🌋' },
+                'water+water': { name: 'Lake', emoji: '🏞️' },
+                'earth+earth': { name: 'Mountain', emoji: '⛰️' },
+                'wind+wind': { name: 'Tornado', emoji: '🌪️' },
+                'lava+water': { name: 'Stone', emoji: '🪨' },
+                'plant+water': { name: 'Swamp', emoji: '🐊' },
+                'earth+plant': { name: 'Tree', emoji: '🌳' },
+                'lake+water': { name: 'Ocean', emoji: '🌊' },
+                'steam+wind': { name: 'Cloud', emoji: '☁️' },
+                'cloud+water': { name: 'Rain', emoji: '🌧️' },
+                'earth+rain': { name: 'Mud', emoji: '🟤' },
+                'fire+mud': { name: 'Brick', emoji: '🧱' },
+                'stone+wind': { name: 'Sand', emoji: '🏖️' },
+                'fire+sand': { name: 'Glass', emoji: '🪟' },
+                'cloud+cloud': { name: 'Storm', emoji: '⛈️' },
+                'fire+storm': { name: 'Lightning', emoji: '⚡' },
+                'lightning+swamp': { name: 'Life', emoji: '🧬' },
+                'life+mud': { name: 'Human', emoji: '🧑' },
+                'fire+stone': { name: 'Metal', emoji: '⚙️' },
+                'plant+plant': { name: 'Forest', emoji: '🌲' },
+                'tree+tree': { name: 'Forest', emoji: '🌲' }
+            };
+            if (extendedKnowledge[key]) {
+                return { ...extendedKnowledge[key], isAI: false };
+            }
+
+            // Semantic thematic synthesizer so combinations still feel meaningful offline
+            const themes = [
+                { words: ['fire', 'lava', 'sun', 'heat', 'flame', 'magma'], nouns: ['Phoenix', 'Inferno', 'Ember', 'Star', 'Plasma', 'Forge'], emoji: '🔥' },
+                { words: ['water', 'ocean', 'sea', 'rain', 'lake', 'river', 'wave'], nouns: ['Tsunami', 'Coral', 'Glacier', 'Pearl', 'Kraken', 'Mist'], emoji: '🌊' },
+                { words: ['earth', 'stone', 'mountain', 'mud', 'sand', 'metal'], nouns: ['Crystal', 'Golem', 'Canyon', 'Fossil', 'Diamond', 'Island'], emoji: '💎' },
+                { words: ['wind', 'cloud', 'storm', 'sky', 'lightning', 'steam'], nouns: ['Hurricane', 'Thunder', 'Aurora', 'Zephyr', 'Atmosphere', 'Comet'], emoji: '⚡' },
+                { words: ['plant', 'tree', 'forest', 'swamp', 'life', 'human'], nouns: ['Jungle', 'Spirit', 'Civilization', 'Myth', 'Evolution', 'Dragon'], emoji: '🐉' }
+            ];
+
+            let matched = themes.find(t => t.words.some(w => pair[0].includes(w) || pair[1].includes(w))) || themes[4];
+            const hash = (pair[0] + pair[1]).split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+            const chosenNoun = matched.nouns[hash % matched.nouns.length];
+            return { name: chosenNoun, emoji: matched.emoji, isAI: false };
         }
 
         /**
@@ -757,7 +968,7 @@ Rules:
                 if (options.discoveryBadge === 'First Discovery!') {
                     badge.style.background = 'linear-gradient(135deg, #f59e0b, #ea580c)';
                     badge.style.color = '#ffffff';
-                    badge.textContent = '✦ First Discovery!';
+                    badge.textContent = '✦ Global First Discovery!';
                 } else {
                     badge.style.background = '#3b82f6';
                     badge.style.color = '#ffffff';
@@ -845,9 +1056,6 @@ Rules:
          */
         function startSidebarDrag(startEvent, item) {
             SoundFX.playPop(0.95);
-            const wsRect = workspaceEl.getBoundingClientRect();
-            const startX = startEvent.clientX - wsRect.left;
-            const startY = startEvent.clientY - wsRect.top;
 
             // Create floating ghost pill
             const ghost = document.createElement('div');
@@ -1066,18 +1274,23 @@ Rules:
             instB.isCombining = true;
 
             const wsRect = workspaceEl.getBoundingClientRect();
+            const rectA = instA.el.getBoundingClientRect();
             const rectB = instB.el.getBoundingClientRect();
+            const posAX = rectA.left - wsRect.left + rectA.width / 2;
+            const posAY = rectA.top - wsRect.top + rectA.height / 2;
             const midX = rectB.left - wsRect.left + rectB.width / 2;
             const midY = rectB.top - wsRect.top + rectB.height / 2;
 
             const nameA = instA.name;
+            const emojiA = instA.emoji;
             const nameB = instB.name;
+            const emojiB = instB.emoji;
 
             // Remove original two instances immediately
             removeCanvasInstance(instA.id);
             removeCanvasInstance(instB.id);
 
-            // Show subtle pulsing placeholder while resolving (especially noticeable during AI generation)
+            // Show subtle pulsing placeholder while AI synthesizes
             const placeholder = document.createElement('div');
             placeholder.className = 'element-pill canvas-instance combining-placeholder';
             placeholder.innerHTML = `<span class="text-base leading-none">⏳</span><span class="opacity-75">Crafting...</span>`;
@@ -1089,14 +1302,33 @@ Rules:
             const result = await resolveRecipe(nameA, nameB);
             placeholder.remove();
 
-            // Check if newly discovered
+            // If AI request failed completely, restore the two elements gracefully instead of faking a result
+            if (!result) {
+                spawnCanvasInstance({ name: nameA, emoji: emojiA }, posAX - 24, posAY);
+                spawnCanvasInstance({ name: nameB, emoji: emojiB }, midX + 24, midY);
+                return;
+            }
+
+            // Check if newly discovered locally or globally
             const existing = discoveredItems.find(
                 item => item.name.toLowerCase() === result.name.toLowerCase()
             );
 
             let badgeType = null;
             if (!existing) {
-                const isFirstDiscovery = Boolean(result.isAI);
+                const alreadyGlobal = globalDiscoveries.some(
+                    g => g.name.toLowerCase() === result.name.toLowerCase()
+                );
+                const isFirstDiscovery = Boolean(result.isAI) && !alreadyGlobal;
+
+                if (isFirstDiscovery) {
+                    globalDiscoveries.push({
+                        name: result.name,
+                        emoji: result.emoji,
+                        discoveredAt: Date.now()
+                    });
+                }
+
                 discoveredItems.push({
                     name: result.name,
                     emoji: result.emoji,
@@ -1104,7 +1336,7 @@ Rules:
                     isFirstDiscovery
                 });
                 saveState();
-                updateCounter();
+                updateCounters();
                 renderSidebar(result.name);
                 badgeType = isFirstDiscovery ? 'First Discovery!' : 'New Discovery!';
                 SoundFX.playDiscovery(isFirstDiscovery);
@@ -1180,6 +1412,33 @@ Rules:
             });
         }
 
+        function updateFilterFirstsButton() {
+            const globalBadgeBtn = document.getElementById('btn-global-badge');
+            if (filterFirstsOnly) {
+                filterFirstsBtn.style.backgroundColor = 'rgba(245, 158, 11, 0.16)';
+                filterFirstsBtn.style.borderColor = '#f59e0b';
+                filterFirstsBtn.style.color = darkMode ? '#fbbf24' : '#b45309';
+                globalBadgeBtn.style.borderColor = '#f59e0b';
+                globalBadgeBtn.style.color = darkMode ? '#fbbf24' : '#b45309';
+            } else {
+                filterFirstsBtn.style.backgroundColor = 'var(--pill-bg)';
+                filterFirstsBtn.style.borderColor = 'var(--border-color)';
+                filterFirstsBtn.style.color = 'var(--ui-muted)';
+                globalBadgeBtn.style.borderColor = 'var(--border-color)';
+                globalBadgeBtn.style.color = 'var(--ui-muted)';
+            }
+        }
+
+        function toggleFilterFirsts() {
+            filterFirstsOnly = !filterFirstsOnly;
+            updateFilterFirstsButton();
+            renderSidebar();
+            SoundFX.playPop(filterFirstsOnly ? 1.2 : 0.9);
+        }
+
+        filterFirstsBtn.addEventListener('click', toggleFilterFirsts);
+        document.getElementById('btn-global-badge').addEventListener('click', toggleFilterFirsts);
+
         document.getElementById('btn-clear').addEventListener('click', () => {
             if (canvasInstances.length > 0) {
                 SoundFX.playDelete();
@@ -1200,10 +1459,11 @@ Rules:
             darkMode = !darkMode;
             applyTheme();
             updateSortButtons();
+            updateFilterFirstsButton();
             saveState();
         });
 
-        // Reset Progress Modal
+        // Reset Progress & Global Discoveries Modal
         const resetModal = document.getElementById('reset-modal');
         document.getElementById('btn-reset').addEventListener('click', () => {
             resetModal.classList.remove('hidden');
@@ -1211,20 +1471,63 @@ Rules:
         document.getElementById('cancel-reset').addEventListener('click', () => {
             resetModal.classList.add('hidden');
         });
+
+        // 1. Reset Global Discoveries & Recipe Cache Only
+        document.getElementById('reset-global-only').addEventListener('click', () => {
+            resetModal.classList.add('hidden');
+            globalDiscoveries = [];
+            recipeCache = { ...SEED_RECIPES };
+            discoveredItems = discoveredItems.map(item => ({
+                ...item,
+                isFirstDiscovery: false
+            }));
+            filterFirstsOnly = false;
+            updateFilterFirstsButton();
+            saveState();
+            renderSidebar();
+            updateCounters();
+            SoundFX.playDelete();
+            showStatusToast('✦ Global Discoveries & AI cache reset!', '#f59e0b');
+        });
+
+        // 2. Reset Personal Inventory Only
+        document.getElementById('reset-personal-only').addEventListener('click', () => {
+            resetModal.classList.add('hidden');
+            canvasInstances.forEach(inst => inst.el.remove());
+            canvasInstances = [];
+            discoveredItems = INITIAL_ELEMENTS.map(el => ({ ...el }));
+            filterFirstsOnly = false;
+            searchQuery = '';
+            searchInputEl.value = '';
+            clearSearchBtn.classList.add('hidden');
+            updateFilterFirstsButton();
+            saveState();
+            renderSidebar();
+            updateCounters();
+            updateEmptyHint();
+            SoundFX.playDelete();
+            showStatusToast('Personal inventory reset to starter elements', '#3b82f6');
+        });
+
+        // 3. Full Wipe (Personal + Global Discoveries + Cache)
         document.getElementById('confirm-reset').addEventListener('click', () => {
             resetModal.classList.add('hidden');
             canvasInstances.forEach(inst => inst.el.remove());
             canvasInstances = [];
-            discoveredItems = [...INITIAL_ELEMENTS];
+            discoveredItems = INITIAL_ELEMENTS.map(el => ({ ...el }));
             recipeCache = { ...SEED_RECIPES };
+            globalDiscoveries = [];
+            filterFirstsOnly = false;
             searchQuery = '';
             searchInputEl.value = '';
             clearSearchBtn.classList.add('hidden');
+            updateFilterFirstsButton();
             saveState();
             renderSidebar();
-            updateCounter();
+            updateCounters();
             updateEmptyHint();
             SoundFX.playDelete();
+            showStatusToast('Everything reset — Global Discoveries wiped!', '#ef4444');
         });
 
         // Search input
