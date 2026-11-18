@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Minecraft 2: Skybound Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            background: #0b1120;
+            font-family: 'Inter', sans-serif;
+            touch-action: none;
+        }
+        #game-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #title-overlay,
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+        #title-overlay #menu-bg-sprite,
+        #start-screen #menu-bg-sprite {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        #title-overlay .menu-foreground,
+        #start-screen .menu-foreground {
+            position: relative;
+            z-index: 1;
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', monospace;
+            letter-spacing: 0.04em;
+        }
+        .mc-panel {
+            background: rgba(15, 23, 42, 0.86);
+            border: 3px solid #334155;
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.12), 0 10px 28px rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+        }
+        .mc-btn {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            border: 3px solid #0369a1;
+            box-shadow: inset 0 3px 0 rgba(255,255,255,0.35), 0 5px 0 #075985;
+            transition: transform 0.08s ease, filter 0.12s ease;
+        }
+        .mc-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .mc-btn:active { transform: translateY(3px); box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 2px 0 #075985; }
+        .hotbar-slot {
+            width: 52px;
+            height: 52px;
+            background: rgba(15, 23, 42, 0.84);
+            border: 3px solid #475569;
+            border-radius: 10px;
+            transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s ease, box-shadow 0.12s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        .hotbar-slot.active {
+            border-color: #38bdf8;
+            transform: translateY(-4px) scale(1.06);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.65), inset 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 20;
+        }
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+        #crosshair::before { top: 9px; left: 2px; width: 16px; height: 2px; }
+        #crosshair::after { left: 9px; top: 2px; width: 2px; height: 16px; }
+        @media (max-width: 640px) {
+            .hotbar-slot {
+                width: clamp(28px, 9.2vw, 40px);
+            80% { transform: scale(1.06) rotate(-0.8deg); opacity: 0.94; }
+        }
+        #portal-loading-overlay {
+            background-color: #2e0249;
+            background-size: 96px 96px;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 140px 55px rgba(15, 3, 28, 0.94), inset 0 0 60px rgba(217, 70, 239, 0.65);
+            transition: opacity 0.45s ease;
+        }
+        #portal-loading-overlay::before {
+            content: '';
+            position: absolute;
+            inset: -8%;
+            background: inherit;
+            opacity: 0.55;
+            mix-blend-mode: screen;
+            animation: portalSwirl 2.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .dirt-bg-screen {
+            background-color: #4a2e16;
+            background-size: 96px 96px;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 180px 70px rgba(10, 6, 3, 0.86);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+    <div id="crosshair" class="hidden"></div>
+
+    <!-- Full-Screen Nether Portal Dimension Loading Overlay -->
+    <div id="portal-loading-overlay" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+        <div class="relative z-10 mc-panel rounded-2xl px-6 py-5 border-fuchsia-500/70 bg-slate-950/80 max-w-sm w-full">
+            <div class="pixel-font text-xs sm:text-sm text-fuchsia-300 mb-2 animate-pulse" id="portal-loading-title">
+                🌀 ENTERING THE NETHER...
+            </div>
+            <div class="text-xs text-purple-200/90" id="portal-loading-sub">
+                Generating dimension terrain &amp; lighting...
+            </div>
+        </div>
+    </div>
+
+    <!-- Dirt-Textured World Loading Screen -->
+    <div id="world-loading-overlay" class="hidden dirt-bg-screen fixed inset-0 z-40 flex flex-col items-center justify-center p-6 text-center">
+        <div class="mc-panel rounded-2xl px-6 py-6 border-amber-700/80 bg-slate-950/85 max-w-md w-full">
+            <div class="pixel-font text-xs sm:text-sm text-amber-300 mb-2">
+                🌍 GENERATING WORLD
+            </div>
+            <div id="world-loading-status" class="text-xs text-slate-200 mb-4">
+                Preparing terrain seed...
+            </div>
+            <div class="w-full h-3.5 bg-slate-900 rounded-full overflow-hidden border border-slate-600 p-0.5">
+                <div id="world-loading-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 via-lime-400 to-amber-300 transition-all duration-150" style="width: 5%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top HUD -->
+    <div id="hud-top" class="hidden fixed top-2 left-2 right-2 sm:top-3 sm:left-3 sm:right-3 z-20 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
+        <div class="mc-panel rounded-xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 sm:gap-3 text-[11px] sm:text-xs text-slate-100 max-w-[calc(100vw-165px)] sm:max-w-none">
+            <span id="hud-mode" class="text-cyan-300 font-bold">🧭 Survival</span>
+            <span class="text-slate-600">|</span>
+            <span id="hud-weather" class="text-sky-300">🌤️ Clear</span>
+            <span class="text-slate-600">|</span>
+            <span id="hud-light" class="text-yellow-300 font-semibold">☀️ Light: 15/15</span>
+            <span class="hidden sm:inline text-slate-600">|</span>
+            <span id="hud-coords" class="text-slate-300 font-mono text-[10px] sm:text-[11px]">XYZ: 0, 20, 0</span>
+            <span id="hud-seed" class="text-slate-400 font-mono text-[10px] sm:text-[11px]">Seed: --</span>
+        </div>
+
+        <div class="mc-panel rounded-xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 flex items-center gap-1.5 sm:gap-2.5 text-[11px] sm:text-xs text-slate-100 pointer-events-auto">
+            <div class="flex items-center gap-1">
+                <span class="text-emerald-400 font-bold">💎</span>
+                <span id="hud-emeralds" class="font-bold text-emerald-300">0</span>
+            </div>
+            <span class="text-slate-600">|</span>
+            <button id="btn-safe-land" class="px-2 py-1 rounded-lg bg-sky-900/80 hover:bg-sky-800 border border-sky-500/60 text-sky-200 font-bold text-[10px] sm:text-xs cursor-pointer transition active:scale-95" title="Teleport to nearest safe dry ground without changing terrain [R]">
+                🧭 Safe Land
+            </button>
+            <button id="btn-mute-audio" class="px-2 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-600 text-amber-200 font-bold text-[10px] sm:text-xs cursor-pointer transition active:scale-95" title="Toggle Sound Effects">
+                🔊
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Banner -->
+    <div id="toast-banner" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-30 mc-panel rounded-xl px-4 py-2 text-xs sm:text-sm font-bold text-sky-200 pointer-events-none text-center"></div>
+
+    <!-- Block Mining Progress Bar (Visual Aid) -->
+    <div id="mining-progress-wrap" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 translate-y-6 z-20 flex flex-col items-center gap-1 pointer-events-none">
+        <div class="w-28 h-2.5 bg-slate-950/90 rounded-full overflow-hidden border border-slate-500/80 shadow-lg">
+            <div id="mining-progress-fill" class="h-full bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 transition-none" style="width: 0%"></div>
+        </div>
+        <div id="mining-progress-label" class="text-[10px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">0%</div>
+    </div>
+
+    <!-- Bottom Hotbar + Survival Bars (Hearts Left, Level Center, Hunger Right, XP Bar Below) -->
+    <div id="hud-bottom" class="hidden fixed bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 sm:gap-1.5 w-full max-w-[calc(100vw-16px)] sm:max-w-[540px] px-1 sm:px-2">
+        <div id="held-item-name" class="px-3 py-1 rounded-full bg-slate-950/85 text-white text-[11px] sm:text-xs font-bold tracking-wide border border-slate-600/80 shadow-md">
+            Empty Hand
+        </div>
+
+        <!-- Survival Status Bars directly above Hotbar -->
+        <div class="w-full px-0.5 sm:px-1.5">
+            <div class="flex items-end justify-between w-full mb-1 gap-1">
+                <div id="hud-hearts" class="flex items-center gap-[1px] sm:gap-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"></div>
+                <div id="hud-xp-level" class="pixel-font text-[10px] sm:text-sm font-bold text-lime-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.95)] leading-none px-1">0</div>
+                <div id="hud-hunger" class="flex items-center gap-[1px] sm:gap-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"></div>
+            </div>
+            <div class="w-full h-1.5 sm:h-2 bg-slate-950/90 rounded-full overflow-hidden border border-slate-700/90 shadow-inner">
+                <div id="hud-xp-fill" class="h-full bg-gradient-to-r from-lime-500 to-emerald-400 transition-all duration-150" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div id="hotbar" class="flex items-center justify-center gap-1 sm:gap-2 p-1 sm:p-1.5 rounded-2xl bg-slate-950/80 border border-slate-700/85 backdrop-blur-md w-full sm:w-auto"></div>
+        <div class="hidden md:flex items-center gap-3 text-[11px] text-slate-300 bg-slate-950/70 px-3 py-1 rounded-lg border border-slate-800 whitespace-nowrap">
+            <span><b>WASD</b> Move</span>
+            <span><b>Space</b> Jump / Fly</span>
+            <span><b>E</b> Inventory / Creative</span>
+            <span><b>C</b> Creative</span>
+            <span><b>G</b> Spectator</span>
+            <span><b>L-Click</b> Mine / Attack</span>
+            <span><b>R-Click</b> Place / Eat</span>
+            <span><b>Q</b> Drop Item</span>
+            <span><b>T</b> Day/Night</span>
+            <span><b>R</b> Safe Land</span>
+        </div>
+    </div>
+
+    <!-- Desktop-Only Bottom-Left Disclaimer Badge (Visible whenever mobile touch controls are not enabled) -->
+    <div id="ai-disclaimer-badge" class="hidden md:block fixed bottom-2 left-2 z-20 pointer-events-none max-w-[235px] px-2.5 py-1.5 rounded-lg bg-slate-950/75 border border-amber-500/40 backdrop-blur-sm text-[10px] leading-snug text-amber-200/90 shadow-md">
+        !!This is only a test of my AI prompting skills. NO HUMAN CODE HAS BEEN USED!!
+    </div>
+
+    <!-- Creative Mode Catalog Modal -->
+    <div id="creative-modal" class="hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3">
+        <div class="mc-panel rounded-2xl max-w-2xl w-full p-4 sm:p-5 text-slate-100 max-h-[92vh] flex flex-col gap-3 overflow-y-auto">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="pixel-font text-xs sm:text-sm text-amber-300">✨ Creative Mode Menu</h2>
+                    <p class="text-[11px] text-slate-400 mt-1">Click any item to grab a full stack, or Shift-Click to send straight to your hotbar!</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-clear-inv" class="px-2.5 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-200 text-xs font-bold border border-rose-700/70">🗑️ Clear Hotbar</button>
+                    <button id="btn-close-creative" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-600">✕ Close [E]</button>
+                </div>
+            </div>
+
+            <!-- Category Tabs & Search -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div id="creative-tabs" class="flex flex-wrap items-center gap-1.5"></div>
+                <input id="creative-search" type="text" placeholder="Search blocks & tools..." class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 w-full sm:w-48" />
+            </div>
+
+            <!-- Creative Item Grid -->
+            <div class="p-2.5 rounded-xl bg-slate-900/95 border border-slate-700 max-h-56 overflow-y-auto">
+                <div id="creative-catalog-grid" class="grid grid-cols-6 sm:grid-cols-9 gap-1.5"></div>
+            </div>
+
+            <!-- 9-Slot Hotbar Editor in Creative Mode -->
+            <div>
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Active Hotbar (Click to Place Held Stack, Right-Click to Clear)</div>
+                <div id="creative-hotbar-grid" class="grid grid-cols-9 gap-1.5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crafting & 36-Slot Inventory Modal (Drag & Drop Grid) -->
+    <div id="craft-modal" class="hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3">
+        <div class="mc-panel rounded-2xl max-w-2xl w-full p-4 sm:p-5 text-slate-100 max-h-[92vh] flex flex-col gap-3 overflow-y-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 id="craft-modal-title" class="pixel-font text-xs sm:text-sm text-sky-300">🎒 Inventory & Crafting (2x2)</h2>
+                    <p class="text-[11px] text-slate-400 mt-1">Drag items into the crafting grid! Right-click a Crafting Table for 3x3.</p>
+                </div>
+                <button id="btn-close-craft" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-600">✕ Close [E]</button>
+            </div>
+
+            <!-- Interactive Drag-and-Drop Crafting Area -->
+            <div class="p-3 rounded-xl bg-slate-900/95 border border-slate-700 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="craft-grid" class="grid gap-1.5"></div>
+                    <div class="text-xl text-slate-400 font-bold">➔</div>
+                    <div id="craft-output-slot" class="w-14 h-14 rounded-xl bg-slate-800/90 border-2 border-amber-400/70 flex items-center justify-center relative cursor-pointer hover:border-amber-300" title="Click to craft result"></div>
+                </div>
+                <div class="text-[11px] text-slate-300 space-y-1 max-w-xs">
+                    <div class="font-bold text-amber-300">📜 Controls & Quick Recipes:</div>
+                    <div>• <b>Click & Hold Left-Click + Drag</b> across slots to evenly split stacks!</div>
+                    <div>• <b>1 Oak Log</b> ➔ 4 Oak Planks | <b>2 Vertical Planks</b> ➔ 4 Sticks</div>
+                    <div>• <b>3 Top Material + 2 Sticks</b> ➔ Pickaxe | <b>2 Material + 1 Stick</b> ➔ Sword</div>
+                    <div>• <b>4 Planks (2x2)</b> ➔ Crafting Table | <b>Planks + Iron + Planks</b> ➔ Lantern</div>
+                </div>
+            </div>
+
+            <!-- 27-Slot Main Backpack -->
+            <div>
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Backpack (27 Slots)</div>
+                <div id="inv-backpack-grid" class="grid grid-cols-9 gap-1.5"></div>
+            </div>
+
+            <!-- 9-Slot Hotbar Mirror -->
+            <div>
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Hotbar (Slots 1–9)</div>
+                <div id="inv-hotbar-grid" class="grid grid-cols-9 gap-1.5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cursor Stack for Hold-Left-Click Drag Splitting -->
+    <div id="cursor-held-item" class="hidden fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"></div>
+
+    <!-- Villager Trading Modal -->
+    <div id="trade-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
+        <div class="w-full max-w-2xl bg-[#c6c6c6] border-4 border-[#373737] shadow-[inset_3px_3px_0_#ffffff,inset_-3px_-3px_0_#555555,0_20px_50px_rgba(0,0,0,0.85)] rounded-sm overflow-hidden text-[#1f1f1f]">
+            <div class="flex items-center justify-between px-4 py-2.5 bg-[#8b8b8b] border-b-4 border-[#373737] text-white">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl drop-shadow">🧑‍🌾</span>
+                    <div>
+                        <h3 id="trade-villager-name" class="text-sm sm:text-base font-extrabold tracking-wide drop-shadow-[1px_1px_0_#222]">Village Merchant</h3>
+                        <p class="text-[11px] text-emerald-200 font-semibold">Mountain &amp; Sky Trader</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 bg-[#373737] border-2 border-[#1e1e1e] rounded-sm">
+                        <span class="text-emerald-400 text-xs font-extrabold">◆</span>
+                        <span id="trade-emerald-count" class="text-xs font-extrabold text-emerald-300">0 Emeralds</span>
+                    </div>
+                    <button id="btn-close-trade" class="w-7 h-7 bg-[#a33] hover:bg-[#c44] border-2 border-[#373737] text-white font-extrabold text-xs flex items-center justify-center shadow-[inset_1px_1px_0_#f88]">✕</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12">
+                <div class="md:col-span-5 bg-[#9e9e9e] border-b-4 md:border-b-0 md:border-r-4 border-[#555555] p-2.5">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wider text-[#2b2b2b] mb-2 px-1">Trades</div>
+                    <div id="trade-offers" class="space-y-1.5 max-h-64 overflow-y-auto pr-1"></div>
+                </div>
+                <div class="md:col-span-7 p-4 flex flex-col justify-between bg-[#c6c6c6]">
+                    <div>
+                        <div class="text-xs font-extrabold text-[#373737] mb-3">Selected Exchange</div>
+                        <div class="flex items-center justify-center gap-3 sm:gap-5 py-4 px-3 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#555555]">
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#373737,inset_-2px_-2px_0_#ffffff] flex flex-col items-center justify-center relative">
+                                    <span class="text-lg">💚</span>
+                                    <span id="trade-cost-qty" class="text-xs font-extrabold text-white drop-shadow-[1px_1px_0_#000]">1</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-white mt-1 drop-shadow-[1px_1px_0_#222]">Emeralds</span>
+                            </div>
+                            <div class="text-2xl font-black text-[#373737]">➔</div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#373737,inset_-2px_-2px_0_#ffffff] flex flex-col items-center justify-center relative">
+                                    <div id="trade-result-swatch" class="w-7 h-7 rounded-sm border border-black/40"></div>
+                                    <span id="trade-result-qty" class="text-xs font-extrabold text-white drop-shadow-[1px_1px_0_#000]">1</span>
+                                </div>
+                                <span id="trade-result-name" class="text-[10px] font-bold text-white mt-1 drop-shadow-[1px_1px_0_#222] text-center max-w-[90px] truncate">Item</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-col gap-2">
+                        <button id="btn-execute-trade" class="w-full py-2.5 bg-[#5a8f3d] hover:bg-[#68a347] active:translate-y-0.5 border-2 border-[#253b19] shadow-[inset_2px_2px_0_#8fd16b,inset_-2px_-2px_0_#3b6127] text-white font-extrabold text-sm tracking-wide drop-shadow-[1px_1px_0_#1e3014]">
+                            Trade Emeralds
+                        </button>
+                        <p class="text-[11px] text-[#3f3f3f] text-center font-semibold">Mine Emerald Ore in cold Crystal Spire basins or defeat hostile mobs!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start / Pause Overlay -->
+    <div id="title-overlay" class="dirt-bg-screen fixed inset-0 z-50 flex flex-col items-center justify-center p-4 text-center">
+        <div id="menu-bg-sprite" class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-35 overflow-hidden" aria-hidden="true">
+            <svg viewBox="0 0 240 160" class="w-[140vw] max-w-[1300px] max-h-[95vh] h-auto drop-shadow-[0_24px_48px_rgba(56,189,248,0.45)]" style="image-rendering: pixelated;">
+                <polygon points="0,145 48,55 96,145" fill="#334155"/>
+                <polygon points="34,81 48,55 62,81 55,86 48,79 41,86" fill="#f8fafc"/>
+                <polygon points="135,145 190,42 240,145" fill="#1e293b"/>
+                <polygon points="172,76 190,42 208,76 199,82 190,74 181,82" fill="#f1f5f9"/>
+                <rect x="76" y="72" width="88" height="10" fill="#4ade80"/>
+                <rect x="76" y="82" width="88" height="14" fill="#92400e"/>
+                <rect x="86" y="96" width="68" height="14" fill="#64748b"/>
+                <rect x="98" y="110" width="44" height="12" fill="#475569"/>
+                <rect x="110" y="122" width="20" height="10" fill="#334155"/>
+                <rect x="96" y="100" width="6" height="6" fill="#10b981"/>
+                <rect x="134" y="102" width="6" height="6" fill="#34d399"/>
+                <rect x="114" y="114" width="6" height="6" fill="#10b981"/>
+            </svg>
+        </div>
+        <div class="menu-foreground relative mc-panel rounded-3xl max-w-xl w-full p-6 sm:p-8 text-center text-white">
+            <div class="inline-block px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-bold mb-3">
+                ✨ DYNAMIC LIGHTING • VILLAGES • VOXEL MOBS • SOUND FX
+            </div>
+            <h1 class="pixel-font text-xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-b from-white via-sky-200 to-cyan-400 leading-relaxed mb-2">
+                MINECRAFT 2
+            </h1>
+            <p class="pixel-font text-xs sm:text-sm text-amber-300 mb-5">SKYBOUND EDITION</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left text-xs mb-6">
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80">
+                    <div class="text-amber-300 font-bold mb-0.5">🔆 0–15 Light</div>
+                    <div class="text-slate-400 text-[11px]">Sun propagation, glowing lanterns & held torches</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80">
+                    <div class="text-emerald-300 font-bold mb-0.5">🏘️ Villages</div>
+                    <div class="text-slate-400 text-[11px]">Hidden settlements, wells, farms & traders</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80">
+                    <div class="text-rose-300 font-bold mb-0.5">🐾 Live Mobs</div>
+                    <div class="text-slate-400 text-[11px]">Sheep, Cows, Foxes, Zombies, Skeletons & Creepers</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80">
+                    <div class="text-cyan-300 font-bold mb-0.5">🔊 Synth Audio</div>
+                    <div class="text-slate-400 text-[11px]">Footsteps, block mining, mob calls & combat FX</div>
+                </div>
+            </div>
+
+            <button id="btn-play" class="mc-btn w-full py-4 rounded-2xl pixel-font text-sm sm:text-base text-white cursor-pointer">
+                ▶ PLAY MINECRAFT 2
+            </button>
+            <p class="text-[11px] text-slate-400 mt-3">
+                Click Play to lock mouse look (or drag anywhere on screen to look around).
+            </p>
+        </div>
+    </div>
+
+    <!-- Mobile Touch Controls (Positioned cleanly above status bars & hotbar) -->
+    <div id="mobile-controls" class="hidden md:hidden fixed bottom-[106px] left-2.5 right-2.5 z-20 flex items-end justify-between pointer-events-none">
+        <div class="grid grid-cols-3 gap-1.5 pointer-events-auto">
+            <div></div>
+            <button id="btn-m-fwd" class="mobile-ctrl-btn w-11 h-11 rounded-xl text-white text-sm font-extrabold">▲</button>
+            <div></div>
+            <button id="btn-m-left" class="mobile-ctrl-btn w-11 h-11 rounded-xl text-white text-sm font-extrabold">◀</button>
+            <button id="btn-m-back" class="mobile-ctrl-btn w-11 h-11 rounded-xl text-white text-sm font-extrabold">▼</button>
+            <button id="btn-m-right" class="mobile-ctrl-btn w-11 h-11 rounded-xl text-white text-sm font-extrabold">▶</button>
+        </div>
+        <div class="flex flex-col items-end gap-1.5 pointer-events-auto">
+            <button id="btn-m-craft" class="mobile-ctrl-btn px-3.5 py-2 rounded-xl bg-indigo-900/85 border-indigo-400/75 text-indigo-100 text-xs font-extrabold tracking-wide">
+                🎒 Craft
+            </button>
+            <div class="flex gap-1.5">
+                <button id="btn-m-mine" class="mobile-ctrl-btn px-3.5 py-2.5 rounded-xl bg-rose-900/85 border-rose-400/75 text-rose-100 text-xs font-extrabold tracking-wide">Mine</button>
+                <button id="btn-m-place" class="mobile-ctrl-btn px-3.5 py-2.5 rounded-xl bg-emerald-900/85 border-emerald-400/75 text-emerald-100 text-xs font-extrabold tracking-wide">Place</button>
+            </div>
+            <div class="flex gap-1.5">
+                <button id="btn-m-drop" class="mobile-ctrl-btn px-3.5 py-2.5 rounded-xl bg-sky-900/85 border-sky-400/75 text-sky-100 text-xs font-extrabold tracking-wide">Drop</button>
+                <button id="btn-m-jump" class="mobile-ctrl-btn px-3.5 py-2.5 rounded-xl bg-amber-900/85 border-amber-400/75 text-amber-100 text-xs font-extrabold tracking-wide">Jump</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/audio.js"></script>
+    <script src="js/block-data.js"></script>
+    <script src="js/textures.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/fluid-dynamics.js"></script>
+    <script src="js/entities.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/item-handling.js"></script>
+    <script src="js/menus.js"></script>
+
+</body>
+</html>

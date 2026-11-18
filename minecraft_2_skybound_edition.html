@@ -15,6 +15,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
             background: #0b1120;
             font-family: 'Inter', sans-serif;
             touch-action: none;
@@ -23,6 +25,23 @@
             display: block;
             width: 100%;
             height: 100%;
+        }
+        #title-overlay,
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+        #title-overlay #menu-bg-sprite,
+        #start-screen #menu-bg-sprite {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        #title-overlay .menu-foreground,
+        #start-screen .menu-foreground {
+            position: relative;
+            z-index: 1;
         }
         .pixel-font {
             font-family: 'Press Start 2P', monospace;
@@ -291,26 +310,80 @@
     <div id="cursor-held-item" class="hidden fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"></div>
 
     <!-- Villager Trading Modal -->
-    <div id="trade-modal" class="hidden fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="mc-panel rounded-2xl max-w-md w-full p-5 text-slate-100">
-            <div class="flex items-center justify-between mb-3">
-                <div>
-                    <h2 id="trade-villager-name" class="pixel-font text-sm text-amber-300">Village Merchant</h2>
-                    <p class="text-xs text-slate-400 mt-1">Trade Emeralds earned from mobs & exploration</p>
+    <div id="trade-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
+        <div class="w-full max-w-2xl bg-[#c6c6c6] border-4 border-[#373737] shadow-[inset_3px_3px_0_#ffffff,inset_-3px_-3px_0_#555555,0_20px_50px_rgba(0,0,0,0.85)] rounded-sm overflow-hidden text-[#1f1f1f]">
+            <div class="flex items-center justify-between px-4 py-2.5 bg-[#8b8b8b] border-b-4 border-[#373737] text-white">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl drop-shadow">🧑‍🌾</span>
+                    <div>
+                        <h3 id="trade-villager-name" class="text-sm sm:text-base font-extrabold tracking-wide drop-shadow-[1px_1px_0_#222]">Village Merchant</h3>
+                        <p class="text-[11px] text-emerald-200 font-semibold">Mountain &amp; Sky Trader</p>
+                    </div>
                 </div>
-                <button id="btn-close-trade" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-600">✕ Close</button>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 bg-[#373737] border-2 border-[#1e1e1e] rounded-sm">
+                        <span class="text-emerald-400 text-xs font-extrabold">◆</span>
+                        <span id="trade-emerald-count" class="text-xs font-extrabold text-emerald-300">0 Emeralds</span>
+                    </div>
+                    <button id="btn-close-trade" class="w-7 h-7 bg-[#a33] hover:bg-[#c44] border-2 border-[#373737] text-white font-extrabold text-xs flex items-center justify-center shadow-[inset_1px_1px_0_#f88]">✕</button>
+                </div>
             </div>
-            <div class="mb-3 px-3 py-2 rounded-xl bg-emerald-950/60 border border-emerald-700/60 flex items-center justify-between text-xs">
-                <span>Your Emerald Pouch:</span>
-                <span id="trade-emerald-count" class="font-bold text-emerald-300 text-sm">💎 3</span>
+            <div class="grid grid-cols-1 md:grid-cols-12">
+                <div class="md:col-span-5 bg-[#9e9e9e] border-b-4 md:border-b-0 md:border-r-4 border-[#555555] p-2.5">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wider text-[#2b2b2b] mb-2 px-1">Trades</div>
+                    <div id="trade-offers" class="space-y-1.5 max-h-64 overflow-y-auto pr-1"></div>
+                </div>
+                <div class="md:col-span-7 p-4 flex flex-col justify-between bg-[#c6c6c6]">
+                    <div>
+                        <div class="text-xs font-extrabold text-[#373737] mb-3">Selected Exchange</div>
+                        <div class="flex items-center justify-center gap-3 sm:gap-5 py-4 px-3 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#555555]">
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#373737,inset_-2px_-2px_0_#ffffff] flex flex-col items-center justify-center relative">
+                                    <span class="text-lg">💚</span>
+                                    <span id="trade-cost-qty" class="text-xs font-extrabold text-white drop-shadow-[1px_1px_0_#000]">1</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-white mt-1 drop-shadow-[1px_1px_0_#222]">Emeralds</span>
+                            </div>
+                            <div class="text-2xl font-black text-[#373737]">➔</div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-[#8b8b8b] border-2 border-[#373737] shadow-[inset_2px_2px_0_#373737,inset_-2px_-2px_0_#ffffff] flex flex-col items-center justify-center relative">
+                                    <div id="trade-result-swatch" class="w-7 h-7 rounded-sm border border-black/40"></div>
+                                    <span id="trade-result-qty" class="text-xs font-extrabold text-white drop-shadow-[1px_1px_0_#000]">1</span>
+                                </div>
+                                <span id="trade-result-name" class="text-[10px] font-bold text-white mt-1 drop-shadow-[1px_1px_0_#222] text-center max-w-[90px] truncate">Item</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-col gap-2">
+                        <button id="btn-execute-trade" class="w-full py-2.5 bg-[#5a8f3d] hover:bg-[#68a347] active:translate-y-0.5 border-2 border-[#253b19] shadow-[inset_2px_2px_0_#8fd16b,inset_-2px_-2px_0_#3b6127] text-white font-extrabold text-sm tracking-wide drop-shadow-[1px_1px_0_#1e3014]">
+                            Trade Emeralds
+                        </button>
+                        <p class="text-[11px] text-[#3f3f3f] text-center font-semibold">Mine Emerald Ore in cold Crystal Spire basins or defeat hostile mobs!</p>
+                    </div>
+                </div>
             </div>
-            <div id="trade-offers" class="space-y-2"></div>
         </div>
     </div>
 
     <!-- Start / Pause Overlay -->
-    <div id="title-overlay" class="dirt-bg-screen fixed inset-0 z-30 flex items-center justify-center p-4">
-        <div class="mc-panel rounded-3xl max-w-xl w-full p-6 sm:p-8 text-center text-white">
+    <div id="title-overlay" class="dirt-bg-screen fixed inset-0 z-50 flex flex-col items-center justify-center p-4 text-center">
+        <div id="menu-bg-sprite" class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-35 overflow-hidden" aria-hidden="true">
+            <svg viewBox="0 0 240 160" class="w-[140vw] max-w-[1300px] max-h-[95vh] h-auto drop-shadow-[0_24px_48px_rgba(56,189,248,0.45)]" style="image-rendering: pixelated;">
+                <polygon points="0,145 48,55 96,145" fill="#334155"/>
+                <polygon points="34,81 48,55 62,81 55,86 48,79 41,86" fill="#f8fafc"/>
+                <polygon points="135,145 190,42 240,145" fill="#1e293b"/>
+                <polygon points="172,76 190,42 208,76 199,82 190,74 181,82" fill="#f1f5f9"/>
+                <rect x="76" y="72" width="88" height="10" fill="#4ade80"/>
+                <rect x="76" y="82" width="88" height="14" fill="#92400e"/>
+                <rect x="86" y="96" width="68" height="14" fill="#64748b"/>
+                <rect x="98" y="110" width="44" height="12" fill="#475569"/>
+                <rect x="110" y="122" width="20" height="10" fill="#334155"/>
+                <rect x="96" y="100" width="6" height="6" fill="#10b981"/>
+                <rect x="134" y="102" width="6" height="6" fill="#34d399"/>
+                <rect x="114" y="114" width="6" height="6" fill="#10b981"/>
+            </svg>
+        </div>
+        <div class="menu-foreground relative mc-panel rounded-3xl max-w-xl w-full p-6 sm:p-8 text-center text-white">
             <div class="inline-block px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-bold mb-3">
                 ✨ DYNAMIC LIGHTING • VILLAGES • VOXEL MOBS • SOUND FX
             </div>
@@ -436,7 +509,15 @@
                 let toneFreq = 120;
                 let q = 1.4;
 
-                if (blockId === BLOCKS.STONE || blockId === BLOCKS.COBBLESTONE || blockId === BLOCKS.DEEPSLATE || blockId === BLOCKS.OBSIDIAN || blockId === BLOCKS.BEDROCK) {
+                if (blockId === BLOCKS.SNOW) {
+                    filterFreq = 2200 + Math.random() * 550;
+                    toneFreq = 210;
+                    q = 1.6;
+                } else if (blockId === BLOCKS.PACKED_ICE || blockId === BLOCKS.GLASS || blockId === BLOCKS.EMERALD_BLOCK) {
+                    filterFreq = 1150 + Math.random() * 350;
+                    toneFreq = 180;
+                    q = 2.2;
+                } else if (blockId === BLOCKS.STONE || blockId === BLOCKS.COBBLESTONE || blockId === BLOCKS.DEEPSLATE || blockId === BLOCKS.OBSIDIAN || blockId === BLOCKS.BEDROCK || blockId === BLOCKS.EMERALD_ORE) {
                     filterFreq = 1650;
                     toneFreq = 210;
                     q = 3.2;
@@ -920,7 +1001,7 @@
         }
 
         const CHUNK_SIZE = 16;
-        const CHUNK_HEIGHT = 96;
+        const CHUNK_HEIGHT = 112;
         const WATER_LEVEL = 53;
         const RENDER_DIST = 3;
 
@@ -989,7 +1070,12 @@
             GLOWSTONE: 61,
             SOUL_SAND: 62,
             NETHER_QUARTZ_ORE: 63,
-            PORTAL: 64
+            PORTAL: 64,
+            EMERALD_ORE: 65,
+            EMERALD: 66,
+            SNOW: 67,
+            PACKED_ICE: 68,
+            EMERALD_BLOCK: 69
         };
 
         const BLOCK_DEFS = {
@@ -1057,7 +1143,12 @@
             [BLOCKS.GLOWSTONE]: { name: 'Glowstone', solid: true, transparent: false, hardness: 0.5, emissive: true, light: 15, heldLight: { color: 0xfde047, intensity: 1.7, distance: 15 }, tex: { all: 43 }, color: '#facc15', dropItem: BLOCKS.GLOWSTONE },
             [BLOCKS.SOUL_SAND]: { name: 'Soul Sand', solid: true, transparent: false, hardness: 0.6, bestTool: 'shovel', tex: { all: 44 }, color: '#451a03', dropItem: BLOCKS.SOUL_SAND },
             [BLOCKS.NETHER_QUARTZ_ORE]: { name: 'Nether Quartz Ore', solid: true, transparent: false, hardness: 2.6, bestTool: 'pickaxe', minTier: 1, tex: { all: 45 }, color: '#fda4af', dropItem: BLOCKS.NETHER_QUARTZ_ORE },
-            [BLOCKS.PORTAL]: { name: 'Nether Portal', solid: false, transparent: true, emissive: true, light: 12, unbreakable: true, customModel: 'portal', tex: { all: 46 }, color: '#a855f7' }
+            [BLOCKS.PORTAL]: { name: 'Nether Portal', solid: false, transparent: true, emissive: true, light: 12, unbreakable: true, customModel: 'portal', tex: { all: 46 }, color: '#a855f7' },
+            [BLOCKS.EMERALD_ORE]: { name: 'Emerald Ore', solid: true, transparent: false, hardness: 3.2, bestTool: 'pickaxe', minTier: 3, tex: { all: 47 }, color: '#10b981', dropItem: BLOCKS.EMERALD },
+            [BLOCKS.EMERALD]: { name: 'Emerald Gem', itemOnly: true, tool: true, tex: { all: 48 }, color: '#10b981' },
+            [BLOCKS.SNOW]: { name: 'Snow Block', solid: true, transparent: false, hardness: 0.45, bestTool: 'shovel', tex: { all: 49 }, color: '#f8fafc', dropItem: BLOCKS.SNOW },
+            [BLOCKS.PACKED_ICE]: { name: 'Packed Ice', solid: true, transparent: true, hardness: 0.7, bestTool: 'pickaxe', tex: { all: 50 }, color: '#bae6fd', dropItem: BLOCKS.PACKED_ICE },
+            [BLOCKS.EMERALD_BLOCK]: { name: 'Emerald Block', solid: true, transparent: false, hardness: 2.5, bestTool: 'pickaxe', minTier: 3, tex: { all: 51 }, color: '#059669', dropItem: BLOCKS.EMERALD_BLOCK }
         };
 
         const GRID_RECIPES = [
@@ -1103,7 +1194,7 @@
         function createTextureAtlas() {
             const tileSize = 16;
             const cols = 8;
-            const rows = 6;
+            const rows = 7;
             const canvas = document.createElement('canvas');
             canvas.width = cols * tileSize;
             canvas.height = rows * tileSize;
@@ -1328,6 +1419,35 @@
                 if (Math.floor(d) % 2 === 0) return r > 0.4 ? '#e879f9' : '#c026d3';
                 return '#7e22ce';
             });
+            drawTile(47, (x, y, r) => {
+                const gem = ((x >= 3 && x <= 5 && y >= 3 && y <= 6) ||
+                    (x >= 10 && x <= 13 && y >= 4 && y <= 7) ||
+                    (x >= 5 && x <= 8 && y >= 10 && y <= 13) ||
+                    (x >= 11 && x <= 13 && y >= 11 && y <= 13));
+                if (gem && r > 0.18) return r > 0.62 ? '#a7f3d0' : (r > 0.32 ? '#10b981' : '#047857');
+                return r > 0.7 ? '#94a3b8' : (r > 0.3 ? '#64748b' : '#475569');
+            });
+            drawTile(48, (x, y, r) => {
+                const dx = Math.abs(x - 7.5);
+                const dy = Math.abs(y - 7.5);
+                if (dx <= 4.5 && dy <= 5.5 && dx + dy <= 8.2) {
+                    if (dx > 3.2 || dy > 4.2 || dx + dy > 7) return '#065f46';
+                    if (x < 7 && y < 7) return '#a7f3d0';
+                    return r > 0.45 ? '#34d399' : '#10b981';
+                }
+                return 'rgba(0,0,0,0)';
+            });
+            drawTile(49, (x, y, r) => r > 0.75 ? '#e2e8f0' : (r > 0.35 ? '#f8fafc' : '#ffffff'));
+            drawTile(50, (x, y, r) => {
+                if ((x + y) % 6 === 0 && r > 0.28) return '#e0f2fe';
+                return r > 0.55 ? '#7dd3fc' : (r > 0.25 ? '#38bdf8' : '#0284c7');
+            });
+            drawTile(51, (x, y, r) => {
+                if (x === 0 || y === 0) return '#a7f3d0';
+                if (x === 15 || y === 15) return '#065f46';
+                if (x === 3 || y === 3 || x === 12 || y === 12) return '#34d399';
+                return r > 0.5 ? '#10b981' : '#059669';
+            });
 
             const tex = new THREE.CanvasTexture(canvas);
             tex.magFilter = THREE.NearestFilter;
@@ -1461,13 +1581,21 @@
                 }
             }
 
+            hash2(wx, wz) {
+                const value = Math.sin(wx * 127.1 + wz * 311.7 + this.noise.seed * 0.01) * 43758.5453123;
+                return value - Math.floor(value);
+            }
+
             getBiome(wx, wz) {
                 if (this.dimension === 'nether') return '🔥 Crimson Nether Wastes';
-                const temp = this.noise.noise2D(wx * 0.008, wz * 0.008);
-                const humid = this.noise.noise2D(wx * 0.008 + 90, wz * 0.008 - 40);
+                const temp = this.noise.noise2D(wx * 0.0075, wz * 0.0075);
+                const humid = this.noise.noise2D(wx * 0.0075 + 90, wz * 0.0075 - 40);
+                const distFromSpawn = Math.hypot(wx - 6, wz - 6);
+                const distFromVillage = Math.hypot(wx - 28, wz - 24);
+                const distToVistaRange = Math.hypot(wx + 76, wz + 72);
+                if (distFromSpawn > 28 && distFromVillage > 36 && (temp < -0.33 || distToVistaRange < 24)) return '🏔️ Jagged Snow Mountains';
                 if (temp > 0.24) return '🏜️ Solar Desert Dunes';
                 if (humid > 0.18) return '🌸 Cherry Blossom Grove';
-                if (temp < -0.22) return '💎 Crystal Spire Basin';
                 return '🌿 Lush Sky Meadow';
             }
 
@@ -1478,8 +1606,22 @@
                 }
                 const base = this.noise.fbm(wx * 0.014, wz * 0.014, 3);
                 const detail = this.noise.noise2D(wx * 0.055, wz * 0.055) * 0.25;
-                let h = Math.floor(57 + (base + detail) * 11);
-                return Math.max(46, Math.min(74, h));
+                let h = 57 + (base + detail) * 10;
+                const distFromSpawn = Math.hypot(wx - 6, wz - 6);
+                const distFromVillage = Math.hypot(wx - 28, wz - 24);
+                const temp = this.noise.noise2D(wx * 0.0075, wz * 0.0075);
+                const distToVistaRange = Math.hypot(wx + 76, wz + 72);
+                const climateFactor = Math.max(0, (-0.33 - temp) / 0.22);
+                const vistaFactor = Math.max(0, 1 - distToVistaRange / 26);
+                const mountainFactor = (distFromSpawn > 24 && distFromVillage > 32)
+                    ? Math.min(1.25, Math.max(climateFactor, vistaFactor))
+                    : 0;
+                if (mountainFactor > 0) {
+                    const ridge1 = 1 - Math.abs(this.noise.noise2D(wx * 0.022 + 17, wz * 0.022 - 29)) * 2.1;
+                    const ridge2 = Math.abs(this.noise.fbm(wx * 0.045 - 60, wz * 0.045 + 42, 3));
+                    h += Math.pow(mountainFactor, 1.15) * (15 + Math.max(0, ridge1) * 14 + ridge2 * 9);
+                }
+                return Math.max(38, Math.min(89, Math.floor(h)));
             }
 
             ensureChunk(cx, cz) {
@@ -1549,10 +1691,6 @@
                             const ceilH = Math.floor(72 + this.noise.noise2D(wx * 0.03 + 50, wz * 0.03 - 30) * 9);
                             const soulPatch = this.noise.noise2D(wx * 0.05 - 20, wz * 0.05 + 40) > 0.22;
 
-                            // Occasional Nether ceiling lava falls
-                            const fallRoll = Math.sin(wx * 27.13 + wz * 61.89 + this.noise.seed * 0.02) * 43758.5453;
-                            const hasCeilingLavaFall = (fallRoll - Math.floor(fallRoll)) > 0.994 && floorH >= NETHER_LAVA_LEVEL + 1;
-
                             for (let y = 0; y < CHUNK_HEIGHT; y++) {
                                 let block = BLOCKS.AIR;
                                 let liq = 0;
@@ -1572,11 +1710,7 @@
                                     liq = 7;
                                 } else if (y >= ceilH) {
                                     const glowNoise = this.noise.noise2D(wx * 0.16 + y * 0.25, wz * 0.16 - y * 0.25);
-                                    if (hasCeilingLavaFall && y === ceilH) {
-                                        block = BLOCKS.LAVA;
-                                        liq = 7;
-                                        this.scheduleLiquidUpdate(wx, y, wz);
-                                    } else if (y <= ceilH + 2 && glowNoise > 0.31) {
+                                    if (y <= ceilH + 2 && glowNoise > 0.31) {
                                         block = BLOCKS.GLOWSTONE;
                                     } else {
                                         block = BLOCKS.NETHERRACK;
@@ -1596,6 +1730,7 @@
                         const wx = baseX + lx;
                         const wz = baseZ + lz;
                         const biome = this.getBiome(wx, wz);
+                        const isMountain = biome.includes('Mountain');
                         const h = this.getTerrainHeight(wx, wz);
                         const gravelPatch = this.noise.noise2D(wx * 0.07 + 33, wz * 0.07 - 19) > 0.24;
                         // Regional cave density gate so caves are moderately common rather than everywhere
@@ -1643,7 +1778,9 @@
                                         block = BLOCKS.DEEPSLATE;
                                     }
                                 } else {
-                                    if (y <= deepslateTop + 6 && oreNoise < -0.39 && grainFrac > 0.68) {
+                                    if (isMountain && y >= 40 && oreNoise > 0.32 && grainFrac > 0.52) {
+                                        block = BLOCKS.EMERALD_ORE;
+                                    } else if (y <= deepslateTop + 6 && oreNoise < -0.39 && grainFrac > 0.68) {
                                         block = BLOCKS.STONE_DIAMOND_ORE;
                                     } else if (oreNoise > 0.33 && grainFrac > 0.48) {
                                         block = BLOCKS.STONE_IRON_ORE;
@@ -1654,12 +1791,22 @@
                                     }
                                 }
                             } else if (y < h) {
-                                block = biome.includes('Desert') ? BLOCKS.SAND : (gravelPatch && h <= WATER_LEVEL + 2 ? BLOCKS.GRAVEL : BLOCKS.DIRT);
+                                if (biome.includes('Desert')) {
+                                    block = BLOCKS.SAND;
+                                } else if (isMountain && h >= 63) {
+                                    block = (y === h - 1 && h >= 68) ? BLOCKS.SNOW : BLOCKS.STONE;
+                                } else {
+                                    block = (gravelPatch && h <= WATER_LEVEL + 2) ? BLOCKS.GRAVEL : BLOCKS.DIRT;
+                                }
                             } else if (y === h) {
                                 if (h <= WATER_LEVEL + 1) {
                                     block = gravelPatch ? BLOCKS.GRAVEL : BLOCKS.SAND;
                                 } else if (biome.includes('Desert')) {
                                     block = BLOCKS.SAND;
+                                } else if (isMountain && h >= 66) {
+                                    block = BLOCKS.SNOW;
+                                } else if (isMountain && h >= 63) {
+                                    block = gravelPatch ? BLOCKS.PACKED_ICE : BLOCKS.STONE;
                                 } else {
                                     block = BLOCKS.GRASS;
                                 }
@@ -1668,10 +1815,15 @@
                                 liq = 7;
                             }
 
+                            const nearMountain = isMountain || h >= 62 ||
+                                this.getBiome(wx + 14, wz).includes('Mountain') ||
+                                this.getBiome(wx - 14, wz).includes('Mountain') ||
+                                this.getBiome(wx, wz + 14).includes('Mountain') ||
+                                this.getBiome(wx, wz - 14).includes('Mountain');
                             const skyVal = this.noise.noise2D(wx * 0.032 + 210, wz * 0.032 - 140);
-                            if (skyVal > 0.27) {
+                            if (!nearMountain && skyVal > 0.27) {
                                 const thickness = Math.floor((skyVal - 0.27) * 26);
-                                const islandTop = 87;
+                                const islandTop = 98;
                                 if (y === islandTop) { block = BLOCKS.GRASS; liq = 0; }
                                 else if (y >= islandTop - 2 && y < islandTop) { block = BLOCKS.DIRT; liq = 0; }
                                 else if (y >= islandTop - 2 - thickness && y < islandTop - 2) {
@@ -1685,39 +1837,82 @@
                             liquidLevel[cell] = liq;
                         }
 
-                        if (h > WATER_LEVEL + 1 && !biome.includes('Desert') && lx >= 3 && lx <= 12 && lz >= 3 && lz <= 12) {
-                            const treeRoll = Math.sin(wx * 19.31 + wz * 47.17 + this.noise.seed * 0.01) * 43758.5453;
-                            const frac = treeRoll - Math.floor(treeRoll);
-                            if (frac > 0.981) {
-                                const leafType = biome.includes('Cherry') ? BLOCKS.CHERRY_LEAVES : BLOCKS.LEAVES;
-                                const trunkH = 5 + (Math.floor(frac * 100) % 2);
-                                [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([rx, rz], ri) => {
-                                    if ((Math.floor(frac * 1000) + ri) % 2 === 0 && data[idx(lx + rx, h + 1, lz + rz)] === BLOCKS.AIR) {
-                                        data[idx(lx + rx, h + 1, lz + rz)] = BLOCKS.OAK_LOG;
-                                    }
-                                });
+
+                    }
+                }
+
+                // Complete symmetric trees: the canopy is centered on the exact integer trunk
+                // position and can extend across chunk boundaries.
+                if (this.dimension === 'overworld') {
+                    const neighborRemesh = new Set();
+
+                    const putWorldBlock = (wx, wy, wz, block) => {
+                        if (wy <= 0 || wy >= CHUNK_HEIGHT) return;
+                        const targetCx = Math.floor(wx / CHUNK_SIZE);
+                        const targetCz = Math.floor(wz / CHUNK_SIZE);
+                        const targetLx = ((wx % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                        const targetLz = ((wz % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+
+                        if (targetCx === cx && targetCz === cz) {
+                            const targetIdx = wy * CHUNK_SIZE * CHUNK_SIZE + targetLz * CHUNK_SIZE + targetLx;
+                            if (data[targetIdx] === BLOCKS.AIR) data[targetIdx] = block;
+                            return;
+                        }
+
+                        const targetChunk = this.chunks.get(this.key(targetCx, targetCz));
+                        if (targetChunk) {
+                            const targetIdx = wy * CHUNK_SIZE * CHUNK_SIZE + targetLz * CHUNK_SIZE + targetLx;
+                            if (targetChunk.data[targetIdx] === BLOCKS.AIR) {
+                                targetChunk.data[targetIdx] = block;
+                                targetChunk.dirty = true;
+                                targetChunk.lightDirty = true;
+                                neighborRemesh.add(this.key(targetCx, targetCz));
+                            }
+                        }
+                    };
+
+                    for (let lx = -3; lx < CHUNK_SIZE + 3; lx++) {
+                        for (let lz = -3; lz < CHUNK_SIZE + 3; lz++) {
+                            const wx = baseX + lx;
+                            const wz = baseZ + lz;
+                            const h = this.getTerrainHeight(wx, wz);
+                            const biome = this.getBiome(wx, wz);
+                            if (biome.includes('Desert') || h <= WATER_LEVEL + 1) continue;
+
+                            const roll = this.hash2(wx * 1.73, wz * 2.31);
+                            if (roll <= 0.974) continue;
+
+                            const leafType = biome.includes('Cherry') ? BLOCKS.CHERRY_LEAVES : BLOCKS.LEAVES;
+                            const trunkH = 5 + (Math.floor(roll * 100) % 2);
+
+                            if (lx >= 0 && lx < CHUNK_SIZE && lz >= 0 && lz < CHUNK_SIZE) {
+                                if (data[idx(lx, h, lz)] !== BLOCKS.GRASS) continue;
                                 for (let ty = 1; ty <= trunkH; ty++) {
-                                    if (h + ty < CHUNK_HEIGHT - 4) data[idx(lx, h + ty, lz)] = BLOCKS.OAK_LOG;
+                                    if (h + ty < CHUNK_HEIGHT - 4) {
+                                        data[idx(lx, h + ty, lz)] = BLOCKS.OAK_LOG;
+                                    }
                                 }
-                                for (let dy = trunkH - 2; dy <= trunkH + 2; dy++) {
-                                    const layerRadius = dy === trunkH + 2 ? 1.4 : (dy === trunkH - 2 ? 2.2 : 2.75);
-                                    for (let dx = -3; dx <= 3; dx++) {
-                                        for (let dz = -3; dz <= 3; dz++) {
-                                            const dist = Math.hypot(dx, dz, (dy - trunkH) * 0.85);
-                                            if (dist <= layerRadius) {
-                                                const tx = lx + dx, tz = lz + dz, ty = h + dy;
-                                                if (tx >= 0 && tx < CHUNK_SIZE && tz >= 0 && tz < CHUNK_SIZE && ty < CHUNK_HEIGHT) {
-                                                    if (data[idx(tx, ty, tz)] === BLOCKS.AIR) {
-                                                        data[idx(tx, ty, tz)] = leafType;
-                                                    }
-                                                }
-                                            }
-                                        }
+                            }
+
+                            for (let dy = trunkH - 1; dy <= trunkH + 2; dy++) {
+                                const wy = h + dy;
+                                if (wy <= 0 || wy >= CHUNK_HEIGHT) continue;
+                                const radius = dy === trunkH + 2 ? 1 : 2;
+                                for (let dx = -radius; dx <= radius; dx++) {
+                                    for (let dz = -radius; dz <= radius; dz++) {
+                                        if (dx === 0 && dz === 0 && dy <= trunkH) continue;
+                                        if (Math.abs(dx) === 2 && Math.abs(dz) === 2 && dy !== trunkH) continue;
+                                        putWorldBlock(wx + dx, wy, wz + dz, leafType);
                                     }
                                 }
                             }
                         }
                     }
+
+                    neighborRemesh.forEach(key => {
+                        const neighbor = this.chunks.get(key);
+                        if (neighbor) this.buildChunkMesh(neighbor);
+                    });
                 }
             }
 
@@ -2389,6 +2584,7 @@
                                 continue;
                             }
 
+
                             const cellSky = skyLight[cellIdx];
                             const cellBlock = blockLight[cellIdx];
                             const combinedHere = Math.min(15, Math.round(Math.max(cellSky * dayF, cellBlock)));
@@ -3029,8 +3225,8 @@
                 });
 
                 const categoryMap = {
-                    blocks: [BLOCKS.GRASS, BLOCKS.DIRT, BLOCKS.FARMLAND, BLOCKS.STONE, BLOCKS.DEEPSLATE, BLOCKS.COBBLESTONE, BLOCKS.OBSIDIAN, BLOCKS.NETHERRACK, BLOCKS.SOUL_SAND, BLOCKS.OAK_LOG, BLOCKS.OAK_PLANKS, BLOCKS.GLASS, BLOCKS.CRAFTING, BLOCKS.PATH, BLOCKS.BEDROCK],
-                    ores: [BLOCKS.STONE_IRON_ORE, BLOCKS.IRON_ORE, BLOCKS.STONE_DIAMOND_ORE, BLOCKS.DIAMOND_ORE, BLOCKS.CRYSTAL, BLOCKS.DEEPSLATE_CRYSTAL_ORE, BLOCKS.NETHER_QUARTZ_ORE, BLOCKS.GOLD, BLOCKS.GLOWSTONE, BLOCKS.LANTERN, BLOCKS.TNT, BLOCKS.FLINT_AND_STEEL, BLOCKS.FLINT],
+                    blocks: [BLOCKS.GRASS, BLOCKS.DIRT, BLOCKS.FARMLAND, BLOCKS.STONE, BLOCKS.DEEPSLATE, BLOCKS.COBBLESTONE, BLOCKS.SNOW, BLOCKS.PACKED_ICE, BLOCKS.EMERALD_BLOCK, BLOCKS.OBSIDIAN, BLOCKS.NETHERRACK, BLOCKS.SOUL_SAND, BLOCKS.OAK_LOG, BLOCKS.OAK_PLANKS, BLOCKS.GLASS, BLOCKS.CRAFTING, BLOCKS.PATH, BLOCKS.BEDROCK],
+                    ores: [BLOCKS.STONE_IRON_ORE, BLOCKS.IRON_ORE, BLOCKS.STONE_DIAMOND_ORE, BLOCKS.DIAMOND_ORE, BLOCKS.EMERALD_ORE, BLOCKS.EMERALD, BLOCKS.CRYSTAL, BLOCKS.DEEPSLATE_CRYSTAL_ORE, BLOCKS.NETHER_QUARTZ_ORE, BLOCKS.GOLD, BLOCKS.GLOWSTONE, BLOCKS.LANTERN, BLOCKS.TNT, BLOCKS.FLINT_AND_STEEL, BLOCKS.FLINT],
                     tools: [
                         BLOCKS.WOOD_SWORD, BLOCKS.STONE_SWORD, BLOCKS.IRON_SWORD, BLOCKS.DIAMOND_SWORD, BLOCKS.AETHER_SWORD,
                         BLOCKS.WOOD_PICKAXE, BLOCKS.STONE_PICKAXE, BLOCKS.IRON_PICKAXE, BLOCKS.DIAMOND_PICKAXE, BLOCKS.AETHER_PICKAXE,
@@ -3735,7 +3931,10 @@
                     this.world.setBlock(hit.x, hit.y, hit.z, BLOCKS.AIR, true);
                     this.triggerGravityAbove(hit.x, hit.y, hit.z);
 
-                    if (canHarvest && dropId && dropId !== BLOCKS.AIR) {
+                    if (hit.id === BLOCKS.EMERALD_ORE && canHarvest) {
+                        this.spawnDroppedStack(hit.x + 0.5, hit.y + 0.5, hit.z + 0.5, BLOCKS.EMERALD, 1);
+                        this.showToast('💎 Mined Emerald Ore!');
+                    } else if (canHarvest && dropId && dropId !== BLOCKS.AIR) {
                         const actualDrop = (hit.id === BLOCKS.GRAVEL && Math.random() < 0.22) ? BLOCKS.FLINT : dropId;
                         this.spawnDroppedStack(hit.x + 0.5, hit.y + 0.5, hit.z + 0.5, actualDrop, 1);
                     }
@@ -3994,42 +4193,93 @@
                 this.drops.push({ mesh, kind, age: 0 });
             }
 
+            getTotalEmeraldCount() {
+                let inventoryCount = 0;
+                for (const stack of this.player.inventory) {
+                    if (stack && stack.id === BLOCKS.EMERALD) inventoryCount += stack.count;
+                }
+                return this.player.emeralds + inventoryCount;
+            }
+
+            consumeEmeralds(cost) {
+                let remaining = cost;
+                for (let i = 0; i < this.player.inventory.length && remaining > 0; i++) {
+                    const stack = this.player.inventory[i];
+                    if (!stack || stack.id !== BLOCKS.EMERALD) continue;
+                    const take = Math.min(stack.count, remaining);
+                    stack.count -= take;
+                    remaining -= take;
+                    if (stack.count <= 0) this.player.inventory[i] = null;
+                }
+                if (remaining > 0) {
+                    this.player.emeralds = Math.max(0, this.player.emeralds - remaining);
+                }
+                this.initHotbarUI();
+                this.buildHeldItemMesh();
+            }
+
             openTradeModal(villager) {
                 this.activeVillager = villager;
                 if (document.pointerLockElement) document.exitPointerLock();
                 document.getElementById('trade-villager-name').textContent = villager.name || 'Village Merchant';
-                document.getElementById('trade-emerald-count').textContent = `💎 ${this.player.emeralds}`;
-
                 const offers = [
-                    { label: '⚔️ Aether Crystal Sword', cost: 3, give: () => this.giveItem(BLOCKS.AETHER_SWORD, 1) },
-                    { label: '⛏️ Diamond Pickaxe', cost: 2, give: () => this.giveItem(BLOCKS.DIAMOND_PICKAXE, 1) },
-                    { label: '🏮 4x Starlight Lanterns', cost: 1, give: () => this.giveItem(BLOCKS.LANTERN, 4) },
-                    { label: '🍞 4x Golden Bread', cost: 1, give: () => this.giveItem(BLOCKS.BREAD, 4) },
-                    { label: '🧨 2x Super TNT', cost: 2, give: () => this.giveItem(BLOCKS.TNT, 2) }
+                    { cost: 1, item: BLOCKS.BREAD, count: 4, label: 'Golden Bread', color: '#d97706' },
+                    { cost: 2, item: BLOCKS.LANTERN, count: 4, label: 'Starlight Lantern', color: '#fbbf24' },
+                    { cost: 3, item: BLOCKS.IRON_PICKAXE, count: 1, label: 'Iron Pickaxe', color: '#f1f5f9' },
+                    { cost: 4, item: BLOCKS.DIAMOND_ORE, count: 1, label: 'Diamond Ore', color: '#38bdf8' },
+                    { cost: 6, item: BLOCKS.AETHER_SWORD, count: 1, label: 'Aether Sword', color: '#22d3ee' }
                 ];
+                let selectedOffer = offers[0];
+
+                const refreshEmeraldDisplay = () => {
+                    const total = this.getTotalEmeraldCount();
+                    document.getElementById('trade-emerald-count').textContent =
+                        `${total} Emerald${total === 1 ? '' : 's'}`;
+                };
+                const selectOffer = (offer, button) => {
+                    selectedOffer = offer;
+                    Array.from(list.children).forEach(el => {
+                        el.classList.remove('bg-[#6b8e55]', 'border-[#ffffff]', 'text-white');
+                        el.classList.add('bg-[#b8b8b8]', 'border-[#555555]', 'text-[#1f1f1f]');
+                    });
+                    button.classList.remove('bg-[#b8b8b8]', 'border-[#555555]', 'text-[#1f1f1f]');
+                    button.classList.add('bg-[#6b8e55]', 'border-[#ffffff]', 'text-white');
+                    document.getElementById('trade-cost-qty').textContent = String(offer.cost);
+                    document.getElementById('trade-result-qty').textContent = String(offer.count);
+                    document.getElementById('trade-result-name').textContent = offer.label;
+                    document.getElementById('trade-result-swatch').style.backgroundColor = offer.color;
+                };
 
                 const list = document.getElementById('trade-offers');
                 list.innerHTML = '';
-                offers.forEach(o => {
-                    const row = document.createElement('div');
-                    row.className = 'flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs';
-                    row.innerHTML = `<span class="font-semibold">${o.label}</span>`;
-                    const btn = document.createElement('button');
-                    btn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold disabled:opacity-40';
-                    btn.textContent = `💎 ${o.cost}`;
-                    btn.disabled = this.player.emeralds < o.cost;
-                    btn.onclick = () => {
-                        if (this.player.emeralds >= o.cost) {
-                            this.player.emeralds -= o.cost;
-                            o.give();
-                            this.updateStatusBars();
-                            this.openTradeModal(villager);
-                        }
-                    };
-                    row.appendChild(btn);
-                    list.appendChild(row);
+                offers.forEach((offer, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'w-full flex items-center justify-between px-2.5 py-2 bg-[#b8b8b8] hover:bg-[#c8c8c8] border-2 border-[#555555] text-xs font-extrabold text-[#1f1f1f] transition';
+                    button.innerHTML = `
+                        <span class="flex items-center gap-1.5">
+                            <span class="text-emerald-600">💚</span><span>${offer.cost}</span>
+                            <span class="opacity-70">➔</span>
+                            <span class="inline-block w-3.5 h-3.5 rounded-sm border border-black/40" style="background:${offer.color}"></span>
+                            <span>${offer.count}x ${offer.label}</span>
+                        </span>`;
+                    button.onclick = () => selectOffer(offer, button);
+                    list.appendChild(button);
+                    if (index === 0) selectOffer(offer, button);
                 });
 
+                document.getElementById('btn-execute-trade').onclick = () => {
+                    if (this.getTotalEmeraldCount() < selectedOffer.cost) {
+                        this.showToast(`❌ Need ${selectedOffer.cost} Emerald(s)!`);
+                        return;
+                    }
+                    this.consumeEmeralds(selectedOffer.cost);
+                    this.giveItem(selectedOffer.item, selectedOffer.count);
+                    this.updateStatusBars();
+                    refreshEmeraldDisplay();
+                    this.showToast(`✅ Traded ${selectedOffer.cost} Emerald(s) for ${selectedOffer.count}x ${selectedOffer.label}!`);
+                };
+
+                refreshEmeraldDisplay();
                 document.getElementById('trade-modal').classList.remove('hidden');
             }
 
@@ -4606,6 +4856,7 @@
                         }
                     }
 
+
                     m.vel.y = Math.max(-24, m.vel.y - 22 * dt);
                     const nextX = m.pos.x + m.vel.x * dt;
                     const nextZ = m.pos.z + m.vel.z * dt;
@@ -4689,9 +4940,12 @@
                     if (canPickup && d.mesh.position.distanceTo(this.player.pos) < 1.8) {
                         if (d.kind === 'item') {
                             this.giveItem(d.itemId, d.count);
+                            if (d.itemId === BLOCKS.EMERALD) {
+                                this.showToast(`💎 Picked up +${d.count} Emerald Gem!`);
+                            }
                         } else if (d.kind === 'emerald') {
-                            this.player.emeralds += 1;
-                            this.showToast('💎 Picked up +1 Emerald!');
+                            this.giveItem(BLOCKS.EMERALD, 1);
+                            this.showToast('💎 Picked up +1 Emerald Gem!');
                         } else {
                             this.giveItem(BLOCKS.APPLE, 1);
                             this.showToast('🍎 Collected Sky Apple!');
