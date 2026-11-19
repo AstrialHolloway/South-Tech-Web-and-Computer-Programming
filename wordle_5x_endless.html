@@ -224,6 +224,7 @@
         <span>WORDLE</span>
         <span class="px-1.5 py-0.5 text-xs font-bold rounded bg-emerald-600 text-white">5X</span>
       </h1>
+      <span id="dict-status-badge" class="text-[10px] font-medium text-gray-500 dark:text-zinc-400">Loading full dictionary...</span>
     </div>
 
     <div class="flex items-center gap-1.5 sm:gap-2">
@@ -321,7 +322,7 @@
         <button class="modal-close p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800">✕</button>
       </div>
       <div class="py-4 space-y-3 text-sm text-gray-700 dark:text-zinc-300">
-        <p>Guess the hidden word in <strong>6 tries</strong>. Each guess must be a valid word matching the puzzle's length.</p>
+        <p>Guess the hidden word in <strong>6 tries</strong>. Any valid English dictionary word matching the puzzle's length is accepted!</p>
         <ul class="list-disc pl-5 space-y-1">
           <li><strong>Daily 5 Puzzles:</strong> Solve 5 progressive daily words every day — starting at <strong>3 letters</strong> (Puzzle 1) up to <strong>7 letters</strong> (Puzzle 5).</li>
           <li><strong>Endless Stream:</strong> Play an infinite stream of randomly generated words at any length!</li>
@@ -386,40 +387,28 @@
      * ============================================================================
      * DORMANT FEATURE HOOK: 8+ LETTER WILDCARD WORD VALIDATION
      * ============================================================================
-     * Currently DORMANT (returns false).
-     *
-     * Instructions for later activation:
-     * 1. Set `ENABLE_LONG_WORD_WILDCARD_MODE = true` (or add your custom logic inside
-     *    `checkDormantLongWordRule`).
-     * 2. When active, if a puzzle's target word length is strictly greater than 8
-     *    (i.e. 9 or more letters), ANY guess that has no spaces and matches the
-     *    exact target length (e.g., "EEEEEEEEE" for a 9-letter word) will bypass
-     *    standard dictionary validation and be accepted as a valid guess!
-     * ============================================================================
      */
     const ENABLE_LONG_WORD_WILDCARD_MODE = false;
 
     function checkDormantLongWordRule(guess, targetLength) {
-      // DORMANT: Does nothing until ENABLE_LONG_WORD_WILDCARD_MODE is enabled or custom logic is added here.
       if (!ENABLE_LONG_WORD_WILDCARD_MODE) {
         return false;
       }
-
-      // Active behavior when enabled:
-      // Allows any guess for words > 8 letters as long as it has no spaces and matches the exact length.
       if (targetLength > 8 && !guess.includes(" ") && guess.length === targetLength) {
         return true;
       }
-
       return false;
     }
 
     /**
      * ============================================================================
-     * CURATED WORD DICTIONARIES BY LENGTH (3, 4, 5, 6, 7, and 9 letters)
+     * CURATED TARGET POOLS + FULL ENGLISH DICTIONARY EXPANSION
      * ============================================================================
+     * Curated lists are used for choosing solvable, fair hidden target answers,
+     * while FULL_DICTIONARY_SETS stores all ~370,000+ English words (grouped by
+     * length) for validating player guesses.
      */
-    const WORD_BANK = {
+    const TARGET_WORD_BANK = {
       3: [
         "ACE", "ACT", "ADD", "AGE", "AGO", "AID", "AIM", "AIR", "ALL", "AND",
         "ANT", "ANY", "APE", "ARC", "ARE", "ARK", "ARM", "ART", "ASH", "ASK",
@@ -708,11 +697,73 @@
       ]
     };
 
-    // Fast lookup sets for validation
-    const VALID_SETS = {};
-    Object.keys(WORD_BANK).forEach(len => {
-      VALID_SETS[len] = new Set(WORD_BANK[len]);
+    // Full English Dictionary Validation Sets (Seeded immediately with TARGET_WORD_BANK, then expanded with 370k+ words)
+    const FULL_DICTIONARY_SETS = {};
+    Object.keys(TARGET_WORD_BANK).forEach(len => {
+      FULL_DICTIONARY_SETS[len] = new Set(TARGET_WORD_BANK[len]);
     });
+
+    const DICT_CACHE_KEY = "wordle_5x_full_english_dict_v1";
+    const DICT_SOURCE_URL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt";
+    let isFullDictionaryReady = false;
+    let isCheckingApi = false;
+
+    function ingestRawWordList(rawText) {
+      const lines = rawText.split(/\r?\n/);
+      let totalLoaded = 0;
+
+      for (let i = 0; i < lines.length; i++) {
+        const w = lines[i].trim().toUpperCase();
+        // Keep purely alphabetic words between 2 and 15 letters
+        if (w.length >= 2 && w.length <= 15 && /^[A-Z]+$/.test(w)) {
+          if (!FULL_DICTIONARY_SETS[w.length]) {
+            FULL_DICTIONARY_SETS[w.length] = new Set();
+          }
+          FULL_DICTIONARY_SETS[w.length].add(w);
+          totalLoaded++;
+        }
+      }
+
+      isFullDictionaryReady = totalLoaded > 10000;
+      const badge = document.getElementById("dict-status-badge");
+      if (badge) {
+        badge.textContent = `📖 ${totalLoaded.toLocaleString()} English words active`;
+      }
+    }
+
+    async function loadFullEnglishDictionary() {
+      const badge = document.getElementById("dict-status-badge");
+
+      // 1. Check localStorage cache first for instant load
+      try {
+        const cached = localStorage.getItem(DICT_CACHE_KEY);
+        if (cached && cached.length > 50000) {
+          ingestRawWordList(cached);
+          return;
+        }
+      } catch (e) {
+        // Ignore storage read errors
+      }
+
+      // 2. Fetch full ~370,000-word English lexicon from dwyl/english-words
+      try {
+        const response = await fetch(DICT_SOURCE_URL);
+        if (!response.ok) throw new Error("Dictionary download failed");
+        const text = await response.text();
+        ingestRawWordList(text);
+
+        // Attempt to cache for future visits (may fail if localStorage 5MB quota is tight, which is fine)
+        try {
+          localStorage.setItem(DICT_CACHE_KEY, text);
+        } catch (storageErr) {
+          // Quota exceeded is harmless; it will stay in memory for the session
+        }
+      } catch (err) {
+        if (badge) {
+          badge.textContent = "📖 Online Dictionary API Fallback Active";
+        }
+      }
+    }
 
     /**
      * ============================================================================
@@ -720,7 +771,7 @@
      * ============================================================================
      */
     const MAX_GUESSES = 6;
-    const DAILY_LENGTHS = [3, 4, 5, 6, 7]; // Puzzle 1 (3), Puzzle 2 (4), Puzzle 3 (5), Puzzle 4 (6), Puzzle 5 (7)
+    const DAILY_LENGTHS = [3, 4, 5, 6, 7];
 
     function getTodayKey() {
       const now = new Date();
@@ -730,7 +781,6 @@
       return `${y}-${m}-${d}`;
     }
 
-    // Deterministic seeded PRNG (Mulberry32)
     function hashString(str) {
       let h = 2166136261 >>> 0;
       for (let i = 0; i < str.length; i++) {
@@ -751,8 +801,8 @@
 
     function getDailyWords(dateKey) {
       const rng = seededRandom(hashString("WORDLE5X_" + dateKey));
-      return DAILY_LENGTHS.map((len, idx) => {
-        const list = WORD_BANK[len];
+      return DAILY_LENGTHS.map((len) => {
+        const list = TARGET_WORD_BANK[len];
         const pickIndex = Math.floor(rng() * list.length);
         return list[pickIndex];
       });
@@ -769,7 +819,7 @@
         length: DAILY_LENGTHS[idx],
         target,
         guesses: [],
-        status: "playing" // "playing" | "won" | "lost"
+        status: "playing"
       }));
 
       let saved = null;
@@ -798,12 +848,11 @@
     }
 
     let appState = loadSavedData();
-    let currentMode = "daily"; // "daily" | "endless"
+    let currentMode = "daily";
     let currentGuess = "";
     let isAnimating = false;
     let autoNextTimer = null;
 
-    // Endless Mode Active Puzzle State
     let endlessPuzzle = {
       length: 5,
       target: "APPLE",
@@ -844,9 +893,8 @@
         chosenLen = parseInt(selectVal, 10);
       }
 
-      const list = WORD_BANK[chosenLen] || WORD_BANK[5];
+      const list = TARGET_WORD_BANK[chosenLen] || TARGET_WORD_BANK[5];
       let nextTarget = list[Math.floor(Math.random() * list.length)];
-      // Avoid immediate repeat
       if (list.length > 1 && nextTarget === endlessPuzzle.target) {
         nextTarget = list[(list.indexOf(nextTarget) + 1) % list.length];
       }
@@ -863,7 +911,7 @@
 
     /**
      * ============================================================================
-     * WORDLE EVALUATION LOGIC (Handles duplicate letters accurately)
+     * WORDLE EVALUATION & FULL DICTIONARY VALIDATION
      * ============================================================================
      */
     function evaluateGuess(guess, target) {
@@ -873,7 +921,6 @@
       const guessLetters = guess.split("");
       const usedTarget = new Array(len).fill(false);
 
-      // Pass 1: Exact position matches ("correct")
       for (let i = 0; i < len; i++) {
         if (guessLetters[i] === targetLetters[i]) {
           result[i] = "correct";
@@ -881,7 +928,6 @@
         }
       }
 
-      // Pass 2: Misplaced letters ("present")
       for (let i = 0; i < len; i++) {
         if (result[i] === "correct") continue;
         for (let j = 0; j < len; j++) {
@@ -896,17 +942,38 @@
       return result;
     }
 
-    function isValidWord(guess, targetLength) {
+    async function isValidWord(guess, targetLength) {
       // 1. Check Dormant 8+ Letter Rule first
       if (checkDormantLongWordRule(guess, targetLength)) {
         return true;
       }
 
-      // 2. Standard length & dictionary check
       if (guess.length !== targetLength) return false;
-      const dict = VALID_SETS[targetLength];
-      if (!dict) return false;
-      return dict.has(guess);
+
+      // 2. Instant lookup in our 370,000+ English dictionary set
+      const dict = FULL_DICTIONARY_SETS[targetLength];
+      if (dict && dict.has(guess)) {
+        return true;
+      }
+
+      // 3. Fallback: If full list hasn't finished downloading or word is a brand-new neologism,
+      // verify live against the Free Dictionary API and cache valid results
+      try {
+        isCheckingApi = true;
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess.toLowerCase()}`);
+        isCheckingApi = false;
+        if (res.ok) {
+          if (!FULL_DICTIONARY_SETS[targetLength]) {
+            FULL_DICTIONARY_SETS[targetLength] = new Set();
+          }
+          FULL_DICTIONARY_SETS[targetLength].add(guess);
+          return true;
+        }
+      } catch (e) {
+        isCheckingApi = false;
+      }
+
+      return false;
     }
 
     /**
@@ -953,7 +1020,7 @@
 
     function updateKeyboardColors() {
       const puzzle = getActivePuzzle();
-      const bestStates = {}; // letter -> "correct" | "present" | "absent"
+      const bestStates = {};
       const priority = { correct: 3, present: 2, absent: 1 };
 
       puzzle.guesses.forEach(guess => {
@@ -1165,7 +1232,7 @@
     }
 
     function handleKeyInput(key) {
-      if (isAnimating) return;
+      if (isAnimating || isCheckingApi) return;
       const puzzle = getActivePuzzle();
       if (puzzle.status !== "playing") {
         if (key === "ENTER" && currentMode === "endless") {
@@ -1195,7 +1262,7 @@
       }
     }
 
-    function submitGuess() {
+    async function submitGuess() {
       const puzzle = getActivePuzzle();
       if (currentGuess.length < puzzle.length) {
         showToast("Not enough letters");
@@ -1203,8 +1270,9 @@
         return;
       }
 
-      if (!isValidWord(currentGuess, puzzle.length)) {
-        showToast("Not in word list");
+      const valid = await isValidWord(currentGuess, puzzle.length);
+      if (!valid) {
+        showToast("Not in English dictionary");
         shakeCurrentRow();
         return;
       }
@@ -1217,7 +1285,6 @@
       currentGuess = "";
       isAnimating = true;
 
-      // Animate tile flips sequentially
       const len = puzzle.length;
       for (let c = 0; c < len; c++) {
         const tile = document.getElementById(`tile-${rowIdx}-${c}`);
@@ -1248,7 +1315,6 @@
               appState.stats.maxEndlessStreak = appState.stats.endlessStreak;
             }
           }
-          // Victory bounce animation
           for (let c = 0; c < len; c++) {
             const tile = document.getElementById(`tile-${rowIdx}-${c}`);
             setTimeout(() => tile.classList.add("anim-bounce"), c * 75);
@@ -1267,7 +1333,6 @@
         updateKeyboardColors();
         updateBanner();
 
-        // Auto-advance in Endless Stream mode if enabled
         if ((isWin || isLoss) && currentMode === "endless") {
           const autoNext = document.getElementById("endless-auto-next").checked;
           if (autoNext) {
@@ -1373,8 +1438,8 @@
       applyTheme(appState.theme);
       buildKeyboard();
       renderAll();
+      loadFullEnglishDictionary();
 
-      // Physical Keyboard Support
       window.addEventListener("keydown", (e) => {
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         const k = e.key.toUpperCase();
@@ -1384,27 +1449,22 @@
         }
       });
 
-      // Responsive Resize Handler
       window.addEventListener("resize", () => {
         renderBoard();
       });
 
-      // Mode Toggles
       document.getElementById("mode-daily-btn").addEventListener("click", () => switchMode("daily"));
       document.getElementById("mode-endless-btn").addEventListener("click", () => switchMode("endless"));
 
-      // Endless Controls
       document.getElementById("endless-length-select").addEventListener("change", () => generateNewEndlessWord());
       document.getElementById("btn-endless-skip").addEventListener("click", () => generateNewEndlessWord());
 
-      // Theme Toggle
       document.getElementById("btn-theme").addEventListener("click", () => {
         appState.theme = appState.theme === "dark" ? "light" : "dark";
         applyTheme(appState.theme);
         saveAppState();
       });
 
-      // Modals
       document.getElementById("btn-help").addEventListener("click", () => {
         document.getElementById("modal-help").classList.remove("hidden");
       });
@@ -1424,7 +1484,6 @@
         });
       });
 
-      // Share Buttons
       document.getElementById("btn-banner-share").addEventListener("click", shareDailySummary);
       document.getElementById("btn-share-daily-summary").addEventListener("click", shareDailySummary);
     });
