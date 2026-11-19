@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Wordle 5x & Endless</title>
+  <title>Wordle 5x, Endless & Custom</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +45,10 @@
       user-select: none;
     }
 
+    input, textarea, select {
+      user-select: text;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-primary);
@@ -67,9 +71,15 @@
       align-items: center;
       justify-content: center;
       text-transform: uppercase;
-      border-radius: 0.375rem;
+      border-radius: 0.3rem;
       transition: border-color 0.12s ease, transform 0.1s ease;
       perspective: 1000px;
+      line-height: 1;
+    }
+
+    .tile.compact-tile {
+      border-width: 1px;
+      border-radius: 0.2rem;
     }
 
     .tile[data-state="tbd"] {
@@ -119,19 +129,19 @@
 
     @keyframes bounce {
       0%, 20% { transform: translateY(0); }
-      40% { transform: translateY(-20px); }
+      40% { transform: translateY(-16px); }
       50% { transform: translateY(4px); }
-      60% { transform: translateY(-10px); }
+      60% { transform: translateY(-8px); }
       80% { transform: translateY(2px); }
       100% { transform: translateY(0); }
     }
 
     .anim-flip-in {
-      animation: flipIn 0.22s ease-in forwards;
+      animation: flipIn 0.2s ease-in forwards;
     }
 
     .anim-flip-out {
-      animation: flipOut 0.22s ease-out forwards;
+      animation: flipOut 0.2s ease-out forwards;
     }
 
     .anim-shake {
@@ -186,9 +196,10 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Custom Scrollbar for Modals */
+    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
@@ -205,8 +216,8 @@
   <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none"></div>
 
   <!-- Header -->
-  <header class="w-full border-b border-gray-200 dark:border-zinc-800 px-3 sm:px-6 py-2.5 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-2">
+  <header class="w-full border-b border-gray-200 dark:border-zinc-800 px-3 sm:px-6 py-2 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-1.5">
       <button id="btn-help" aria-label="How to Play" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -240,16 +251,19 @@
   </header>
 
   <!-- Mode Switcher & Sub-Navigation Bar -->
-  <div class="w-full max-w-2xl mx-auto px-3 pt-2.5 pb-1 flex flex-col gap-2 shrink-0">
+  <div class="w-full max-w-3xl mx-auto px-3 pt-2 pb-1 flex flex-col gap-2 shrink-0">
     <!-- Mode Tabs -->
-    <div class="grid grid-cols-2 p-1 rounded-xl bg-gray-200/80 dark:bg-zinc-800/90 text-xs sm:text-sm font-bold">
-      <button id="mode-daily-btn" class="py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white flex items-center justify-center gap-1.5">
-        <span>📅 Daily 5 Puzzles</span>
+    <div class="grid grid-cols-3 p-1 rounded-xl bg-gray-200/80 dark:bg-zinc-800/90 text-xs sm:text-sm font-bold">
+      <button id="mode-daily-btn" class="py-1.5 px-2 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white flex items-center justify-center gap-1.5">
+        <span>📅 Daily 5</span>
         <span id="daily-progress-pill" class="text-[11px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">0/5</span>
       </button>
-      <button id="mode-endless-btn" class="py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5">
-        <span>♾️ Endless Stream</span>
+      <button id="mode-endless-btn" class="py-1.5 px-2 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5">
+        <span>♾️ Endless</span>
         <span id="endless-streak-pill" class="text-[11px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">🔥 0</span>
+      </button>
+      <button id="mode-custom-btn" class="py-1.5 px-2 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5">
+        <span>✨ Custom</span>
       </button>
     </div>
 
@@ -269,7 +283,7 @@
           <option value="5">5 Letters</option>
           <option value="6">6 Letters</option>
           <option value="7">7 Letters</option>
-          <option value="9">9 Letters (Long)</option>
+          <option value="9">9 Letters (Wildcard)</option>
         </select>
       </div>
       <div class="flex items-center gap-2">
@@ -282,26 +296,42 @@
         </button>
       </div>
     </div>
+
+    <!-- Custom Active Game Status Bar (Shown when playing a custom word) -->
+    <div id="custom-active-bar" class="hidden flex items-center justify-between gap-2 bg-purple-500/10 dark:bg-purple-500/15 px-3 py-1.5 rounded-xl border border-purple-500/30">
+      <div class="flex items-center gap-2 text-xs">
+        <span class="font-extrabold text-purple-600 dark:text-purple-400">✨ Custom Puzzle</span>
+        <span id="custom-meta-label" class="text-gray-600 dark:text-zinc-300 font-medium">5 Letters • 6 Guesses</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button id="btn-custom-copy-active" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-colors">
+          Copy Code
+        </button>
+        <button id="btn-custom-open-hub" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
+          Menu
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Main Game Board Area -->
-  <main class="flex-1 w-full max-w-2xl mx-auto px-2 py-1 flex flex-col items-center justify-center overflow-hidden relative">
-    <div id="board-wrapper" class="w-full h-full flex items-center justify-center">
-      <div id="game-board" class="grid gap-1.5 transition-all">
+  <main class="flex-1 w-full max-w-4xl mx-auto px-2 py-1 flex flex-col items-center justify-center overflow-hidden relative">
+    <div id="board-wrapper" class="w-full h-full flex items-center justify-center overflow-auto">
+      <div id="game-board" class="grid transition-all">
         <!-- Tiles generated dynamically -->
       </div>
     </div>
 
-    <!-- Post-Round Banner (Shows Next Puzzle / Next Endless Word / Share) -->
-    <div id="round-action-banner" class="hidden absolute bottom-2 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-700 shadow-xl rounded-2xl px-4 py-2.5 flex items-center gap-3">
-      <div class="text-xs sm:text-sm">
+    <!-- Post-Round Banner -->
+    <div id="round-action-banner" class="hidden absolute bottom-2 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-700 shadow-xl rounded-2xl px-4 py-2.5 flex items-center gap-3 max-w-[95vw]">
+      <div class="text-xs sm:text-sm min-w-0">
         <span id="banner-status-text" class="font-bold block">Splendid!</span>
-        <span id="banner-word-reveal" class="text-gray-500 dark:text-zinc-400 font-medium">Word: APPLE</span>
+        <span id="banner-word-reveal" class="text-gray-500 dark:text-zinc-400 font-medium block truncate">Word: APPLE</span>
       </div>
-      <button id="btn-banner-next" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow transition-transform active:scale-95">
+      <button id="btn-banner-next" class="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow transition-transform active:scale-95">
         Next Puzzle →
       </button>
-      <button id="btn-banner-share" class="px-3 py-2 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-xs sm:text-sm font-bold transition-transform active:scale-95">
+      <button id="btn-banner-share" class="shrink-0 px-3 py-2 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-xs sm:text-sm font-bold transition-transform active:scale-95">
         Share
       </button>
     </div>
@@ -314,6 +344,91 @@
     </div>
   </footer>
 
+  <!-- Custom Wordle Hub Modal (2 Tabs: Enter Code vs Create & History) -->
+  <div id="modal-custom" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-zinc-800 shrink-0">
+        <h2 class="text-lg font-extrabold flex items-center gap-2">
+          <span>✨ Custom Wordle Studio</span>
+        </h2>
+        <button id="btn-close-custom" class="p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800">✕</button>
+      </div>
+
+      <!-- 2 Sub-Tabs -->
+      <div class="grid grid-cols-2 p-1 rounded-xl bg-gray-100 dark:bg-zinc-800 text-xs sm:text-sm font-bold my-3 shrink-0">
+        <button id="custom-tab-join" class="py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white">
+          🔑 Play with Code
+        </button>
+        <button id="custom-tab-create" class="py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white">
+          🛠️ Create & My Codes
+        </button>
+      </div>
+
+      <!-- Tab 1: Input Code to Access Custom Wordle -->
+      <div id="custom-panel-join" class="space-y-4 overflow-y-auto py-1">
+        <p class="text-xs sm:text-sm text-gray-600 dark:text-zinc-400">
+          Paste a Custom Wordle code shared by a friend (or from your own history) to load their custom word, length, and guess limit.
+        </p>
+        <div class="space-y-2">
+          <label for="input-join-code" class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Custom Wordle Code</label>
+          <textarea id="input-join-code" rows="3" placeholder="Paste code here (e.g., W5X-...)..." class="w-full rounded-xl bg-gray-50 dark:bg-zinc-950 border border-gray-300 dark:border-zinc-700 p-3 text-xs sm:text-sm font-mono focus:outline-none focus:border-purple-500"></textarea>
+        </div>
+        <button id="btn-launch-custom-code" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm shadow transition-transform active:scale-98">
+          Load & Play Custom Wordle →
+        </button>
+      </div>
+
+      <!-- Tab 2: Create Custom Wordle + Previous Codes List -->
+      <div id="custom-panel-create" class="hidden space-y-4 overflow-y-auto pr-1 py-1">
+        <div class="space-y-3 bg-gray-50 dark:bg-zinc-950/60 p-3.5 rounded-xl border border-gray-200 dark:border-zinc-800">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="input-custom-word" class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Secret Word (A–Z, up to 50)</label>
+              <span id="custom-word-len-badge" class="text-xs font-extrabold text-purple-600 dark:text-purple-400">0 / 50 letters</span>
+            </div>
+            <input id="input-custom-word" type="text" maxlength="50" placeholder="Enter any word (even non-dictionary)..." class="w-full rounded-xl bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-3 py-2 text-sm font-bold uppercase tracking-wider focus:outline-none focus:border-purple-500" />
+            <p class="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">Letters only (A–Z). Custom words automatically allow any matching-length guess!</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="input-custom-guesses" class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">Max Guesses (1–15)</label>
+              <input id="input-custom-guesses" type="number" min="1" max="15" value="6" class="w-full rounded-xl bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-3 py-2 text-sm font-bold focus:outline-none focus:border-purple-500" />
+            </div>
+            <div class="flex flex-col justify-end">
+              <button id="btn-publish-custom" class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm shadow transition-transform active:scale-98">
+                Publish & Get Code
+              </button>
+            </div>
+          </div>
+
+          <!-- Newly Published Code Box -->
+          <div id="published-result-box" class="hidden pt-2 border-t border-gray-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ Published! Share this code:</span>
+              <div class="flex items-center gap-1.5">
+                <button id="btn-copy-published" class="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-xs font-bold">Copy Code</button>
+                <button id="btn-play-published" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">Play Now</button>
+              </div>
+            </div>
+            <input id="output-published-code" type="text" readonly class="w-full rounded-lg bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-2.5 py-1.5 text-xs font-mono text-gray-700 dark:text-zinc-300" />
+          </div>
+        </div>
+
+        <!-- History of Previously Created Custom Wordles -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Your Created Custom Wordles</h3>
+            <span id="custom-history-count" class="text-[11px] text-gray-400">0 saved</span>
+          </div>
+          <div id="custom-history-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Help Modal -->
   <div id="modal-help" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl max-h-[85vh] overflow-y-auto">
@@ -322,10 +437,11 @@
         <button class="modal-close p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800">✕</button>
       </div>
       <div class="py-4 space-y-3 text-sm text-gray-700 dark:text-zinc-300">
-        <p>Guess the hidden word in <strong>6 tries</strong>. Any valid English dictionary word matching the puzzle's length is accepted!</p>
+        <p>Guess the hidden word before running out of tries! Any valid English dictionary word matching the puzzle's length is accepted—and for <strong>9+ letter words</strong> or <strong>Custom Wordles</strong>, any matching-length combination of letters is allowed.</p>
         <ul class="list-disc pl-5 space-y-1">
-          <li><strong>Daily 5 Puzzles:</strong> Solve 5 progressive daily words every day — starting at <strong>3 letters</strong> (Puzzle 1) up to <strong>7 letters</strong> (Puzzle 5).</li>
-          <li><strong>Endless Stream:</strong> Play an infinite stream of randomly generated words at any length!</li>
+          <li><strong>Daily 5:</strong> Solve 5 progressive daily words every day — starting at <strong>3 letters</strong> (#1) up to <strong>7 letters</strong> (#5).</li>
+          <li><strong>Endless:</strong> Play an infinite stream of random words (including 9-letter wildcard rounds).</li>
+          <li><strong>Custom:</strong> Build your own puzzle up to <strong>50 letters</strong> and <strong>15 guesses</strong>, or paste a friend's code to play theirs.</li>
         </ul>
         <div class="pt-2 space-y-2.5">
           <p class="font-bold text-gray-900 dark:text-white">Tile Examples</p>
@@ -385,16 +501,17 @@
   <script>
     /**
      * ============================================================================
-     * DORMANT FEATURE HOOK: 8+ LETTER WILDCARD WORD VALIDATION
+     * ACTIVE FEATURE: 9+ LETTER WILDCARD WORD VALIDATION
      * ============================================================================
      */
-    const ENABLE_LONG_WORD_WILDCARD_MODE = false;
+    const ENABLE_LONG_WORD_WILDCARD_MODE = true;
 
     function checkDormantLongWordRule(guess, targetLength) {
       if (!ENABLE_LONG_WORD_WILDCARD_MODE) {
         return false;
       }
-      if (targetLength > 8 && !guess.includes(" ") && guess.length === targetLength) {
+      // Allows any guess for words >= 9 letters as long as it has no spaces and matches exact length
+      if (targetLength >= 9 && !guess.includes(" ") && guess.length === targetLength) {
         return true;
       }
       return false;
@@ -404,9 +521,6 @@
      * ============================================================================
      * CURATED TARGET POOLS + FULL ENGLISH DICTIONARY EXPANSION
      * ============================================================================
-     * Curated lists are used for choosing solvable, fair hidden target answers,
-     * while FULL_DICTIONARY_SETS stores all ~370,000+ English words (grouped by
-     * length) for validating player guesses.
      */
     const TARGET_WORD_BANK = {
       3: [
@@ -697,7 +811,6 @@
       ]
     };
 
-    // Full English Dictionary Validation Sets (Seeded immediately with TARGET_WORD_BANK, then expanded with 370k+ words)
     const FULL_DICTIONARY_SETS = {};
     Object.keys(TARGET_WORD_BANK).forEach(len => {
       FULL_DICTIONARY_SETS[len] = new Set(TARGET_WORD_BANK[len]);
@@ -705,7 +818,6 @@
 
     const DICT_CACHE_KEY = "wordle_5x_full_english_dict_v1";
     const DICT_SOURCE_URL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt";
-    let isFullDictionaryReady = false;
     let isCheckingApi = false;
 
     function ingestRawWordList(rawText) {
@@ -714,8 +826,7 @@
 
       for (let i = 0; i < lines.length; i++) {
         const w = lines[i].trim().toUpperCase();
-        // Keep purely alphabetic words between 2 and 15 letters
-        if (w.length >= 2 && w.length <= 15 && /^[A-Z]+$/.test(w)) {
+        if (w.length >= 2 && w.length <= 50 && /^[A-Z]+$/.test(w)) {
           if (!FULL_DICTIONARY_SETS[w.length]) {
             FULL_DICTIONARY_SETS[w.length] = new Set();
           }
@@ -724,44 +835,90 @@
         }
       }
 
-      isFullDictionaryReady = totalLoaded > 10000;
       const badge = document.getElementById("dict-status-badge");
       if (badge) {
-        badge.textContent = `📖 ${totalLoaded.toLocaleString()} English words active`;
+        badge.textContent = `📖 ${totalLoaded.toLocaleString()} English words + 9+ Wildcard`;
       }
     }
 
     async function loadFullEnglishDictionary() {
       const badge = document.getElementById("dict-status-badge");
-
-      // 1. Check localStorage cache first for instant load
       try {
         const cached = localStorage.getItem(DICT_CACHE_KEY);
         if (cached && cached.length > 50000) {
           ingestRawWordList(cached);
           return;
         }
-      } catch (e) {
-        // Ignore storage read errors
-      }
+      } catch (e) {}
 
-      // 2. Fetch full ~370,000-word English lexicon from dwyl/english-words
       try {
         const response = await fetch(DICT_SOURCE_URL);
         if (!response.ok) throw new Error("Dictionary download failed");
         const text = await response.text();
         ingestRawWordList(text);
-
-        // Attempt to cache for future visits (may fail if localStorage 5MB quota is tight, which is fine)
         try {
           localStorage.setItem(DICT_CACHE_KEY, text);
-        } catch (storageErr) {
-          // Quota exceeded is harmless; it will stay in memory for the session
-        }
+        } catch (storageErr) {}
       } catch (err) {
         if (badge) {
-          badge.textContent = "📖 Online Dictionary API Fallback Active";
+          badge.textContent = "📖 Dictionary API + 9+ Wildcard Active";
         }
+      }
+    }
+
+    /**
+     * ============================================================================
+     * CUSTOM WORDLE CODE ENCODER / DECODER
+     * ============================================================================
+     */
+    function encodeCustomPuzzleCode(word, maxGuesses) {
+      const payload = JSON.stringify({
+        v: 1,
+        w: word.toUpperCase(),
+        g: maxGuesses
+      });
+      // XOR obfuscation with simple salt + URL-safe Base64 so the answer isn't readable in plain text
+      const salt = "W5X";
+      let xored = "";
+      for (let i = 0; i < payload.length; i++) {
+        xored += String.fromCharCode(payload.charCodeAt(i) ^ salt.charCodeAt(i % salt.length));
+      }
+      const b64 = btoa(xored).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      return `W5X-${b64}`;
+    }
+
+    function decodeCustomPuzzleCode(rawCode) {
+      try {
+        const cleaned = rawCode.trim();
+        if (!cleaned.startsWith("W5X-")) return null;
+        let b64 = cleaned.slice(4).replace(/-/g, "+").replace(/_/g, "/");
+        while (b64.length % 4) b64 += "=";
+        const xored = atob(b64);
+        const salt = "W5X";
+        let jsonStr = "";
+        for (let i = 0; i < xored.length; i++) {
+          jsonStr += String.fromCharCode(xored.charCodeAt(i) ^ salt.charCodeAt(i % salt.length));
+        }
+        const data = JSON.parse(jsonStr);
+        if (
+          data &&
+          data.v === 1 &&
+          typeof data.w === "string" &&
+          /^[A-Z]{1,50}$/.test(data.w) &&
+          Number.isInteger(data.g) &&
+          data.g >= 1 &&
+          data.g <= 15
+        ) {
+          return {
+            word: data.w,
+            length: data.w.length,
+            maxGuesses: data.g,
+            code: cleaned
+          };
+        }
+        return null;
+      } catch (e) {
+        return null;
       }
     }
 
@@ -770,7 +927,7 @@
      * APPLICATION STATE & PERSISTENCE
      * ============================================================================
      */
-    const MAX_GUESSES = 6;
+    const DEFAULT_MAX_GUESSES = 6;
     const DAILY_LENGTHS = [3, 4, 5, 6, 7];
 
     function getTodayKey() {
@@ -808,7 +965,7 @@
       });
     }
 
-    const STORAGE_KEY = "wordle_5x_endless_v1";
+    const STORAGE_KEY = "wordle_5x_endless_v2";
 
     function loadSavedData() {
       const today = getTodayKey();
@@ -817,6 +974,7 @@
       const defaultDaily = dailyTargets.map((target, idx) => ({
         index: idx,
         length: DAILY_LENGTHS[idx],
+        maxGuesses: DEFAULT_MAX_GUESSES,
         target,
         guesses: [],
         status: "playing"
@@ -834,6 +992,7 @@
           dateKey: today,
           dailyPuzzles: defaultDaily,
           activeDailyIndex: 0,
+          customHistory: saved?.customHistory || [],
           stats: saved?.stats || {
             played: 0,
             won: 0,
@@ -844,21 +1003,36 @@
         };
       }
 
+      if (!Array.isArray(saved.customHistory)) {
+        saved.customHistory = [];
+      }
       return saved;
     }
 
     let appState = loadSavedData();
-    let currentMode = "daily";
+    let currentMode = "daily"; // "daily" | "endless" | "custom"
     let currentGuess = "";
     let isAnimating = false;
     let autoNextTimer = null;
 
     let endlessPuzzle = {
       length: 5,
+      maxGuesses: DEFAULT_MAX_GUESSES,
       target: "APPLE",
       guesses: [],
       status: "playing"
     };
+
+    let customPuzzle = {
+      length: 5,
+      maxGuesses: 6,
+      target: "CUSTOM",
+      code: "",
+      isCustom: true,
+      guesses: [],
+      status: "playing"
+    };
+    let hasLoadedCustomPuzzle = false;
 
     function saveAppState() {
       try {
@@ -866,19 +1040,25 @@
           dateKey: appState.dateKey,
           dailyPuzzles: appState.dailyPuzzles,
           activeDailyIndex: appState.activeDailyIndex,
+          customHistory: appState.customHistory,
           stats: appState.stats,
           theme: appState.theme
         }));
-      } catch (e) {
-        // Ignore storage quota errors
-      }
+      } catch (e) {}
     }
 
     function getActivePuzzle() {
       if (currentMode === "daily") {
         return appState.dailyPuzzles[appState.activeDailyIndex];
       }
+      if (currentMode === "custom") {
+        return customPuzzle;
+      }
       return endlessPuzzle;
+    }
+
+    function getPuzzleMaxGuesses(puzzle) {
+      return puzzle.maxGuesses || DEFAULT_MAX_GUESSES;
     }
 
     function generateNewEndlessWord() {
@@ -901,6 +1081,7 @@
 
       endlessPuzzle = {
         length: chosenLen,
+        maxGuesses: DEFAULT_MAX_GUESSES,
         target: nextTarget,
         guesses: [],
         status: "playing"
@@ -909,9 +1090,26 @@
       renderAll();
     }
 
+    function startCustomPuzzle(decodedObj) {
+      customPuzzle = {
+        length: decodedObj.length,
+        maxGuesses: decodedObj.maxGuesses,
+        target: decodedObj.word,
+        code: decodedObj.code,
+        isCustom: true,
+        guesses: [],
+        status: "playing"
+      };
+      hasLoadedCustomPuzzle = true;
+      currentGuess = "";
+      closeCustomModal();
+      switchMode("custom", true);
+      showToast(`Loaded ${decodedObj.length}-letter Custom Wordle (${decodedObj.maxGuesses} guesses)`);
+    }
+
     /**
      * ============================================================================
-     * WORDLE EVALUATION & FULL DICTIONARY VALIDATION
+     * WORDLE EVALUATION & VALIDATION
      * ============================================================================
      */
     function evaluateGuess(guess, target) {
@@ -942,22 +1140,28 @@
       return result;
     }
 
-    async function isValidWord(guess, targetLength) {
-      // 1. Check Dormant 8+ Letter Rule first
+    async function isValidWord(guess, puzzle) {
+      const targetLength = puzzle.length;
+
+      // 1. Custom Wordles allow ANY non-space word of matching length (even non-dictionary words)
+      if (puzzle.isCustom) {
+        return !guess.includes(" ") && guess.length === targetLength;
+      }
+
+      // 2. Active 9+ Letter Wildcard Rule
       if (checkDormantLongWordRule(guess, targetLength)) {
         return true;
       }
 
       if (guess.length !== targetLength) return false;
 
-      // 2. Instant lookup in our 370,000+ English dictionary set
+      // 3. Instant lookup in our 370,000+ English dictionary set
       const dict = FULL_DICTIONARY_SETS[targetLength];
       if (dict && dict.has(guess)) {
         return true;
       }
 
-      // 3. Fallback: If full list hasn't finished downloading or word is a brand-new neologism,
-      // verify live against the Free Dictionary API and cache valid results
+      // 4. Fallback to Free Dictionary API
       try {
         isCheckingApi = true;
         const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess.toLowerCase()}`);
@@ -978,7 +1182,7 @@
 
     /**
      * ============================================================================
-     * UI RENDERING & DYNAMIC SIZING
+     * UI RENDERING & DYNAMIC SIZING (Supports up to 50x15 grids)
      * ============================================================================
      */
     const KEYBOARD_ROWS = [
@@ -1000,7 +1204,7 @@
           const btn = document.createElement("button");
           btn.type = "button";
           btn.dataset.key = key;
-          btn.className = "key-btn h-11 sm:h-12 text-xs sm:text-sm select-none";
+          btn.className = "key-btn h-10 sm:h-12 text-xs sm:text-sm select-none";
 
           if (key === "ENTER" || key === "BACK") {
             btn.classList.add("px-2.5", "sm:px-4", "flex-[1.5]", "text-[11px]", "sm:text-xs");
@@ -1088,30 +1292,37 @@
       document.getElementById("endless-streak-pill").textContent = `🔥 ${appState.stats.endlessStreak}`;
     }
 
-    function computeTileSize(wordLength) {
+    function computeTileSize(wordLength, maxGuesses) {
       const wrapper = document.getElementById("board-wrapper");
-      const availW = wrapper.clientWidth - 16;
-      const availH = wrapper.clientHeight - 12;
-      const gap = 6;
+      const availW = Math.max(240, wrapper.clientWidth - 16);
+      const availH = Math.max(200, wrapper.clientHeight - 12);
+      const gap = wordLength > 14 || maxGuesses > 9 ? 3 : 6;
 
       const maxTileW = Math.floor((availW - gap * (wordLength - 1)) / wordLength);
-      const maxTileH = Math.floor((availH - gap * (MAX_GUESSES - 1)) / MAX_GUESSES);
-      const size = Math.max(28, Math.min(62, maxTileW, maxTileH));
-      return size;
+      const maxTileH = Math.floor((availH - gap * (maxGuesses - 1)) / maxGuesses);
+      // Allow shrinking down to 16px for massive 50-letter custom grids
+      const size = Math.max(16, Math.min(62, maxTileW, maxTileH));
+      return { size, gap };
     }
 
     function renderBoard() {
       const puzzle = getActivePuzzle();
       const board = document.getElementById("game-board");
       const len = puzzle.length;
-      const tileSize = computeTileSize(len);
-      const fontSize = Math.max(14, Math.floor(tileSize * 0.52));
+      const maxRows = getPuzzleMaxGuesses(puzzle);
+      const { size: tileSize, gap } = computeTileSize(len, maxRows);
+      const fontSize = Math.max(10, Math.floor(tileSize * 0.54));
 
+      board.style.gap = `${gap}px`;
       board.style.gridTemplateColumns = `repeat(${len}, ${tileSize}px)`;
-      board.style.gridTemplateRows = `repeat(${MAX_GUESSES}, ${tileSize}px)`;
+      board.style.gridTemplateRows = `repeat(${maxRows}, ${tileSize}px)`;
       board.innerHTML = "";
 
-      for (let r = 0; r < MAX_GUESSES; r++) {
+      if (currentMode === "custom") {
+        document.getElementById("custom-meta-label").textContent = `${len} Letter${len === 1 ? "" : "s"} • ${maxRows} Guess${maxRows === 1 ? "" : "es"}`;
+      }
+
+      for (let r = 0; r < maxRows; r++) {
         const isSubmittedRow = r < puzzle.guesses.length;
         const isCurrentRow = r === puzzle.guesses.length && puzzle.status === "playing";
         const rowWord = isSubmittedRow
@@ -1123,7 +1334,7 @@
 
         for (let c = 0; c < len; c++) {
           const tile = document.createElement("div");
-          tile.className = "tile";
+          tile.className = tileSize < 26 ? "tile compact-tile" : "tile";
           tile.id = `tile-${r}-${c}`;
           tile.style.width = `${tileSize}px`;
           tile.style.height = `${tileSize}px`;
@@ -1170,6 +1381,9 @@
 
       if (currentMode === "daily") {
         shareBtn.classList.remove("hidden");
+        shareBtn.textContent = "Share";
+        shareBtn.onclick = shareDailySummary;
+
         const nextUnsolved = appState.dailyPuzzles.findIndex((p, i) => i > appState.activeDailyIndex && p.status === "playing");
         const anyUnsolved = appState.dailyPuzzles.findIndex(p => p.status === "playing");
 
@@ -1185,6 +1399,13 @@
           nextBtn.textContent = "Play Endless ♾️";
           nextBtn.onclick = () => switchMode("endless");
         }
+      } else if (currentMode === "custom") {
+        shareBtn.classList.remove("hidden");
+        shareBtn.textContent = "Copy Code";
+        shareBtn.onclick = () => copyTextToClipboard(customPuzzle.code, "Custom Wordle code copied!");
+
+        nextBtn.textContent = "Custom Menu ✨";
+        nextBtn.onclick = () => openCustomModal("join");
       } else {
         shareBtn.classList.add("hidden");
         nextBtn.textContent = "Next Word →";
@@ -1231,8 +1452,16 @@
       }
     }
 
+    function isAnyModalOpen() {
+      return (
+        !document.getElementById("modal-help").classList.contains("hidden") ||
+        !document.getElementById("modal-stats").classList.contains("hidden") ||
+        !document.getElementById("modal-custom").classList.contains("hidden")
+      );
+    }
+
     function handleKeyInput(key) {
-      if (isAnimating || isCheckingApi) return;
+      if (isAnimating || isCheckingApi || isAnyModalOpen()) return;
       const puzzle = getActivePuzzle();
       if (puzzle.status !== "playing") {
         if (key === "ENTER" && currentMode === "endless") {
@@ -1264,13 +1493,15 @@
 
     async function submitGuess() {
       const puzzle = getActivePuzzle();
+      const maxRows = getPuzzleMaxGuesses(puzzle);
+
       if (currentGuess.length < puzzle.length) {
         showToast("Not enough letters");
         shakeCurrentRow();
         return;
       }
 
-      const valid = await isValidWord(currentGuess, puzzle.length);
+      const valid = await isValidWord(currentGuess, puzzle);
       if (!valid) {
         showToast("Not in English dictionary");
         shakeCurrentRow();
@@ -1286,6 +1517,9 @@
       isAnimating = true;
 
       const len = puzzle.length;
+      // Scale stagger speed for very long words (e.g. 30-50 letters) so reveal stays snappy
+      const staggerMs = len > 12 ? Math.max(18, Math.floor(1100 / len)) : 110;
+
       for (let c = 0; c < len; c++) {
         const tile = document.getElementById(`tile-${rowIdx}-${c}`);
         setTimeout(() => {
@@ -1294,16 +1528,16 @@
             tile.dataset.state = evals[c];
             tile.classList.remove("anim-flip-in");
             tile.classList.add("anim-flip-out");
-          }, 210);
-        }, c * 110);
+          }, 200);
+        }, c * staggerMs);
       }
 
-      const totalRevealTime = len * 110 + 250;
+      const totalRevealTime = len * staggerMs + 240;
 
       setTimeout(() => {
         isAnimating = false;
         const isWin = submittedWord === puzzle.target;
-        const isLoss = !isWin && puzzle.guesses.length >= MAX_GUESSES;
+        const isLoss = !isWin && puzzle.guesses.length >= maxRows;
 
         if (isWin) {
           puzzle.status = "won";
@@ -1315,9 +1549,10 @@
               appState.stats.maxEndlessStreak = appState.stats.endlessStreak;
             }
           }
+          const bounceStagger = len > 12 ? Math.max(15, Math.floor(800 / len)) : 75;
           for (let c = 0; c < len; c++) {
             const tile = document.getElementById(`tile-${rowIdx}-${c}`);
-            setTimeout(() => tile.classList.add("anim-bounce"), c * 75);
+            setTimeout(() => tile.classList.add("anim-bounce"), c * bounceStagger);
           }
         } else if (isLoss) {
           puzzle.status = "lost";
@@ -1346,10 +1581,83 @@
 
     /**
      * ============================================================================
+     * CUSTOM WORDLE STUDIO LOGIC
+     * ============================================================================
+     */
+    function openCustomModal(defaultTab = "join") {
+      switchCustomModalTab(defaultTab);
+      renderCustomHistory();
+      document.getElementById("modal-custom").classList.remove("hidden");
+    }
+
+    function closeCustomModal() {
+      document.getElementById("modal-custom").classList.add("hidden");
+    }
+
+    function switchCustomModalTab(tab) {
+      const joinBtn = document.getElementById("custom-tab-join");
+      const createBtn = document.getElementById("custom-tab-create");
+      const joinPanel = document.getElementById("custom-panel-join");
+      const createPanel = document.getElementById("custom-panel-create");
+
+      if (tab === "join") {
+        joinBtn.className = "py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white";
+        createBtn.className = "py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white";
+        joinPanel.classList.remove("hidden");
+        createPanel.classList.add("hidden");
+      } else {
+        createBtn.className = "py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white";
+        joinBtn.className = "py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white";
+        createPanel.classList.remove("hidden");
+        joinPanel.classList.add("hidden");
+        renderCustomHistory();
+      }
+    }
+
+    function renderCustomHistory() {
+      const container = document.getElementById("custom-history-list");
+      const countLabel = document.getElementById("custom-history-count");
+      const list = appState.customHistory || [];
+      countLabel.textContent = `${list.length} saved`;
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-500 dark:text-zinc-400 text-center py-4 border border-dashed border-gray-300 dark:border-zinc-800 rounded-xl">No custom Wordles published yet. Create one above!</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      list.forEach((item, idx) => {
+        const card = document.createElement("div");
+        card.className = "flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-100 dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700/70";
+        card.innerHTML = `
+          <div class="min-w-0">
+            <div class="text-xs font-extrabold tracking-wider truncate">${item.word}</div>
+            <div class="text-[11px] text-gray-500 dark:text-zinc-400">${item.length}L • ${item.maxGuesses} Guesses</div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" data-action="copy" class="px-2.5 py-1 rounded-lg bg-white dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-600 text-xs font-bold shadow-xs">Copy</button>
+            <button type="button" data-action="play" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-xs">Play</button>
+          </div>
+        `;
+
+        card.querySelector('[data-action="copy"]').addEventListener("click", () => {
+          copyTextToClipboard(item.code, `Code for "${item.word}" copied!`);
+        });
+        card.querySelector('[data-action="play"]').addEventListener("click", () => {
+          const decoded = decodeCustomPuzzleCode(item.code);
+          if (decoded) startCustomPuzzle(decoded);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * ============================================================================
      * MODE SWITCHING, SHARING & MODALS
      * ============================================================================
      */
-    function switchMode(mode) {
+    function switchMode(mode, skipAutoOpenModal = false) {
       if (isAnimating) return;
       clearTimeout(autoNextTimer);
       currentMode = mode;
@@ -1357,29 +1665,48 @@
 
       const dailyBtn = document.getElementById("mode-daily-btn");
       const endlessBtn = document.getElementById("mode-endless-btn");
+      const customBtn = document.getElementById("mode-custom-btn");
+
       const dailyBar = document.getElementById("daily-selector-bar");
       const endlessBar = document.getElementById("endless-controls-bar");
+      const customBar = document.getElementById("custom-active-bar");
 
-      if (mode === "daily") {
-        dailyBtn.className = "py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white flex items-center justify-center gap-1.5";
-        endlessBtn.className = "py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5";
-        dailyBar.classList.remove("hidden");
-        endlessBar.classList.add("hidden");
-      } else {
-        endlessBtn.className = "py-1.5 px-3 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white flex items-center justify-center gap-1.5";
-        dailyBtn.className = "py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5";
-        dailyBar.classList.add("hidden");
-        endlessBar.classList.remove("hidden");
+      const activeClasses = "py-1.5 px-2 rounded-lg transition-all shadow-sm bg-white dark:bg-zinc-700 text-gray-900 dark:text-white flex items-center justify-center gap-1.5";
+      const inactiveClasses = "py-1.5 px-2 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1.5";
+
+      dailyBtn.className = mode === "daily" ? activeClasses : inactiveClasses;
+      endlessBtn.className = mode === "endless" ? activeClasses : inactiveClasses;
+      customBtn.className = mode === "custom" ? activeClasses : inactiveClasses;
+
+      dailyBar.classList.toggle("hidden", mode !== "daily");
+      endlessBar.classList.toggle("hidden", mode !== "endless");
+      customBar.classList.toggle("hidden", mode !== "custom");
+
+      if (mode === "endless") {
         if (endlessPuzzle.guesses.length === 0 && endlessPuzzle.status === "playing") {
           generateNewEndlessWord();
           return;
+        }
+      } else if (mode === "custom") {
+        if (!hasLoadedCustomPuzzle && !skipAutoOpenModal) {
+          openCustomModal("join");
         }
       }
 
       renderAll();
     }
 
-    function copyTextToClipboard(text) {
+    function copyTextToClipboard(text, successMsg = "Copied to clipboard!") {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg);
+        }).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
       const textarea = document.createElement("textarea");
       textarea.value = text;
       textarea.style.position = "fixed";
@@ -1388,9 +1715,9 @@
       textarea.select();
       try {
         document.execCommand("copy");
-        showToast("Results copied to clipboard!");
+        showToast(successMsg);
       } catch (err) {
-        showToast("Could not copy results");
+        showToast("Could not copy to clipboard");
       }
       document.body.removeChild(textarea);
     }
@@ -1402,7 +1729,7 @@
         const mark = p.status === "won" ? `🟩 ${p.guesses.length}/6` : p.status === "lost" ? "🟥 X/6" : "⬜ ...";
         lines.push(`#${idx + 1} (${p.length}L): ${mark}`);
       });
-      copyTextToClipboard(lines.join("\n"));
+      copyTextToClipboard(lines.join("\n"), "Daily results copied to clipboard!");
     }
 
     function updateStatsModal() {
@@ -1440,8 +1767,9 @@
       renderAll();
       loadFullEnglishDictionary();
 
+      // Physical Keyboard Support
       window.addEventListener("keydown", (e) => {
-        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.ctrlKey || e.metaKey || e.altKey || isAnyModalOpen()) return;
         const k = e.key.toUpperCase();
         if (k === "ENTER" || k === "BACKSPACE" || k === "DELETE" || /^[A-Z]$/.test(k)) {
           e.preventDefault();
@@ -1453,18 +1781,105 @@
         renderBoard();
       });
 
+      // Mode Toggles
       document.getElementById("mode-daily-btn").addEventListener("click", () => switchMode("daily"));
       document.getElementById("mode-endless-btn").addEventListener("click", () => switchMode("endless"));
+      document.getElementById("mode-custom-btn").addEventListener("click", () => {
+        if (currentMode === "custom") {
+          openCustomModal("join");
+        } else {
+          switchMode("custom");
+        }
+      });
 
+      // Custom Studio Controls
+      document.getElementById("btn-custom-open-hub").addEventListener("click", () => openCustomModal("join"));
+      document.getElementById("btn-custom-copy-active").addEventListener("click", () => {
+        if (customPuzzle.code) copyTextToClipboard(customPuzzle.code, "Custom Wordle code copied!");
+      });
+      document.getElementById("btn-close-custom").addEventListener("click", closeCustomModal);
+      document.getElementById("custom-tab-join").addEventListener("click", () => switchCustomModalTab("join"));
+      document.getElementById("custom-tab-create").addEventListener("click", () => switchCustomModalTab("create"));
+
+      // Join Custom Wordle via Code
+      document.getElementById("btn-launch-custom-code").addEventListener("click", () => {
+        const raw = document.getElementById("input-join-code").value;
+        const decoded = decodeCustomPuzzleCode(raw);
+        if (!decoded) {
+          showToast("Invalid Custom Wordle code");
+          return;
+        }
+        startCustomPuzzle(decoded);
+      });
+
+      // Live character counter & A-Z sanitization in Custom Maker
+      const customWordInput = document.getElementById("input-custom-word");
+      customWordInput.addEventListener("input", () => {
+        const sanitized = customWordInput.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 50);
+        customWordInput.value = sanitized;
+        document.getElementById("custom-word-len-badge").textContent = `${sanitized.length} / 50 letters`;
+      });
+
+      // Publish Custom Wordle
+      let lastPublishedObj = null;
+      document.getElementById("btn-publish-custom").addEventListener("click", () => {
+        const word = customWordInput.value.toUpperCase().replace(/[^A-Z]/g, "");
+        const guessesVal = parseInt(document.getElementById("input-custom-guesses").value, 10);
+
+        if (word.length < 1 || word.length > 50) {
+          showToast("Enter a word between 1 and 50 letters");
+          return;
+        }
+        if (isNaN(guessesVal) || guessesVal < 1 || guessesVal > 15) {
+          showToast("Guesses must be between 1 and 15");
+          return;
+        }
+
+        const code = encodeCustomPuzzleCode(word, guessesVal);
+        lastPublishedObj = {
+          word,
+          length: word.length,
+          maxGuesses: guessesVal,
+          code,
+          createdAt: Date.now()
+        };
+
+        // Save to history (deduplicating identical code)
+        appState.customHistory = [
+          lastPublishedObj,
+          ...(appState.customHistory || []).filter(item => item.code !== code)
+        ];
+        saveAppState();
+        renderCustomHistory();
+
+        document.getElementById("output-published-code").value = code;
+        document.getElementById("published-result-box").classList.remove("hidden");
+        showToast("Custom Wordle published!");
+      });
+
+      document.getElementById("btn-copy-published").addEventListener("click", () => {
+        const code = document.getElementById("output-published-code").value;
+        if (code) copyTextToClipboard(code, "Published code copied!");
+      });
+
+      document.getElementById("btn-play-published").addEventListener("click", () => {
+        if (lastPublishedObj) {
+          startCustomPuzzle(lastPublishedObj);
+        }
+      });
+
+      // Endless Controls
       document.getElementById("endless-length-select").addEventListener("change", () => generateNewEndlessWord());
       document.getElementById("btn-endless-skip").addEventListener("click", () => generateNewEndlessWord());
 
+      // Theme Toggle
       document.getElementById("btn-theme").addEventListener("click", () => {
         appState.theme = appState.theme === "dark" ? "light" : "dark";
         applyTheme(appState.theme);
         saveAppState();
       });
 
+      // Modals
       document.getElementById("btn-help").addEventListener("click", () => {
         document.getElementById("modal-help").classList.remove("hidden");
       });
@@ -1478,7 +1893,7 @@
           document.getElementById("modal-stats").classList.add("hidden");
         });
       });
-      [document.getElementById("modal-help"), document.getElementById("modal-stats")].forEach(modal => {
+      [document.getElementById("modal-help"), document.getElementById("modal-stats"), document.getElementById("modal-custom")].forEach(modal => {
         modal.addEventListener("click", (e) => {
           if (e.target === modal) modal.classList.add("hidden");
         });
