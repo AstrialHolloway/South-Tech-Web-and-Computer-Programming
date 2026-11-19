@@ -297,13 +297,22 @@
       </div>
     </div>
 
-    <!-- Custom Active Game Status Bar (Shown when playing a custom word) -->
-    <div id="custom-active-bar" class="hidden flex items-center justify-between gap-2 bg-purple-500/10 dark:bg-purple-500/15 px-3 py-1.5 rounded-xl border border-purple-500/30">
-      <div class="flex items-center gap-2 text-xs">
-        <span class="font-extrabold text-purple-600 dark:text-purple-400">✨ Custom Puzzle</span>
-        <span id="custom-meta-label" class="text-gray-600 dark:text-zinc-300 font-medium">5 Letters • 6 Guesses</span>
+    <!-- Custom Active Game Status Bar with Wordless-style Arrow Switcher -->
+    <div id="custom-active-bar" class="hidden flex items-center justify-between gap-2 bg-purple-500/10 dark:bg-purple-500/15 px-2.5 sm:px-3 py-1.5 rounded-xl border border-purple-500/30">
+      <div class="flex items-center gap-1.5 sm:gap-2 text-xs min-w-0">
+        <!-- Wordless Arrow Navigation -->
+        <div class="flex items-center gap-1 bg-white/80 dark:bg-zinc-900/80 border border-purple-500/30 rounded-lg px-1 py-0.5 shrink-0">
+          <button id="btn-custom-prev" aria-label="Previous Custom Wordle" class="px-1.5 py-0.5 rounded hover:bg-purple-500/20 disabled:opacity-35 disabled:pointer-events-none font-extrabold text-purple-600 dark:text-purple-400 transition-colors">
+            ◀
+          </button>
+          <span id="custom-counter-label" class="font-extrabold text-[11px] px-1 text-gray-800 dark:text-zinc-200">1 / 1</span>
+          <button id="btn-custom-next" aria-label="Next Custom Wordle" class="px-1.5 py-0.5 rounded hover:bg-purple-500/20 disabled:opacity-35 disabled:pointer-events-none font-extrabold text-purple-600 dark:text-purple-400 transition-colors">
+            ▶
+          </button>
+        </div>
+        <span id="custom-meta-label" class="text-gray-700 dark:text-zinc-300 font-semibold truncate">5 Letters • 6 Guesses</span>
       </div>
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-1.5 shrink-0">
         <button id="btn-custom-copy-active" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-colors">
           Copy Code
         </button>
@@ -367,7 +376,7 @@
       <!-- Tab 1: Input Code to Access Custom Wordle -->
       <div id="custom-panel-join" class="space-y-4 overflow-y-auto py-1">
         <p class="text-xs sm:text-sm text-gray-600 dark:text-zinc-400">
-          Paste a Custom Wordle code shared by a friend (or from your own history) to load their custom word, length, and guess limit.
+          Paste a Custom Wordle code shared by a friend (supports single puzzles or multi-word Wordless playlists!).
         </p>
         <div class="space-y-2">
           <label for="input-join-code" class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Custom Wordle Code</label>
@@ -378,40 +387,43 @@
         </button>
       </div>
 
-      <!-- Tab 2: Create Custom Wordle + Previous Codes List -->
+      <!-- Tab 2: Create Custom Wordle (Multi-Wordle Maker) + Previous Codes List -->
       <div id="custom-panel-create" class="hidden space-y-4 overflow-y-auto pr-1 py-1">
         <div class="space-y-3 bg-gray-50 dark:bg-zinc-950/60 p-3.5 rounded-xl border border-gray-200 dark:border-zinc-800">
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label for="input-custom-word" class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Secret Word (A–Z, up to 50)</label>
-              <span id="custom-word-len-badge" class="text-xs font-extrabold text-purple-600 dark:text-purple-400">0 / 50 letters</span>
-            </div>
-            <input id="input-custom-word" type="text" maxlength="50" placeholder="Enter any word (even non-dictionary)..." class="w-full rounded-xl bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-3 py-2 text-sm font-bold uppercase tracking-wider focus:outline-none focus:border-purple-500" />
-            <p class="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">Letters only (A–Z). Custom words automatically allow any matching-length guess!</p>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-gray-600 dark:text-zinc-300">Build a single puzzle or a multi-word playlist</span>
+            <span id="builder-count-badge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-400">1 Wordle</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="input-custom-guesses" class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">Max Guesses (1–15)</label>
-              <input id="input-custom-guesses" type="number" min="1" max="15" value="6" class="w-full rounded-xl bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-3 py-2 text-sm font-bold focus:outline-none focus:border-purple-500" />
-            </div>
-            <div class="flex flex-col justify-end">
-              <button id="btn-publish-custom" class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm shadow transition-transform active:scale-98">
+          <!-- Dynamic List of Puzzle Entry Cards -->
+          <div id="custom-builder-entries" class="space-y-2.5">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- "Add another" button directly at the bottom of the word and guesses entries -->
+          <button id="btn-add-another-wordle" type="button" class="w-full py-2 px-3 rounded-xl border border-dashed border-purple-500/60 hover:border-purple-500 hover:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-extrabold text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5">
+            <span>+ Add another</span>
+          </button>
+
+          <!-- Action Row: Publish & Get Code moved down alongside Copy Code and Play Now -->
+          <div class="pt-2.5 border-t border-gray-200 dark:border-zinc-800 space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="btn-publish-custom" type="button" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm shadow transition-transform active:scale-98">
                 Publish & Get Code
               </button>
+              <button id="btn-copy-published" type="button" class="hidden py-2 px-3 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-xs sm:text-sm font-bold">
+                Copy Code
+              </button>
+              <button id="btn-play-published" type="button" class="hidden py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-bold shadow">
+                Play Now
+              </button>
             </div>
-          </div>
 
-          <!-- Newly Published Code Box -->
-          <div id="published-result-box" class="hidden pt-2 border-t border-gray-200 dark:border-zinc-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ Published! Share this code:</span>
-              <div class="flex items-center gap-1.5">
-                <button id="btn-copy-published" class="px-2.5 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-xs font-bold">Copy Code</button>
-                <button id="btn-play-published" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">Play Now</button>
-              </div>
+            <!-- Newly Published Code Box -->
+            <div id="published-result-box" class="hidden space-y-1">
+              <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 block">✓ Published! Share this code:</span>
+              <input id="output-published-code" type="text" readonly class="w-full rounded-lg bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-2.5 py-1.5 text-xs font-mono text-gray-700 dark:text-zinc-300" />
             </div>
-            <input id="output-published-code" type="text" readonly class="w-full rounded-lg bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 px-2.5 py-1.5 text-xs font-mono text-gray-700 dark:text-zinc-300" />
           </div>
         </div>
 
@@ -441,7 +453,7 @@
         <ul class="list-disc pl-5 space-y-1">
           <li><strong>Daily 5:</strong> Solve 5 progressive daily words every day — starting at <strong>3 letters</strong> (#1) up to <strong>7 letters</strong> (#5).</li>
           <li><strong>Endless:</strong> Play an infinite stream of random words (including 9-letter wildcard rounds).</li>
-          <li><strong>Custom:</strong> Build your own puzzle up to <strong>50 letters</strong> and <strong>15 guesses</strong>, or paste a friend's code to play theirs.</li>
+          <li><strong>Custom:</strong> Chain multiple custom puzzles (up to <strong>50 letters</strong> and <strong>15 guesses</strong> each) into a single code, switch between them with arrows, or press <strong>Next Puzzle →</strong> after finishing each word.</li>
         </ul>
         <div class="pt-2 space-y-2.5">
           <p class="font-bold text-gray-900 dark:text-white">Tile Examples</p>
@@ -510,7 +522,6 @@
       if (!ENABLE_LONG_WORD_WILDCARD_MODE) {
         return false;
       }
-      // Allows any guess for words >= 9 letters as long as it has no spaces and matches exact length
       if (targetLength >= 9 && !guess.includes(" ") && guess.length === targetLength) {
         return true;
       }
@@ -868,16 +879,29 @@
 
     /**
      * ============================================================================
-     * CUSTOM WORDLE CODE ENCODER / DECODER
+     * CUSTOM WORDLE CODE ENCODER / DECODER (Supports single & multi-word playlists)
      * ============================================================================
      */
-    function encodeCustomPuzzleCode(word, maxGuesses) {
-      const payload = JSON.stringify({
-        v: 1,
-        w: word.toUpperCase(),
-        g: maxGuesses
-      });
-      // XOR obfuscation with simple salt + URL-safe Base64 so the answer isn't readable in plain text
+    function encodeCustomPuzzleSetCode(entries) {
+      // entries: Array of { word, maxGuesses }
+      // Use compact v1 single-word format if 1 entry (keeps backward compatibility),
+      // or v2 multi-word playlist format when >1 entries.
+      const payloadObj =
+        entries.length === 1
+          ? {
+              v: 1,
+              w: entries[0].word.toUpperCase(),
+              g: entries[0].maxGuesses
+            }
+          : {
+              v: 2,
+              p: entries.map(e => ({
+                w: e.word.toUpperCase(),
+                g: e.maxGuesses
+              }))
+            };
+
+      const payload = JSON.stringify(payloadObj);
       const salt = "W5X";
       let xored = "";
       for (let i = 0; i < payload.length; i++) {
@@ -900,6 +924,8 @@
           jsonStr += String.fromCharCode(xored.charCodeAt(i) ^ salt.charCodeAt(i % salt.length));
         }
         const data = JSON.parse(jsonStr);
+
+        // Version 1 (Single Custom Wordle)
         if (
           data &&
           data.v === 1 &&
@@ -910,12 +936,49 @@
           data.g <= 15
         ) {
           return {
-            word: data.w,
-            length: data.w.length,
-            maxGuesses: data.g,
-            code: cleaned
+            code: cleaned,
+            puzzles: [
+              {
+                word: data.w,
+                length: data.w.length,
+                maxGuesses: data.g
+              }
+            ]
           };
         }
+
+        // Version 2 (Multi-Wordle Wordless Playlist)
+        if (
+          data &&
+          data.v === 2 &&
+          Array.isArray(data.p) &&
+          data.p.length >= 1 &&
+          data.p.length <= 50
+        ) {
+          const validList = [];
+          for (const item of data.p) {
+            if (
+              !item ||
+              typeof item.w !== "string" ||
+              !/^[A-Z]{1,50}$/.test(item.w) ||
+              !Number.isInteger(item.g) ||
+              item.g < 1 ||
+              item.g > 15
+            ) {
+              return null;
+            }
+            validList.push({
+              word: item.w,
+              length: item.w.length,
+              maxGuesses: item.g
+            });
+          }
+          return {
+            code: cleaned,
+            puzzles: validList
+          };
+        }
+
         return null;
       } catch (e) {
         return null;
@@ -965,7 +1028,7 @@
       });
     }
 
-    const STORAGE_KEY = "wordle_5x_endless_v2";
+    const STORAGE_KEY = "wordle_5x_endless_v3";
 
     function loadSavedData() {
       const today = getTodayKey();
@@ -1023,14 +1086,20 @@
       status: "playing"
     };
 
-    let customPuzzle = {
-      length: 5,
-      maxGuesses: 6,
-      target: "CUSTOM",
+    // Multi-word Custom Playlist State (Wordless-style)
+    let customSession = {
       code: "",
-      isCustom: true,
-      guesses: [],
-      status: "playing"
+      activeIndex: 0,
+      puzzles: [
+        {
+          length: 5,
+          maxGuesses: 6,
+          target: "CUSTOM",
+          isCustom: true,
+          guesses: [],
+          status: "playing"
+        }
+      ]
     };
     let hasLoadedCustomPuzzle = false;
 
@@ -1052,7 +1121,7 @@
         return appState.dailyPuzzles[appState.activeDailyIndex];
       }
       if (currentMode === "custom") {
-        return customPuzzle;
+        return customSession.puzzles[customSession.activeIndex];
       }
       return endlessPuzzle;
     }
@@ -1090,21 +1159,38 @@
       renderAll();
     }
 
-    function startCustomPuzzle(decodedObj) {
-      customPuzzle = {
-        length: decodedObj.length,
-        maxGuesses: decodedObj.maxGuesses,
-        target: decodedObj.word,
-        code: decodedObj.code,
-        isCustom: true,
-        guesses: [],
-        status: "playing"
+    function startCustomPuzzleSet(decodedSet) {
+      customSession = {
+        code: decodedSet.code,
+        activeIndex: 0,
+        puzzles: decodedSet.puzzles.map(p => ({
+          length: p.length,
+          maxGuesses: p.maxGuesses,
+          target: p.word,
+          isCustom: true,
+          guesses: [],
+          status: "playing"
+        }))
       };
       hasLoadedCustomPuzzle = true;
       currentGuess = "";
       closeCustomModal();
       switchMode("custom", true);
-      showToast(`Loaded ${decodedObj.length}-letter Custom Wordle (${decodedObj.maxGuesses} guesses)`);
+      const count = customSession.puzzles.length;
+      showToast(
+        count === 1
+          ? `Loaded ${customSession.puzzles[0].length}-letter Custom Wordle`
+          : `Loaded ${count}-puzzle Custom Wordle set!`
+      );
+    }
+
+    function navigateCustomPuzzle(delta) {
+      if (isAnimating) return;
+      const nextIdx = customSession.activeIndex + delta;
+      if (nextIdx < 0 || nextIdx >= customSession.puzzles.length) return;
+      customSession.activeIndex = nextIdx;
+      currentGuess = "";
+      renderAll();
     }
 
     /**
@@ -1143,7 +1229,7 @@
     async function isValidWord(guess, puzzle) {
       const targetLength = puzzle.length;
 
-      // 1. Custom Wordles allow ANY non-space word of matching length (even non-dictionary words)
+      // 1. Custom Wordles allow ANY non-space word of matching length
       if (puzzle.isCustom) {
         return !guess.includes(" ") && guess.length === targetLength;
       }
@@ -1182,7 +1268,7 @@
 
     /**
      * ============================================================================
-     * UI RENDERING & DYNAMIC SIZING (Supports up to 50x15 grids)
+     * UI RENDERING & DYNAMIC SIZING
      * ============================================================================
      */
     const KEYBOARD_ROWS = [
@@ -1292,6 +1378,21 @@
       document.getElementById("endless-streak-pill").textContent = `🔥 ${appState.stats.endlessStreak}`;
     }
 
+    function updateCustomBarUI() {
+      if (currentMode !== "custom") return;
+      const total = customSession.puzzles.length;
+      const idx = customSession.activeIndex;
+      const puzzle = customSession.puzzles[idx];
+      const maxRows = getPuzzleMaxGuesses(puzzle);
+
+      document.getElementById("custom-counter-label").textContent = `${idx + 1} / ${total}`;
+      document.getElementById("btn-custom-prev").disabled = idx <= 0;
+      document.getElementById("btn-custom-next").disabled = idx >= total - 1;
+
+      const statusMark = puzzle.status === "won" ? " ✓" : puzzle.status === "lost" ? " ✕" : "";
+      document.getElementById("custom-meta-label").textContent = `${puzzle.length}L • ${maxRows} Guesses${statusMark}`;
+    }
+
     function computeTileSize(wordLength, maxGuesses) {
       const wrapper = document.getElementById("board-wrapper");
       const availW = Math.max(240, wrapper.clientWidth - 16);
@@ -1300,7 +1401,6 @@
 
       const maxTileW = Math.floor((availW - gap * (wordLength - 1)) / wordLength);
       const maxTileH = Math.floor((availH - gap * (maxGuesses - 1)) / maxGuesses);
-      // Allow shrinking down to 16px for massive 50-letter custom grids
       const size = Math.max(16, Math.min(62, maxTileW, maxTileH));
       return { size, gap };
     }
@@ -1318,9 +1418,7 @@
       board.style.gridTemplateRows = `repeat(${maxRows}, ${tileSize}px)`;
       board.innerHTML = "";
 
-      if (currentMode === "custom") {
-        document.getElementById("custom-meta-label").textContent = `${len} Letter${len === 1 ? "" : "s"} • ${maxRows} Guess${maxRows === 1 ? "" : "es"}`;
-      }
+      updateCustomBarUI();
 
       for (let r = 0; r < maxRows; r++) {
         const isSubmittedRow = r < puzzle.guesses.length;
@@ -1402,10 +1500,31 @@
       } else if (currentMode === "custom") {
         shareBtn.classList.remove("hidden");
         shareBtn.textContent = "Copy Code";
-        shareBtn.onclick = () => copyTextToClipboard(customPuzzle.code, "Custom Wordle code copied!");
+        shareBtn.onclick = () => copyTextToClipboard(customSession.code, "Custom Wordle code copied!");
 
-        nextBtn.textContent = "Custom Menu ✨";
-        nextBtn.onclick = () => openCustomModal("join");
+        const total = customSession.puzzles.length;
+        const idx = customSession.activeIndex;
+        const nextSequential = idx + 1 < total ? idx + 1 : -1;
+        const anyUnsolved = customSession.puzzles.findIndex(p => p.status === "playing");
+
+        if (nextSequential !== -1) {
+          nextBtn.textContent = `Next (${idx + 2}/${total}) →`;
+          nextBtn.onclick = () => {
+            customSession.activeIndex = nextSequential;
+            currentGuess = "";
+            renderAll();
+          };
+        } else if (anyUnsolved !== -1) {
+          nextBtn.textContent = `Next Unsolved (#${anyUnsolved + 1}) →`;
+          nextBtn.onclick = () => {
+            customSession.activeIndex = anyUnsolved;
+            currentGuess = "";
+            renderAll();
+          };
+        } else {
+          nextBtn.textContent = "Custom Menu ✨";
+          nextBtn.onclick = () => openCustomModal("join");
+        }
       } else {
         shareBtn.classList.add("hidden");
         nextBtn.textContent = "Next Word →";
@@ -1517,7 +1636,6 @@
       isAnimating = true;
 
       const len = puzzle.length;
-      // Scale stagger speed for very long words (e.g. 30-50 letters) so reveal stays snappy
       const staggerMs = len > 12 ? Math.max(18, Math.floor(1100 / len)) : 110;
 
       for (let c = 0; c < len; c++) {
@@ -1565,6 +1683,7 @@
 
         saveAppState();
         renderDailySelector();
+        updateCustomBarUI();
         updateKeyboardColors();
         updateBanner();
 
@@ -1581,11 +1700,91 @@
 
     /**
      * ============================================================================
-     * CUSTOM WORDLE STUDIO LOGIC
+     * CUSTOM WORDLE STUDIO LOGIC (Multi-Wordle Builder + History)
      * ============================================================================
      */
+    let builderEntries = [{ word: "", maxGuesses: 6 }];
+    let lastPublishedSet = null;
+
+    function renderBuilderEntries() {
+      const container = document.getElementById("custom-builder-entries");
+      const badge = document.getElementById("builder-count-badge");
+      badge.textContent = `${builderEntries.length} Wordle${builderEntries.length === 1 ? "" : "s"}`;
+      container.innerHTML = "";
+
+      builderEntries.forEach((entry, idx) => {
+        const card = document.createElement("div");
+        card.className = "p-3 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 space-y-2";
+
+        const removeBtnHtml =
+          builderEntries.length > 1
+            ? `<button type="button" data-remove-idx="${idx}" class="text-[11px] font-bold text-rose-500 hover:text-rose-400 px-1.5 py-0.5 rounded">✕ Remove</button>`
+            : "";
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-purple-600 dark:text-purple-400">Wordle #${idx + 1}</span>
+            <div class="flex items-center gap-2">
+              <span data-len-badge="${idx}" class="text-[11px] font-bold text-gray-500 dark:text-zinc-400">${entry.word.length} / 50</span>
+              ${removeBtnHtml}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div class="sm:col-span-2">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">Secret Word (A–Z)</label>
+              <input
+                type="text"
+                maxlength="50"
+                data-word-idx="${idx}"
+                value="${entry.word}"
+                placeholder="Enter word..."
+                class="w-full rounded-lg bg-gray-50 dark:bg-zinc-950 border border-gray-300 dark:border-zinc-700 px-2.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider focus:outline-none focus:border-purple-500"
+              />
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">Guesses (1–15)</label>
+              <input
+                type="number"
+                min="1"
+                max="15"
+                data-guesses-idx="${idx}"
+                value="${entry.maxGuesses}"
+                class="w-full rounded-lg bg-gray-50 dark:bg-zinc-950 border border-gray-300 dark:border-zinc-700 px-2.5 py-1.5 text-xs sm:text-sm font-bold focus:outline-none focus:border-purple-500"
+              />
+            </div>
+          </div>
+        `;
+
+        const wordInput = card.querySelector(`[data-word-idx="${idx}"]`);
+        const lenBadge = card.querySelector(`[data-len-badge="${idx}"]`);
+        wordInput.addEventListener("input", () => {
+          const sanitized = wordInput.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 50);
+          wordInput.value = sanitized;
+          builderEntries[idx].word = sanitized;
+          lenBadge.textContent = `${sanitized.length} / 50`;
+        });
+
+        const guessesInput = card.querySelector(`[data-guesses-idx="${idx}"]`);
+        guessesInput.addEventListener("input", () => {
+          const val = parseInt(guessesInput.value, 10);
+          builderEntries[idx].maxGuesses = isNaN(val) ? 6 : val;
+        });
+
+        const removeBtn = card.querySelector(`[data-remove-idx="${idx}"]`);
+        if (removeBtn) {
+          removeBtn.addEventListener("click", () => {
+            builderEntries.splice(idx, 1);
+            renderBuilderEntries();
+          });
+        }
+
+        container.appendChild(card);
+      });
+    }
+
     function openCustomModal(defaultTab = "join") {
       switchCustomModalTab(defaultTab);
+      renderBuilderEntries();
       renderCustomHistory();
       document.getElementById("modal-custom").classList.remove("hidden");
     }
@@ -1610,6 +1809,7 @@
         joinBtn.className = "py-1.5 px-3 rounded-lg transition-all text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white";
         createPanel.classList.remove("hidden");
         joinPanel.classList.add("hidden");
+        renderBuilderEntries();
         renderCustomHistory();
       }
     }
@@ -1626,13 +1826,28 @@
       }
 
       container.innerHTML = "";
-      list.forEach((item, idx) => {
+      list.forEach((item) => {
+        // Normalize both legacy single-word history items and new multi-word playlist items
+        const puzzlesList = Array.isArray(item.puzzles)
+          ? item.puzzles
+          : [{ word: item.word, length: item.length, maxGuesses: item.maxGuesses }];
+
+        const titleText =
+          puzzlesList.length === 1
+            ? puzzlesList[0].word
+            : `${puzzlesList.length} Wordles: ${puzzlesList.map(p => p.word).join(", ")}`;
+
+        const subtitleText =
+          puzzlesList.length === 1
+            ? `${puzzlesList[0].length}L • ${puzzlesList[0].maxGuesses} Guesses`
+            : puzzlesList.map((p, i) => `#${i + 1} (${p.length}L/${p.maxGuesses}G)`).join(" • ");
+
         const card = document.createElement("div");
         card.className = "flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-100 dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700/70";
         card.innerHTML = `
           <div class="min-w-0">
-            <div class="text-xs font-extrabold tracking-wider truncate">${item.word}</div>
-            <div class="text-[11px] text-gray-500 dark:text-zinc-400">${item.length}L • ${item.maxGuesses} Guesses</div>
+            <div class="text-xs font-extrabold tracking-wider truncate">${titleText}</div>
+            <div class="text-[11px] text-gray-500 dark:text-zinc-400 truncate">${subtitleText}</div>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
             <button type="button" data-action="copy" class="px-2.5 py-1 rounded-lg bg-white dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-600 text-xs font-bold shadow-xs">Copy</button>
@@ -1641,11 +1856,11 @@
         `;
 
         card.querySelector('[data-action="copy"]').addEventListener("click", () => {
-          copyTextToClipboard(item.code, `Code for "${item.word}" copied!`);
+          copyTextToClipboard(item.code, "Custom Wordle code copied!");
         });
         card.querySelector('[data-action="play"]').addEventListener("click", () => {
           const decoded = decodeCustomPuzzleCode(item.code);
-          if (decoded) startCustomPuzzle(decoded);
+          if (decoded) startCustomPuzzleSet(decoded);
         });
 
         container.appendChild(card);
@@ -1764,12 +1979,25 @@
     window.addEventListener("DOMContentLoaded", () => {
       applyTheme(appState.theme);
       buildKeyboard();
+      renderBuilderEntries();
       renderAll();
       loadFullEnglishDictionary();
 
-      // Physical Keyboard Support
+      // Physical Keyboard Support (including Left/Right arrows for Custom Wordles)
       window.addEventListener("keydown", (e) => {
         if (e.ctrlKey || e.metaKey || e.altKey || isAnyModalOpen()) return;
+        if (currentMode === "custom" && currentGuess.length === 0) {
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            navigateCustomPuzzle(-1);
+            return;
+          }
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            navigateCustomPuzzle(1);
+            return;
+          }
+        }
         const k = e.key.toUpperCase();
         if (k === "ENTER" || k === "BACKSPACE" || k === "DELETE" || /^[A-Z]$/.test(k)) {
           e.preventDefault();
@@ -1792,10 +2020,14 @@
         }
       });
 
+      // Wordless-style Custom Arrow Controls
+      document.getElementById("btn-custom-prev").addEventListener("click", () => navigateCustomPuzzle(-1));
+      document.getElementById("btn-custom-next").addEventListener("click", () => navigateCustomPuzzle(1));
+
       // Custom Studio Controls
       document.getElementById("btn-custom-open-hub").addEventListener("click", () => openCustomModal("join"));
       document.getElementById("btn-custom-copy-active").addEventListener("click", () => {
-        if (customPuzzle.code) copyTextToClipboard(customPuzzle.code, "Custom Wordle code copied!");
+        if (customSession.code) copyTextToClipboard(customSession.code, "Custom Wordle code copied!");
       });
       document.getElementById("btn-close-custom").addEventListener("click", closeCustomModal);
       document.getElementById("custom-tab-join").addEventListener("click", () => switchCustomModalTab("join"));
@@ -1809,44 +2041,46 @@
           showToast("Invalid Custom Wordle code");
           return;
         }
-        startCustomPuzzle(decoded);
+        startCustomPuzzleSet(decoded);
       });
 
-      // Live character counter & A-Z sanitization in Custom Maker
-      const customWordInput = document.getElementById("input-custom-word");
-      customWordInput.addEventListener("input", () => {
-        const sanitized = customWordInput.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 50);
-        customWordInput.value = sanitized;
-        document.getElementById("custom-word-len-badge").textContent = `${sanitized.length} / 50 letters`;
+      // Add Another Wordle Entry in Builder
+      document.getElementById("btn-add-another-wordle").addEventListener("click", () => {
+        if (builderEntries.length >= 50) {
+          showToast("Maximum 50 Wordles per set");
+          return;
+        }
+        builderEntries.push({ word: "", maxGuesses: 6 });
+        renderBuilderEntries();
       });
 
-      // Publish Custom Wordle
-      let lastPublishedObj = null;
+      // Publish Custom Wordle Set
       document.getElementById("btn-publish-custom").addEventListener("click", () => {
-        const word = customWordInput.value.toUpperCase().replace(/[^A-Z]/g, "");
-        const guessesVal = parseInt(document.getElementById("input-custom-guesses").value, 10);
+        const validated = [];
+        for (let i = 0; i < builderEntries.length; i++) {
+          const w = (builderEntries[i].word || "").toUpperCase().replace(/[^A-Z]/g, "");
+          const g = parseInt(builderEntries[i].maxGuesses, 10);
 
-        if (word.length < 1 || word.length > 50) {
-          showToast("Enter a word between 1 and 50 letters");
-          return;
-        }
-        if (isNaN(guessesVal) || guessesVal < 1 || guessesVal > 15) {
-          showToast("Guesses must be between 1 and 15");
-          return;
+          if (w.length < 1 || w.length > 50) {
+            showToast(`Wordle #${i + 1}: Enter 1 to 50 letters`);
+            return;
+          }
+          if (isNaN(g) || g < 1 || g > 15) {
+            showToast(`Wordle #${i + 1}: Guesses must be 1 to 15`);
+            return;
+          }
+          validated.push({ word: w, length: w.length, maxGuesses: g });
         }
 
-        const code = encodeCustomPuzzleCode(word, guessesVal);
-        lastPublishedObj = {
-          word,
-          length: word.length,
-          maxGuesses: guessesVal,
+        const code = encodeCustomPuzzleSetCode(validated);
+        lastPublishedSet = {
           code,
+          puzzles: validated,
           createdAt: Date.now()
         };
 
-        // Save to history (deduplicating identical code)
         appState.customHistory = [
-          lastPublishedObj,
+          lastPublishedSet,
           ...(appState.customHistory || []).filter(item => item.code !== code)
         ];
         saveAppState();
@@ -1854,7 +2088,13 @@
 
         document.getElementById("output-published-code").value = code;
         document.getElementById("published-result-box").classList.remove("hidden");
-        showToast("Custom Wordle published!");
+        document.getElementById("btn-copy-published").classList.remove("hidden");
+        document.getElementById("btn-play-published").classList.remove("hidden");
+        showToast(
+          validated.length === 1
+            ? "Custom Wordle published!"
+            : `${validated.length}-puzzle Custom Wordle set published!`
+        );
       });
 
       document.getElementById("btn-copy-published").addEventListener("click", () => {
@@ -1863,8 +2103,8 @@
       });
 
       document.getElementById("btn-play-published").addEventListener("click", () => {
-        if (lastPublishedObj) {
-          startCustomPuzzle(lastPublishedObj);
+        if (lastPublishedSet) {
+          startCustomPuzzleSet(lastPublishedSet);
         }
       });
 
